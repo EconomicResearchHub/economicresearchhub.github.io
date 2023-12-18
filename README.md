@@ -9,7 +9,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Ana Davreux" />
+<meta name="author" content="Ana " />
 
 <meta name="date" content="2023-12-18" />
 
