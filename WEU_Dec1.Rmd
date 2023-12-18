@@ -1,0 +1,461 @@
+---
+title: 'Weekly Economic Update: December 1, 2023'
+author: ' '
+date: ' '
+output:
+  html_document:
+    df_print: paged
+    theme: flatly
+    toc: yes
+    toc_float:
+      collapsed: yes
+    highlight: tango
+---
+
+```{r, echo=FALSE, include=FALSE}
+library(OECD)
+library(rmarkdown)
+library(tidyverse)
+library(forecast)
+library(xts)
+library(rmarkdown)
+library(openxlsx)
+library(XML)
+library(reshape2)
+library(plyr)
+library(ggplot2)
+library(rCharts)
+library(dplyr)
+library(tidyr)
+library(plotly)
+library(ggcharts)
+library(ggpol)
+library(RColorBrewer)
+library(highcharter)
+library(vtable)
+library(htmlwidgets)
+library(webshot)
+library(scales)
+library(statcanR)
+library(tidyverse)
+library(writexl)
+library(highcharter) 
+library(rmdformats)
+library(prettydoc)
+library(hrbrthemes)
+library(tint)
+library(tufte)
+library(tinytex)
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+setwd("S:/ERPA Correspondence/Weekly economic update/Update Materials/WEU Data Visualization R Code/WEU 2.0 Mock up") 
+```
+***
+<h3><strong>What's new this week?</strong></h3>
+
+```{r, echo=FALSE, out.width="50px", include=FALSE}
+knitr::include_graphics("S:/ERPA Correspondence/Weekly economic update/Update Materials/WEU Data Visualization R Code/WEU 2.0 Mock up/images/money.png")
+```
+<ul>
+  <li>**The Canadian economy contracted in the third quarter by 0.3 per cent:** Canada's economy shrank in the three months up to September, as household spending was flat and exports declined.<br></li>
+</ul>
+```{r, echo=FALSE, out.width="50px", include=FALSE}
+knitr::include_graphics("S:/ERPA Correspondence/Weekly economic update/Update Materials/WEU Data Visualization R Code/WEU 2.0 Mock up/images/people.png")
+```
+<ul>
+  <li>The economy added **25,000 jobs in November, while the unemployment rate rose 0.1% to 5.8%**, the highest since January 2022.<br></li>
+</ul>
+
+```{r, echo=FALSE, out.width="50px", include=FALSE}
+knitr::include_graphics("S:/ERPA Correspondence/Weekly economic update/Update Materials/WEU Data Visualization R Code/WEU 2.0 Mock up/images/business.png")
+```
+<ul>
+  <li>Canada's November **small business optimism 3-month index fell by 3.4** points to 37.7, while the 12-month index declined by 1.5 points to 45.6.<br></li>
+</ul>
+
+<h3><strong>Chart of the week</h3> The economy contracted in the 3rd quarter by 0.3% </strong>
+
+<center>
+<h4><strong> Gross domestic product, quarterly change</strong></h4>
+</center>
+
+
+```{r, echo=FALSE, include=FALSE, out.width='100%', fig.align='center', class='centered-plot'}
+library(readxl)
+gdpexp <- read_excel("C:/Users/davreuxa/OneDrive - ISED-ISDE/WEU Indicators/3610010401-eng.xlsx")
+
+gdpexp_QoQ2 <- gdpexp %>%
+  mutate(gdp = (`Gross domestic product at market prices` - lag(`Gross domestic product at market prices`, default = `Gross domestic product at market prices`[1])) / lag(`Gross domestic product at market prices`, default = `Gross domestic product at market prices`[1]) * 100) %>%
+  filter(`Quarter` != "Q3 2021") %>%
+  select(`Quarter`,  gdp)
+
+
+gdpexp_chart_QoQ2 <- highchart() %>%
+  hc_chart(type = "column", zoomType = "xy") %>%
+  hc_xAxis(categories = gdpexp_QoQ2$Quarter) %>%
+  hc_add_series(
+    name = " GDP",
+    data = gdpexp_QoQ2$gdp
+  ) %>%
+  hc_plotOptions(
+    column = list(
+      colorByPoint = TRUE,
+      colors = ifelse(gdpexp_QoQ2$gdp < 0, "#E31737", "#333F50")
+    )
+  ) %>%
+  hc_yAxis(
+    title = list(text = "%")
+  ) %>%
+  hc_caption(
+    text = "Source: StatsCan Table 36-10-0104-01"
+  ) %>%
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_tooltip(
+    pointFormat = '{series.name}: <b>{point.y:.2f}%</b><br/>',
+    shared = FALSE
+  )
+
+
+
+```
+
+```{r, echo=FALSE, fig.align='center', fig.width=8, fig.height=6}
+gdpexp_chart_QoQ2
+```
+
+<h3><strong>Canadian economic indicators</strong></h3>
+
+<a id="section-b"></a>
+<ul>
+  <li>Canada’s third quarter GDP contracted by 0.3% driven by a 25.4% drop in refined petroleum exports and 18.5% drop in investment in inventories. Higher housing investments (+2.0%) and flat household spending partially offset these losses.
+  </li> 
+</ul>
+<ul>
+  <li>Real GDP edged up 0.1% in September driven by the goods-producing industries (+0.3%) while the services-producing industries remained essentially unchanged. Advance information indicates that real GDP increased by 0.2% in October, as increases in mining, quarrying, and oil and gas extraction, retail trade, and construction were only partially offset by decreases in wholesale trade.
+  </li> 
+</ul>
+
+<ul>  
+<a id="section-c"></a>
+  <li>The unemployment rate rose by 0.1 percentage points to 5.8%, continuing its upward trend since April. The employment rate fell by 0.1 percentage points to 61.8% in November, as the growth of the population continued to outpace employment growth.</li>
+</ul>
+<ul>
+  <li>On a year-over-year basis, average hourly wages (not seasonally adjusted) rose by 4.8% (or $1.57) to $34.28 in November, following a similar increase in October (+4.8%).
+  </li>
+</ul>
+<ul>
+  <li>Job vacancies dropped by 6.1% to 632,000 and average weekly earnings remained unchanged at $1,219. At the sector level, the largest decline in vacancies was observed in accommodation and food services (-15,000; -18.8%), construction (-10,800; -17.3%), finance and insurance (-9,800; -39.2%), and public administration (-2,400; -14.8%).
+  </li>
+</ul>
+<a id="section-a"></a>
+<ul>
+  <li> In November, small business optimism fell 3.4 points to 37.7 for the next 3-months, and fell 1.5 points to 45.6 for the next 12-months. Nearly half of businesses stated that insufficient domestic demand was constraining sales, and taxes and wages were cited among the top input cost constraints. </li>
+  </li>
+</ul>
+
+<h3><strong> U.S. economic news</strong></h3>
+
+<ul>
+  <li>US real GDP increased at an annual rate of 5.2% in the third quarter of 2023 according to the “second” estimate, well above the 2.1% gain realized in the previous quarter and the fastest pace on record since the fourth quarter of 2021.  </li>
+</ul>
+
+<ul>
+  <li>The advance figure for seasonally adjusted initial claims for unemployment insurance was 218,000 during the week ending November 25, up 7,000 from the previous week’s revised level.</li>
+</ul>
+
+<h3><strong>Economic reports</strong></h3>
+
+<h5><strong>1) Self-employment among women in Canada</strong></h5>
+<ul>
+  <li> [A recent Statistics Canada study](https://www150.statcan.gc.ca/n1/pub/75-006-x/2023001/article/00014-eng.pdf) examined self-employment among women—including its growth, occupations, and the differences among women with different characteristics—found that **a growing share of women are becoming self-employed. In 2022, 37% of all self-employed individuals were women, up from 26% in 1976. Despite this growth, women remain less likely to be in self-employment than men. In 2022, 11% of employed women were self-employed, compared to 16% for employed men.**  
+  </li>
+</ul>
+<ul>
+  <li>This study also shows evidence on **persisting gender-specific labour market segregation.** In 2022, self-employed women were shown to be overrepresented in female-dominated occupations, such as being childcare providers. By contrast, in the same year, self-employed men were reported to be mostly working in historically male-dominated occupations, such as home building and renovation managers. Self-employed men were also reported to worked as managers in agriculture and as transport truck drivers more often than women. 
+  </li>
+</ul>
+<ul>
+  <li> **Self-employment among women also differed by age.** In 2022, 2% of young women (aged 15 to 24 years) in the labour force were self-employed, down from 5% in 1976. By contrast, the self-employment rate among older women (aged 55 years and over) increased from 14% to 18% over the same period. With respect to various groups, self-employment varied little among Indigenous women (9%), racialized women (10%) and non-racialized, non-Indigenous women (12%). However, there are differences within the racialized groups and Indigenous women. Among racialized groups, Korean women are most likely to be self-employed, with one in five (20%) in self-employment, while Filipino women (5%) and Black women (6%) are least likely. With respect to Indigenous women, self-employment rate among women stood at 7% for First Nations people living off reserve, 10% for Métis women, and 4% for Inuit women.
+  </li>
+</ul>
+
+
+
+<h3><strong>Summary of economic indicators </strong></h3>
+
+<style>
+  .boxed-table {
+    border: 2px solid #ddd; /* Border color and thickness */
+    padding: 10px; /* Padding inside the box */
+    border-radius: 5px; /* Optional: Rounded corners */
+  }
+</style>
+
+<div class="boxed-table">
+  <table class="table table-striped table-hover">
+ <thead>
+  <tr class="active">
+    <td><strong>Monthly</strong></td>
+    <td><strong>Nov-23</strong></td>
+    <td><strong>Oct-23</strong></td>
+    <td><strong>Sept-23</strong></td>
+    <td><strong>Aug-23</strong></td>
+    <td><strong>Jul-23</strong></td>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td>GDP growth, basic price (%)</td>
+    <td>N.A.</td>
+    <td>N.A.</td>
+    <td>0.1</td>
+    <td>0.0</td>
+    <td>0.0</td>
+  </tr>
+  <tr>
+    <td>Employment growth (%)</td>
+    <td>0.1</td>
+    <td>0.1</td>
+    <td>0.3</td>
+    <td>0.2</td>
+    <td>0.0</td>
+  </tr>
+  <tr>
+    <td>Unemployment rate (%)</td>
+    <td>5.8</td>
+    <td>5.7</td>
+    <td>5.5</td>
+    <td>5.5</td>
+    <td>5.5</td>
+  </tr>
+  <tr>
+    <td>Inflation (%, YoY)</td>
+    <td>N.A.</td>
+    <td>3.1</td>
+    <td>3.8</td>
+    <td>4.0</td>
+    <td>3.3</td>
+  </tr>
+  <tr class="active">
+    <td><strong>Quarterly</strong></td>
+    <td><strong>2023 Q3</strong></td>
+    <td><strong>2023 Q2</strong></td>
+    <td><strong>2023 Q1</strong></td>
+    <td><strong>2022 Q4</strong></td>
+    <td><strong>2022 Q3</strong></td>
+  </tr>
+  <tr>
+    <td>GDP at market price (%, QoQ)</td>
+    <td>-0.3</td>
+    <td>0.0</td>
+    <td>0.6</td>
+    <td>0.0</td>
+    <td>0.9</td>
+  </tr>
+  <tr>
+    <td>Labour productivity (%, QoQ)</td>
+    <td>N.A.</td>
+    <td>-0.6</td>
+    <td>-0.8</td>
+    <td>-0.4</td>
+    <td>-0.4</td>
+  </tr>
+  <tr>
+    <td>GDP at market price (%, YoY)</td>
+    <td>0.7</td>
+    <td>1.1</td>
+    <td>2.1</td>
+    <td>2.1</td>
+    <td>3.8</td>
+  </tr>
+  <tr>
+    <td>Labour productivity (%, YoY)</td>
+    <td>N.A.</td>
+    <td>-2.2</td>
+    <td>-2.0</td>
+    <td>-1.1</td>
+    <td>-1.1</td>
+  </tr>
+</tbody>
+</table>
+</div>
+
+<h3><strong>Summary of financial indicators </strong></h3>
+
+
+<style>
+  .boxed-table {
+    border: 2px solid #ddd; /* Border color and thickness */
+    padding: 10px; /* Padding inside the box */
+    border-radius: 5px; /* Optional: Rounded corners */
+  }
+</style>
+
+<div class="boxed-table">
+  <table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th> </th>
+      <th>Level at around 4PM ET, Thursday</th>
+      <th>Change since last week close</th>
+      <th>Change since end of last month close</th>
+      <th>Change since beginning of 2023</th>
+      <th>Change since beginning of 2022</th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="active">
+      <td><strong>Market Index</strong></td>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+    <tr>
+      <td>TSX</td>
+      <td>20,210.07</td>
+      <td>0.5%</td>
+      <td>7.1%</td>
+      <td>1.2%</td>
+      <td>-5.3%</td>
+    </tr>
+    <tr>
+      <td>S&P 500</td>
+      <td>4,559.66</td>
+      <td>0.1%</td>
+      <td>8.7%</td>
+      <td>18.3%</td>
+      <td>-4.9%</td>
+    </tr>
+    <tr>
+      <td>Dow Jones</td>
+      <td>35,979.25</td>
+      <td>2.0%</td>
+      <td>8.9%</td>
+      <td>8.5%</td>
+      <td>-0.9%</td>
+    </tr>
+    <tr>
+      <td>FTSE 100</td>
+      <td>7,482.97</td>
+      <td>0.0%</td>
+      <td>0.0%</td>
+      <td>2.2%</td>
+      <td>-0.3%</td>
+    </tr>
+    <tr>
+      <td>Nikkei 225</td>
+      <td>33,431.51</td>
+      <td>-0.1%</td>
+      <td>8.3%</td>
+      <td>26.1%</td>
+      <td>14.9%</td>
+    </tr>
+    <tr>
+      <td>NASDAQ</td>
+      <td>14,161.28</td>
+      <td>-0.7%</td>
+      <td>10.2%</td>
+      <td>35.2%</td>
+      <td>-10.0%</td>
+    </tr>
+    <tr>
+      <td>DAX</td>
+      <td>16,293.55</td>
+      <td>1.9%</td>
+      <td>10.0%</td>
+      <td>17.1%</td>
+      <td>1.7%</td>
+    </tr>
+    <tr class="active">
+      <td><strong>Bond yield</strong></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>3 month (CA)</td>
+      <td>4.99%</td>
+      <td>-0.05pp</td>
+      <td>-0.04pp</td>
+      <td>0.93pp</td>
+      <td>4.79pp</td>
+    </tr>
+    <tr>
+      <td>3 month (US)</td>
+      <td>5.39%</td>
+      <td>0.00pp</td>
+      <td>-0.10pp</td>
+      <td>1.03pp</td>
+      <td>5.29pp</td>
+    </tr>
+    <tr>
+      <td>10 years (CA)</td>
+      <td>3.56%</td>
+      <td>-0.13pp</td>
+      <td>-0.49pp</td>
+      <td>0.60pp</td>
+      <td>1.97pp</td>
+    </tr>
+    <tr>
+      <td>10 years (US)</td>
+      <td>4.34%</td>
+      <td>-0.07pp</td>
+      <td>-0.59pp</td>
+      <td>0.73pp</td>
+      <td>2.83pp</td>
+    </tr>
+    <tr class="active">
+      <td><strong>Commodity Benchmark (USD)</strong></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>West Texas Intermediate</td>
+      <td>USD 76.04</td>
+      <td>-0.41%</td>
+      <td>-5.47%</td>
+      <td>-5.60%</td>
+      <td>-4.30%</td>
+    </tr>
+   <tr>
+      <td>Brent</td>
+      <td>USD 80.73</td>
+      <td>-0.85%</td>
+      <td>-4.61%</td>
+      <td>-7.17%</td>
+      <td>2.22%</td>
+    </tr>
+    <tr>
+      <td>Western Canadian Select</td>
+      <td>USD 50.96</td>
+      <td>-3.43%</td>
+      <td>-8.33%</td>
+      <td>-14.06%</td>
+      <td>-22.49%</td>
+    </tr>
+    <tr>
+      <td>Gold (oz)</td>
+      <td>USD 2,040.28</td>
+      <td>2.38%</td>
+      <td>3.13%</td>
+      <td>15.39%</td>
+      <td>13.27%</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
