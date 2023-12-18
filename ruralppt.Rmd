@@ -1,0 +1,4120 @@
+---
+title: '<span style=''color: #58B404;''>Rural Economy: A Snapshot</span>'
+author: "Economic Research and Analysis, SRRB/SIPS"
+date: "August, 2023"
+output:
+  html_document:
+    df_print: paged
+  xaringan::moon_reader:
+    self_contained: yes
+    css:
+    - default
+    - "hygge-duke"
+    - "metropolis-fonts"
+    lib_dir: libs
+    nature:
+      highlightStyle: arta
+      highlightLines: yes
+      countIncrementalSlides: no
+      ratio: '16:9'
+class: "inverse, middle, center title-slide title-slide-background"
+background-size: contain
+background-image: "url(https://policyoptions.irpp.org/wp-content/uploads/sites/2/2019/11/Facebook-Premiers-should-rally-behind-struggling-rural-Canada.jpg)"
+---
+
+name: Roadmap
+
+<span style="color: #58B404; font-weight: bold; font-size: 55px; margin-top: 30px;">
+Roadmap
+</span>
+
+
+- <span style="font-size: 32px;">[Economy](#GDP)</span>
+
+  - <span style="font-size: 30px; color: black !important;">[GDP](#GDP)</span>
+  
+  - <span style="font-size: 30px; color: black !important;">[Trade](#Trade)</span>
+  
+  - <span style="font-size: 30px; color: black !important;">[Labour Market](#Labour_Market)</span>
+  
+- <span style="font-size: 32px; color: black !important;">[Demography](#Demography)</span>
+
+- <span style="font-size: 32px; color: black !important;">[Standard of Living (GDP per capita)](#Standard_of_Living)</span>
+
+      
+
+---
+name: GDP
+
+<div id="slide3">
+
+<div style="margin-top: 40px;"></div>
+
+<span style="color: #58B404; font-weight: bold; font-size: 23px; margin-top: 30px;">
+Rural Canada accounted for about one quarter of economic activities in 2019, never recovering from the Great Recession and the 2014 oil-price collapse.
+</span>
+
+```{r,message=FALSE,warning=FALSE,echo = FALSE,out.width="100%",out.height="100%"}
+library(statcanR)
+library(tidyverse)
+library(forecast)
+library(xts)
+library(rmarkdown)
+library(openxlsx)
+library(XML)
+library(reshape2)
+library(plyr)
+library(ggplot2)
+library(plotly)
+library(ggcharts)
+library(ggpol)
+library(RColorBrewer)
+library(highcharter)
+library(dplyr)
+library(vtable)
+library(htmlwidgets)
+library(webshot)
+library(dplyr)
+library(tidyr)
+library(highcharter)
+
+
+# Download data and create a dataframe from the Statistics of Canada, ("36-10-0434-01") is the table number, name GDPeng, and engfra
+GDPeng2001.2008 <- statcan_download_data("36-10-0423-01","eng")
+GDPeng2009.2019 <- statcan_download_data("36-10-0468-01","eng")
+popeng2001.2019 <- statcan_download_data("17-10-0135-01","eng")
+popeng2001.2019_prov <- statcan_download_data("17-10-0005-01","eng")
+
+
+
+#Extract year YYYY from date DD.MM.YYYY as new variable - only year
+GDPeng2001.2008$DATE<-format(as.Date(GDPeng2001.2008$REF_DATE, format = "%Y.%m.%d"), "%Y")
+
+GDPindex2001.2008_all<- GDPeng2001.2008 %>% 
+  filter(GEO== "Prince Edward Island"
+          |str_detect(GEO, "Non-census metropolitan areas") #filter in column CEO, has "Non-census metropolitan areas" in it 
+          |GEO== "Yukon"
+          |GEO== "Nunavut"
+          |GEO== "Northwest Territories")%>% #filter column CEO
+  filter(Estimates=="Gross domestic product (GDP)")%>%
+  select(DATE,GEO,VALUE)%>%
+  pivot_wider(names_from =DATE, values_from =VALUE)
+
+
+GDPindex2001.2008<- GDPeng2001.2008 %>% 
+  filter(GEO== "Prince Edward Island"
+          |str_detect(GEO, "Non-census metropolitan areas") #filter in column CEO, has "Non-census metropolitan areas" in it 
+          |GEO== "Yukon"
+          |GEO== "Nunavut"
+          |GEO== "Northwest Territories")%>% #filter column CEO
+  filter(Estimates=="Gross domestic product (GDP)")%>%
+  filter(DATE%in%(2001:2008))%>%
+  select(DATE,GEO,VALUE)%>%
+  pivot_wider(names_from =DATE, values_from =VALUE)
+
+
+#Extract year YYYY from date DD.MM.YYYY as new variable - only year
+GDPeng2009.2019$DATE<-format(as.Date(GDPeng2009.2019$REF_DATE, format = "%Y.%m.%d"), "%Y")
+
+GDPindex2009.2019<- GDPeng2009.2019%>% 
+  filter(GEO== "Prince Edward Island"
+          |str_detect(GEO, "Non-census metropolitan areas")#filter in column CEO, has "Non-census metropolitan areas" in it 
+          |GEO== "Yukon"
+          |GEO== "Nunavut"
+          |GEO== "Northwest Territories")%>% #filter column CEO
+  select(DATE,GEO,VALUE)%>%
+  pivot_wider(names_from =DATE, values_from =VALUE)
+
+
+
+GDPcanada2001.2008<-GDPeng2001.2008 %>% 
+  filter(GEO=="Canada, Census Metropolitan Areas and Non-Census Metropolitan Areas")%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Canada, Census Metropolitan Areas and Non-Census Metropolitan Areas",
+      'Canada',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>%
+  filter(Estimates=="Gross domestic product (GDP)")%>%
+  filter(DATE%in%(2001:2008))%>%
+  select(DATE,GEO,VALUE)%>%
+  pivot_wider(names_from =DATE, values_from =VALUE)
+
+GDPcanada2009.2019<- GDPeng2009.2019%>% 
+   filter( GEO=="Canada")%>%
+# rename the category of variable 'Canada', 'Canada, Census Metropolitan Areas and Non-Census Metropolitan Areas'
+   mutate(GEO = as.character(GEO),
+          GEO = if_else(GEO == 'Canada', 'Canada', GEO),
+          GEO = as.factor(GEO))%>%
+  filter(DATE>=2009)%>%
+  select(DATE,GEO,VALUE)%>%
+  pivot_wider(names_from =DATE, values_from =VALUE)
+
+
+GDP2001.2019_1<-merge(GDPcanada2001.2008, GDPcanada2009.2019, by.x = "GEO", 
+             by.y = "GEO", all.x = TRUE, all.y = FALSE)
+
+# merege together (only non CMAS+ Territories)
+GDP2001.2019_2<-merge(GDPindex2001.2008, GDPindex2009.2019, by.x = "GEO", 
+             by.y = "GEO", all.x = TRUE, all.y = FALSE)
+
+
+
+# create a All non-CMAs plus PEI & territories sum all rows
+GDP2001.2019_3<- GDP2001.2019_2%>%
+  rbind(c("non CMAs plus PEI territories", colSums(GDP2001.2019_2[,2:ncol(GDP2001.2019_2)])))%>%
+  rbind(GDP2001.2019_1)%>%
+  arrange(GEO)%>%
+  pivot_longer(cols = -GEO) %>%
+  pivot_wider(names_from =GEO, values_from =value)  %>% 
+  mutate_at(1:16, as.integer)
+
+
+
+GDP2001.2019_3<- GDP2001.2019_3%>%
+  mutate(diff = Canada - `non CMAs plus PEI territories`)%>%
+  mutate(Rural= `non CMAs plus PEI territories`/291204*100)%>%
+  mutate(Urban = Canada/1032173*100)
+
+
+# Vector of substitutions
+substitutions <- c(
+  "Non-census metropolitan areas, Alberta" = "Non-CMAs, AB",
+  "Non-census metropolitan areas, British Columbia" = "Non-CMAs, BC",
+  "Non-census metropolitan areas, Manitoba" = "Non-CMAs, MB",
+  "Non-census metropolitan areas, New Brunswick" = "Non-CMAs, NB",
+  "Non-census metropolitan areas, Newfoundland and Labrador" = "Non-CMAs, NL",
+  "Non-census metropolitan areas, Nova Scotia" = "Non-CMAs, NS",
+  "Non-census metropolitan areas, Quebec" = "Non-CMAs, QC",
+  "Non-census metropolitan areas, Saskatchewan" = "Non-CMAs, SK",
+  "Northwest Territories" = "NT",
+  "Prince Edward Island" = "PE",
+  "Nunavut" = "NU",
+  "Yukon" = "YT",
+  "Non-census metropolitan areas, Ontario" = "Non-CMAs, ON"
+)
+
+GDP2001.2019_3_1<- GDP2001.2019_3%>%
+  mutate(diff = Canada - `non CMAs plus PEI territories`)%>%
+  mutate(Rural= `non CMAs plus PEI territories`/291204*100)%>%
+  mutate(Urban = Canada/1032173*100)%>%
+  pivot_longer(!`name`,names_to = "GEO", values_to = "value")%>%
+  pivot_wider(names_from = name, values_from =value) %>%
+  mutate(
+    GEO = case_when(
+      GEO %in% names(substitutions) ~ substitutions[GEO],
+      TRUE ~ GEO
+    ),
+    GEO = as.factor(GEO)
+  )
+
+
+
+
+#In this example, the loop iterates over the years from 2001 to 2006. Within each iteration, a ratio_column variable is created using the current year. The mutate function is then used to create a new column with the ratio calculation for that specific year.
+
+# Note the use of {{ratio_column}} and [[as.character(i)]] to dynamically generate the column name and access the corresponding column in GDP2001.2019_1 respectively.
+GDP2001.2019_4 <- GDP2001.2019_2
+
+for (i in 2:ncol(GDP2001.2019_2)) {
+  ratio_column <- colnames(GDP2001.2019_2)[i]
+  GDP2001.2019_4 <- GDP2001.2019_4 %>%
+    mutate({{ratio_column}} := (get(ratio_column) / GDP2001.2019_1[[ratio_column]] * 100))
+}
+
+
+
+# Apply substitutions
+GDP2001.2019_5 <- GDP2001.2019_4 %>%
+  rbind(c("Total %Rural GDP", colSums(GDP2001.2019_4[, 2:ncol(GDP2001.2019_4)]))) %>%
+  mutate_at(2:ncol(GDP2001.2019_4), as.numeric) %>%
+  mutate(
+    GEO = case_when(
+      GEO %in% names(substitutions) ~ substitutions[GEO],
+      TRUE ~ GEO
+    ),
+    GEO = as.factor(GEO)
+  )
+
+
+# Apply substitutions
+GDP2001.2019_5_1 <- GDP2001.2019_4 %>%
+  rbind(c("Total %Rural GDP", colSums(GDP2001.2019_4[, 2:ncol(GDP2001.2019_4)]))) %>%
+  mutate_at(2:ncol(GDP2001.2019_4), as.numeric) %>%
+  mutate(
+    GEO = case_when(
+      GEO == "Total %Rural GDP" ~ 'All non-CMAs plus territories',
+      GEO %in% names(substitutions) ~ substitutions[GEO],
+      TRUE ~ GEO
+    ),
+    GEO = as.factor(GEO)
+  )
+
+GDP2001.2019_6<- GDP2001.2019_5%>%
+  pivot_longer(cols = -GEO) %>%
+  pivot_wider(names_from =GEO, values_from =value)%>% 
+  mutate_at(2:15, as.numeric)%>%
+  select("Total %Rural GDP")
+
+
+GDP2001.2019_7<- GDP2001.2019_3%>%
+  cbind(GDP2001.2019_6)
+
+GDP2001.2019_8 <- GDP2001.2019_5
+
+for (i in 3:ncol(GDP2001.2019_8)) {
+  GDP2001.2019_8[, i] <- log(as.numeric(GDP2001.2019_5[, i]) / as.numeric(GDP2001.2019_5[, i-1])) * 100
+}
+
+
+
+GDP2001.2019_8 <- GDP2001.2019_8%>%
+  mutate(`Average Rate of Growth all years` = round(rowMeans(.[,3:ncol(GDP2001.2019_8)]),3))%>%
+  mutate(`Average Rate of Growth 2002-2008` = round(rowMeans(.[,3:9]),3))%>%
+  mutate(`Average Rate of Growth last 5 year` = round(rowMeans(.[,(ncol(GDP2001.2019_8)-4):(ncol(GDP2001.2019_8))]),3))
+
+GDP2001.2019_8$`2001` <- NA
+
+
+# Replace `GDP2001.2019_4' with the actual name of your dataset
+dataset <- GDP2001.2019_4
+
+# Get the column names of the dataset
+column_names <- colnames(dataset)
+
+# Get the second last column name
+second_last_column <- column_names[length(column_names)]
+
+
+
+GDP2001.2019_15 <- GDP2001.2019_4%>%  
+  mutate("ratiolast_year%"= `2019`/GDP2001.2019_5[14,20]*100)%>%
+  arrange(`ratiolast_year%`,desc(`GEO`))%>%
+  mutate(
+    GEO = if_else(
+      GEO == "Non-census metropolitan areas, Alberta",
+      'Non-CMAs, AB',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Non-census metropolitan areas, British Columbia",
+      'Non-CMAs, BC',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Non-census metropolitan areas, Manitoba",
+      'Non-CMAs, MB',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Non-census metropolitan areas, New Brunswick",
+      'Non-CMAs, NB',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Non-census metropolitan areas, Newfoundland and Labrador",
+      'Non-CMAs, NL',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Non-census metropolitan areas, Nova Scotia",
+      'Non-CMAs, NS',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Non-census metropolitan areas, Quebec",
+      'Non-CMAs, QC',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Non-census metropolitan areas, Saskatchewan",
+      'Non-CMAs, SK',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Northwest Territories",
+      'NT',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Prince Edward Island",
+      'PE',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Nunavut",
+      'NU',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Yukon",
+      'YT',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Non-census metropolitan areas, Ontario",
+      'Non-CMAs, ON',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )
+
+
+
+selected_columns2 <- GDP2001.2019_15[, c(1, seq(2, ncol(GDP2001.2019_15) - 2, 5), ncol(GDP2001.2019_15)-1,ncol(GDP2001.2019_15))]
+
+# Calculate the sums of specific columns
+sum_row <- colSums(selected_columns2[, 2:ncol(selected_columns2)])
+
+# Create a data frame for the total row
+total_row_df <- data.frame(category = "Total", sum_row)
+
+# Drop the last row
+data_with_total <- total_row_df [-nrow(total_row_df ), ]
+# Rename the first column to "GEO"
+colnames(data_with_total)[0] <- "GEO"
+
+# Extract the specific "Year" values based on column indices
+year_values <-  colnames(GDP2001.2019_15[, c(seq(2, ncol(GDP2001.2019_15) - 2, 5), ncol(GDP2001.2019_15)-1)])
+
+
+
+# Assign the "Year" values to the "Year" column in data_with_total
+data_with_total$Year <- year_values
+
+# Convert the Year column to character
+data_with_total$Year <- as.character(data_with_total$Year)
+
+
+
+selected_columns3 <- GDP2001.2019_15[, c(1, seq(2, ncol(GDP2001.2019_15) - 2, 5), ncol(GDP2001.2019_15)-1)]%>%
+   pivot_longer(!GEO, names_to = "date", values_to = "% Rural GDP")  %>% 
+  mutate_at(2:3, as.numeric)%>%
+  arrange(`% Rural GDP`)%>% 
+  mutate_at(2, as.character)
+
+
+# Create a new factor variable with levels ordered by descending `% Rural GDP`
+selected_columns3$GEO <- factor(selected_columns3$GEO, levels = unique(selected_columns3$GEO)[order(selected_columns3$`% Rural GDP`, decreasing = FALSE)])
+
+selected_columns3 <- selected_columns3 %>%
+  mutate_at(2, as.character) %>%
+  arrange(date)
+
+
+selected_columns3_<-selected_columns3%>%
+  filter(GEO=="Non-CMAs, AB")
+
+# Plot the stacked column chart with the modified ordering
+levels_order11 <- unique(selected_columns3$date) # Replace with the desired order of levels
+
+custom_title <- paste( "Rural Share of GDP(%) by Geography, Selected Year, 2001-",second_last_column )
+
+# define color palette
+cols <- c("#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf", "#ff9896", "#ffbb78", "#98df8a")
+
+# Calculate the chart dimensions
+chart_width <- 700  # Set your desired width
+chart_height <- 900  # Set your desired height
+
+# Calculate the coordinates for the text box
+text_x <- chart_width - 130  # Adjust the padding from the right
+text_y <- 20  # Adjust the padding from the top
+
+
+selected_columns3_chart <- highchart() %>%
+  hc_add_series(data = selected_columns3,
+    type = 'column', 
+    hcaes(x = date, y = `% Rural GDP`, group = 'GEO')) %>%
+  hc_colors(cols) %>%
+  hc_plotOptions(column = list(
+    dataLabels = list(enabled = FALSE),
+    stacking = "normal",
+    enableMouseTracking = TRUE)
+  ) %>%
+  hc_caption(text = "Note: The rural economy aggregates non-census metropolitan areas (non-CMAs), Prince Edward Island and Territories. Rural share is the rural economy as a share of the total economy.</b><br><em>Source: Statistics Canada Table 36-10-0423-01 for 2001-2008 and 36-10-0468-01 for 2009 and onwards (unadjusted for inflation).</em>") %>%
+  hc_title(text = custom_title, align = "center") %>%
+  # Add your chart configuration here
+  
+  hc_legend(
+    layout = "vertical",
+    align = "right",
+    verticalAlign = "middle"
+  ) %>%
+  hc_yAxis_multiples(
+    list(
+      title = list(text = "% Rural GDP"),
+      labels = list(format = '{value}%'),
+      opposite = FALSE
+    )
+  ) %>%
+  hc_add_theme(hc_theme_elementary()) %>%
+  hc_xAxis(categories = levels_order11)%>%
+    
+    hc_tooltip(
+        pointFormat = "<b>{point.percentage:.2f}%</b><br>{series.name}"
+    )%>%
+    hc_tooltip(
+        pointFormat = "<b>{point.y:.2f}%</b><br>{series.name}"  # Correct the pointFormat to display percentage values
+    )%>%
+  hc_annotations(
+    list(
+      labels = list(
+        list(
+          point = list(x = text_x, y = text_y),
+          text = "Fluctuations in rural GDP share mirror Alberta's oil and gas sector's volatility.",
+          style = list(color = "black", fontSize = "12px"),
+          backgroundColor = "rgba(255, 255, 255, 0.8)",
+          borderColor = "gray",
+          borderWidth = 1,
+          borderRadius = 5,
+          padding = 5
+        )
+      )
+    )
+  )%>%
+  hc_add_series(data = selected_columns3_,
+    type = 'line', 
+    hcaes(x = date, y = `% Rural GDP`),
+    name ="Non-CMAs AB Trend",
+    color = "red",
+    showInLegend = FALSE  # Remove legend entry for the trendline
+  )%>%
+  hc_add_series(data = data_with_total,
+                type = 'line',
+                hcaes(x = Year, y = sum_row),
+                name = "Aggregated Trend",
+                color = "blue",
+                showInLegend = FALSE  # Show legend entry for the total line
+  )
+
+
+
+# Set highcharter options
+options(highcharter.theme = hc_theme_smpl(tooltip = list(valueDecimals = 2)))
+
+GDP2001.2019_9 <- GDP2001.2019_4%>%
+   pivot_longer(!GEO, names_to = "year", values_to = "% Rural GDP")%>% 
+  mutate_at(2:3, as.numeric)%>%
+  arrange(`% Rural GDP`)%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Non-census metropolitan areas, Alberta",
+      'Non-CMAs, AB',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Non-census metropolitan areas, British Columbia",
+      'Non-CMAs, BC',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Non-census metropolitan areas, Manitoba",
+      'Non-CMAs, MB',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Non-census metropolitan areas, New Brunswick",
+      'Non-CMAs, NB',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Non-census metropolitan areas, Newfoundland and Labrador",
+      'Non-CMAs, NL',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Non-census metropolitan areas, Nova Scotia",
+      'Non-CMAs, NS',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Non-census metropolitan areas, Quebec",
+      'Non-CMAs, QC',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Non-census metropolitan areas, Saskatchewan",
+      'Non-CMAs, SK',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Northwest Territories",
+      'NT',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Prince Edward Island",
+      'PE',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Nunavut",
+      'NU',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Yukon",
+      'YT',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Non-census metropolitan areas, Ontario",
+      'Non-CMAs, ON',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate_at(2, as.character)
+  
+
+
+# Create a new factor variable with levels ordered by descending `% Rural GDP`
+GDP2001.2019_9$GEO <- factor(GDP2001.2019_9$GEO, levels = unique(GDP2001.2019_9$GEO)[order(GDP2001.2019_9$`% Rural GDP`, decreasing = FALSE)])
+
+GDP2001.2019_9<-GDP2001.2019_9 %>%
+  arrange(year)%>% 
+  mutate_at(2, as.character)
+
+# Calculate the sums of specific columns
+sum_row <- colSums(GDP2001.2019_15[, 2:ncol(GDP2001.2019_15)])
+
+# Create a data frame for the total row
+total_row_df <- data.frame(category = "Total", sum_row)
+
+# Drop the last row
+data_with_total <- total_row_df [-nrow(total_row_df ), ]
+# Rename the first column to "GEO"
+colnames(data_with_total)[0] <- "GEO"
+
+# Add the "Year" column starting from 2001
+data_with_total$Year <- seq(2001, length.out = nrow(data_with_total))
+data_with_total$Year <- as.character(data_with_total$Year)  # Convert the Year column to character
+
+
+
+
+levels_order <- unique(GDP2001.2019_9$year) # Replace with the desired order of levels
+
+# Plot the stacked column chart with the modified ordering
+
+GDP2001.2019_9_<-GDP2001.2019_9%>%
+  filter(GEO=="Non-CMAs, AB")
+
+
+
+
+  
+
+GDPindex <-GDP2001.2019_7%>%
+  select("Total %Rural GDP","name", Rural,Urban)%>%
+   pivot_longer(!name, names_to = "category", values_to = "value")%>%
+  arrange(name)%>%
+  filter(category== "Rural")
+
+
+
+GDPindex2 <-GDP2001.2019_7%>%
+  select("Total %Rural GDP","name", Rural,Urban)%>%
+   pivot_longer(!name, names_to = "category", values_to = "value")%>%
+  arrange(name)%>%
+  filter(category== "Urban")
+
+
+
+GDPindex1 <-GDP2001.2019_7%>%
+  select("Total %Rural GDP","name", Rural,Urban)%>%
+   pivot_longer(!name, names_to = "category", values_to = "value")%>%
+  filter(category== "Total %Rural GDP")%>%
+  arrange(name)
+
+
+
+
+GDP2001.2019_11 <-GDP2001.2019_7%>%
+  select("Total %Rural GDP","name")
+
+GDP2001.2019_15 <- GDP2001.2019_4%>%  
+  mutate("ratiolast_year%"= GDP2001.2019_4[,ncol(GDP2001.2019_4)]/GDP2001.2019_5[14,ncol(GDP2001.2019_5)]*100)%>%
+  arrange(`ratiolast_year%`,desc(`GEO`))
+
+
+
+
+#Extract year YYYY from date DD.MM.YYYY as new variable - only year
+popeng2001.2019$DATE<-format(as.Date(popeng2001.2019$REF_DATE, format = "%Y.%m.%d"), "%Y")
+
+pop2001.2019_allagesex <- popeng2001.2019%>%  
+  filter(str_detect(GEO, "Area outside census metropolitan areas and census agglomerations")|GEO=="All census metropolitan areas and census agglomerations, Canada"|GEO=="All census agglomerations, Canada"|GEO=="All census metropolitan areas, Canada"|GEO=="All areas outside census metropolitan areas and census agglomerations, Canada"|GEO == "Canada")%>%
+  select(DATE,GEO,Sex,`Age group`,VALUE)%>% 
+  mutate_at(1, as.numeric)%>% 
+  filter(DATE>=2001) %>%
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, Alberta",
+      'Non-CMAs/CAs, AB',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, British Columbia",
+      'Non-CMAs/CAs, BC',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, Manitoba",
+      'Non-CMAs/CAs, MB',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, New Brunswick",
+      'Non-CMAs/CAs, NB',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, Newfoundland and Labrador",
+      'Non-CMAs/CAs, NL',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, Nova Scotia",
+      'Non-CMAs/CAs, NS',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, Quebec",
+      'Non-CMAs/CAs, QC',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, Saskatchewan",
+      'Non-CMAs/CAs, SK',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, Northwest Territories",
+      'Non-CMAs/CAs, NT',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, Prince Edward Island",
+      'Non-CMAs/CAs, PE',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, Nunavut",
+      'Non-CMAs/CAs, NU',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, Yukon",
+      'Non-CMAs/CAs, YT',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, Ontario",
+      'Non-CMAs/CAs, ON',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "All census metropolitan areas and census agglomerations, Canada",
+      'CMAs/CAs',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "All areas outside census metropolitan areas and census agglomerations, Canada",
+      'Non-CMAs/CAs',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "All census agglomerations, Canada",
+      'CAs',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "All census metropolitan areas, Canada",
+      'CMAs',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )
+
+
+
+pop2001.2019_allage23 <-pop2001.2019_allagesex%>%  
+  filter(`Age group`=="All ages")%>%
+  select(DATE,GEO,Sex,`Age group`,VALUE)%>% 
+  mutate_at(1, as.numeric)%>% 
+  filter(DATE>=2001)%>% 
+  arrange (`Age group`)%>% 
+  filter(Sex=="Both sexes")%>%
+  unite(`GEO`,`GEO`,`Age group`, sep = "_", remove = FALSE)%>% 
+  select(DATE,GEO,VALUE)%>% 
+  mutate_at(1, as.character)%>% 
+  pivot_wider(names_from =GEO, values_from =VALUE)%>% 
+  select(DATE,"Canada_All ages","CAs_All ages","Non-CMAs/CAs_All ages")%>%
+  mutate (`Non-CMAs + PE + Territories`= `CAs_All ages`+`Non-CMAs/CAs_All ages`)%>%
+  mutate (`Urban -Population (CMA/CA divide)`= `Canada_All ages`-`Non-CMAs/CAs_All ages`)%>%
+  mutate (`Rural -Population (CMA/CA divide)`= `Canada_All ages`-`Urban -Population (CMA/CA divide)`)%>%
+  mutate (`Urban -Population (GDP def)`= `Canada_All ages`-`Non-CMAs + PE + Territories`)%>%
+  mutate (`Rural -Population (GDP def)`= `CAs_All ages`+`Non-CMAs/CAs_All ages`)
+
+
+
+GDPPOP <- GDP2001.2019_3%>%
+  select("non CMAs plus PEI territories","diff")%>%
+rename( `Rural-GDP` = "non CMAs plus PEI territories" , `Urban-GDP` = diff)
+
+# Assuming df1 has 22 rows, df2 has 19 rows,
+
+
+
+
+
+DF <-pop2001.2019_allagesex%>%  
+  filter(`Age group`=="All ages")%>%
+  select(DATE,GEO,Sex,`Age group`,VALUE)%>% 
+  mutate_at(1, as.numeric)%>% 
+  filter(DATE>=2001)%>% 
+  arrange (`Age group`)%>% 
+  filter(Sex=="Both sexes")%>%
+  unite(`GEO`,`GEO`,`Age group`, sep = "_", remove = FALSE)%>% 
+  select(DATE,GEO,VALUE)%>% 
+  mutate_at(1, as.character)%>% 
+  pivot_wider(names_from =GEO, values_from =VALUE)%>% 
+  select(DATE,"Canada_All ages","CAs_All ages","Non-CMAs/CAs_All ages")%>%
+  mutate (`Non-CMAs + PE + Territories`= `CAs_All ages`+`Non-CMAs/CAs_All ages`)%>%
+  mutate (`Population share by GDP def`= (`Non-CMAs + PE + Territories`/`Canada_All ages`)*100)
+
+
+GDPPOP <- bind_rows(GDPPOP, data.frame(matrix(NA, nrow = max(nrow(DF)) - nrow(GDPPOP))))%>%
+  select("Rural-GDP","Urban-GDP")
+
+DF <-DF%>%
+  select("Population share by GDP def")%>%
+  cbind( pop2001.2019_allage23,GDPPOP)%>%
+  mutate (`Rural-GDP per Capita`= (`Rural-GDP`/`Rural -Population (GDP def)`)*1000000)%>%
+  mutate (`Urban-GDP per Capita`= (`Urban-GDP`/`Urban -Population (GDP def)`)*1000000)%>%
+  mutate (`Rural-urban Ratio-Population`= `Rural -Population (GDP def)`/`Urban -Population (GDP def)`)%>%
+  mutate (`Rural-urban Ratio-GDP`= `Rural-GDP`/`Urban-GDP`)%>%
+  mutate (`Rural-urban Ratio-GDP per Capita`= `Rural-GDP per Capita`/`Urban-GDP per Capita`)
+
+
+result_df <- data.frame(
+  `Rural-Annual Gr GDP per Capita` = (DF[-1, 13] - DF[-nrow(DF), 13]) / DF[-nrow(DF), 13] * 100,
+ `Urban-Annual Gr GDP per Capita` = (DF[-1, 14] - DF[-nrow(DF), 14]) / DF[-nrow(DF), 14] * 100,
+ `Rural-urban Ratio- Growth Annual` = log(DF[-1, 17] / DF[-nrow(DF), 17]) * 100
+)
+result_df<- rbind(NA, result_df)
+
+DF <-  cbind(DF,result_df)
+DF <-DF%>%
+ rename( `Rural-Annual Gr GDP per Capita` = "Rural.Annual.Gr.GDP.per.Capita" , `Urban-Annual Gr GDP per Capita` =Urban.Annual.Gr.GDP.per.Capita,
+         `Rural-urban Ratio- Growth Annual`= `Rural.urban.Ratio..Growth.Annual`)%>% 
+  select("Population share by GDP def","Canada_All ages","Non-CMAs + PE + Territories",DATE, "Rural -Population (GDP def)","Urban -Population (GDP def)",
+         "Rural -Population (CMA/CA divide)","Urban -Population (CMA/CA divide)","Rural-GDP","Urban-GDP","Rural-GDP per Capita","Urban-GDP per Capita",
+         "Rural-Annual Gr GDP per Capita","Urban-Annual Gr GDP per Capita",DATE,"Rural-urban Ratio-Population","Rural-urban Ratio-GDP","Rural-urban Ratio-GDP per Capita","Rural-urban Ratio- Growth Annual")
+
+
+
+GDP2001.2019_77 <-GDP2001.2019_7%>%
+   select(name,Rural,Urban,"Total %Rural GDP")%>%
+ rename( `Year` = "name")
+
+
+custom_title <- paste( "GDP (index 2001=100) and Rural Share (%), 2001-",second_last_column )
+
+library(highcharter)  # Make sure you have the highcharter library installed
+
+# Assuming you have loaded and defined the necessary data and variables: GDPindex, GDPindex2, GDPindex1, cols
+
+GDP2001.2019_14 <- highchart() %>%
+  hc_chart(type = "line", zoomType = "xy")%>%
+  hc_title(text = custom_title, align = "center", style = list(fontWeight = "bold")) %>%
+  hc_xAxis(categories = `GDPindex`$name) %>%
+  hc_yAxis_multiples(
+    list(
+      title = list(text = "GDP (index, 2001=100)"),
+      opposite = FALSE
+    ),
+    list(
+      title = list(text = "Rural Share of GDP (%)"),
+      labels = list(format = '{value}%'),
+      showLastLabel = FALSE,
+      opposite = TRUE
+    )
+  ) %>%
+  hc_legend(layout = "vertical", align = "right", verticalAlign = "middle") %>%
+  hc_add_series(
+    name = "Urban",
+    type = "line",
+    data = GDPindex2$value,
+    yAxis = 0
+  ) %>%
+  hc_legend(layout = "vertical", align = "right", verticalAlign = "middle") %>%
+  hc_add_series(
+    name = "Rural",
+    type = "line",
+    data = GDPindex$value,
+    yAxis = 0
+  ) %>%
+  hc_add_series(
+    name = "Rural Share of GDP (right)",
+    type = "line",
+    data = `GDPindex1`$value,
+    yAxis = 1
+    
+  )%>%
+  hc_add_theme(hc_theme_elementary()) %>%
+  hc_plotOptions(series = list(label = list(connectorAllowed = FALSE), pointStart = 2001)) %>%
+  hc_colors(colors = c( "#2F75B5","#6BF030","gray")) %>%
+  hc_legend(layout = "horizontal", verticalAlign = "top", y = -10,align = "center")%>%
+  hc_xAxis(
+    plotBands = list(
+      list(from = 2014, to = 2016, color = "rgba(150, 150, 150, 0.3)"),
+      list(from = 2008, to = 2009, color = "rgba(150, 150, 150, 0.3)")
+    )
+  )%>%
+  hc_chart(
+    events = list(
+      load = JS(
+        "function () {
+          var chart = this;
+          chart.renderer.text('Financial Crisis', chart.plotWidth / 3, chart.plotHeight / 2.1)
+            .css({
+              color: 'black',
+              fontSize: '12px'
+            })
+            .add();
+
+          chart.renderer.text('Oil Price Crash', chart.plotWidth / 1.4, chart.plotHeight / 2.3)
+            .css({
+              color: 'black',
+              fontSize: '12px'
+            })
+            .add();            
+        }"
+      )
+    )
+  )%>%
+  hc_tooltip(
+  formatter = JS("function () {
+    var xAxisValue = this.x;  // Get the x-axis value
+    var yAxisValue = this.y;  // Get the y-axis value
+
+    if (this.series.yAxis.options.index === 1) {
+      return '<b>' + xAxisValue + '</b><br>' +
+             '<b>' + Highcharts.numberFormat(yAxisValue, 2) + '%</b><br>' +
+             this.series.name;
+    } else {
+      return '<b>' + xAxisValue + '</b><br>' +
+             '<b>' + Highcharts.numberFormat(yAxisValue, 2) + '</b><br>' +
+             this.series.name;
+    }
+  }")
+)
+GDP2001.2019_14<-GDP2001.2019_14 %>%
+  hc_size(height = 474)
+
+GDP2001.2019_14
+```
+
+
+<font size="1">
+<strong>Note:</strong> The rural economy aggregates non-census metropolitan areas (non-CMAs), including Prince Edward Island and Territories. Rural share is the rural economy as a share of the total economy.</font><br>
+<font size="1">
+<strong>Source:</strong>
+<em> Statistics Canada Table 36-10-0423-01 for 2001-2008 and 36-10-0468-01 for 2009 and onwards (unadjusted for inflation). </em></font>    
+
+
+<style>
+  .subpoints {
+    font-size: 1em;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    background-color: green;
+    text-align: center;
+  }
+
+  .small-font {
+    font-size: 0.8em;
+    margin-right: 10px;
+  }
+
+  .image-container {
+    margin-top: 80px; /* Adjust the value to create more space between subpoints and image */
+    text-align: center;
+  }
+</style>
+
+<style>
+  .slide {
+    display: none;
+  }
+
+  .subpoints a {
+    color: black;
+    margin-left: 10px;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .subpoints a:hover {
+    text-decoration: underline;
+  }
+</style>
+
+
+
+<div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #58B404; text-align: center;">
+ <span class="small-font"> Economy</span> 
+  <strong class="small-font"> - GDP</strong>
+  <span class="small-font">- Trade</span>
+  <span class="small-font">- Labour Market</span>
+  <span class="small-font" style="margin-left: 100px;">Demography</span>
+  <span class="small-font" style="margin-left: 100px;">Standard of Living</span>
+</div>
+
+
+
+
+<script>
+  function showSlide(slideId) {
+    var slides = document.querySelectorAll('.slide');
+    for (var i = 0; i < slides.length; i++) {
+      slides[i].style.display = 'none';
+    }
+    document.getElementById(slideId).style.display = 'block';
+  }
+</script>
+
+</div>
+
+---
+<div id="slide3">
+
+<div style="margin-top: 33px;"></div>
+
+<span style="color: #58B404; font-weight: bold; font-size: 23px; margin-top: 10px;">
+The rise and fall of rural share of GDP are largely driven by the boom and bust of Alberta’s oil and gas sector.
+</span>
+
+
+```{r,message=FALSE,warning=FALSE,echo = FALSE,out.width="100%",out.height="100%"}
+
+custom_title <- paste( "Rural Economy by Geography (%), 2001-",second_last_column )
+
+
+
+GDP2001.2019_colum <- highchart() %>%
+  hc_add_series(data= `GDP2001.2019_9`,
+    type= 'column', 
+    hcaes(x = year, y = `% Rural GDP`, group = 'GEO'))%>%
+  hc_colors(cols)%>% 
+  hc_plotOptions(column = list(
+    dataLabels = list(enabled = FALSE),
+    stacking = "normal",
+    enableMouseTracking = TRUE)
+  ) %>%
+  hc_title(text = custom_title, align = "center", style = list(fontWeight = "bold")) %>%
+  # Add your chart configuration here
+  
+  hc_legend(
+    layout = "vertical",
+    align = "right",
+    verticalAlign = "middle"
+  ) %>%
+  hc_yAxis_multiples(
+    list(
+      title = list(text = "% Rural GDP"),
+      labels = list(format = '{value}%'),
+      opposite = FALSE
+    )
+  )%>%
+  hc_add_theme(hc_theme_elementary())%>%
+  hc_xAxis(categories = levels_order)%>%
+    
+    hc_tooltip(
+        pointFormat = "<b>{point.percentage:.2f}%</b><br>{series.name}"
+    )%>%
+    hc_tooltip(
+        pointFormat = "<b>{point.y:.2f}%</b><br>{series.name}"  # Correct the pointFormat to display percentage values
+    )%>%
+  hc_add_series(data = GDP2001.2019_9_,
+    type = 'line', 
+    hcaes(x = year, y = `% Rural GDP`),
+    name = "Non-CMAs AB Trend ",
+    color = "red",
+    showInLegend = FALSE  # Remove legend entry for the trendline
+  )%>%
+  hc_add_series(data = data_with_total,
+                type = 'line',
+                hcaes(x = Year, y = sum_row),
+                name = "Aggregated Trend",
+                color = "blue",
+                showInLegend = FALSE # Show legend entry for the total line
+  )
+
+GDP2001.2019_colum <- GDP2001.2019_colum %>%
+  hc_size(height = 479)
+
+GDP2001.2019_colum 
+
+```
+
+
+<font size="1">
+<strong>Note:</strong> The rural economy aggregates non-census metropolitan areas (non-CMAs), including Prince Edward Island and Territories. Rural share is the rural economy as a share of the total economy.</font><br>
+
+<font size="1">
+<strong>Source:</strong>
+<em> Statistics Canada Table 36-10-0423-01 for 2001-2008 and 36-10-0468-01 for 2009 and onwards (unadjusted for inflation). </em></font>
+
+<style>
+  .subpoints {
+    font-size: 1em;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    background-color: green;
+    text-align: center;
+  }
+
+  .small-font {
+    font-size: 0.8em;
+    margin-right: 10px;
+  }
+
+  .image-container {
+    margin-top: 80px; /* Adjust the value to create more space between subpoints and image */
+    text-align: center;
+  }
+</style>
+
+<div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #58B404; text-align: center;">
+ <span class="small-font"> Economy</span> 
+  <strong class="small-font"> - GDP</strong>
+  <span class="small-font">- Trade</span>
+  <span class="small-font">- Labour Market</span>
+  <span class="small-font" style="margin-left: 100px;">Demography</span>
+  <span class="small-font" style="margin-left: 100px;">Standard of Living</span>
+</div>
+
+
+<script>
+  function showSlide(slideId) {
+    var slides = document.querySelectorAll('.slide');
+    for (var i = 0; i < slides.length; i++) {
+      slides[i].style.display = 'none';
+    }
+    document.getElementById(slideId).style.display = 'block';
+  }
+</script>
+
+</div>
+
+---
+name: Trade
+
+<div id="slide5">
+
+<div style="margin-top: 33px;"></div>
+
+<span style="color: #58B404; font-weight: bold; font-size: 23px; margin-top: 10px;">
+Trade in rural Canada generally mirrors that of the country - with the top-3 sectors making up 96% of exports and 88% of imports - yet it has a higher concentration in resource-based exports and manufacturing imports than the rest of the country. 
+</span>
+
+<div style="text-align: center; font-size: 20px;">
+Trade, Canada (outer) vs. Non-CMAs (inner)
+</div>
+
+
+```{r,message=FALSE,warning=FALSE,echo = FALSE,out.width="100%",out.height="5%"}
+
+################# import 
+# Download data and create a dataframe from the Statistics of Canada
+trade_good_imIND <- statcan_download_data("12-10-0139-01","eng")
+
+# Define a function to process data for a specific GEO value
+process_geo_data <- function(data, geo) {
+  data %>%
+    filter(GEO == geo, Estimates == "Value of imports", UOM == "Dollars") %>%
+    select(DATE, GEO, Estimates, UOM, SCALAR_FACTOR, VALUE, `North American Industry Classification System (NAICS)`) %>%
+    pivot_wider(names_from = DATE, values_from = VALUE) %>%
+    arrange(desc(.[, ncol(.)]))
+}
+
+# Extract year YYYY from DATE and store it as a new variable
+trade_good_imIND$DATE <- format(as.Date(trade_good_imIND$REF_DATE, format = "%Y.%m.%d"), "%Y")
+
+# Process data for Canada
+trade_good2_imIND_canada <- process_geo_data(trade_good_imIND, "Canada")
+
+# Process data for CMA
+trade_good2_imIND_CMA <- process_geo_data(trade_good_imIND, "Census metropolitan area (CMA)")
+
+# Process data for Non-CMA
+trade_good2_imIND_nonCMA <- process_geo_data(trade_good_imIND, "Non-Census metropolitan area")
+
+#stores the numeric value from the first row and the last column 
+d1<-as.numeric(trade_good2_imIND_canada[1, ncol(trade_good2_imIND_canada)])
+
+trade_good2_imIND_canada<-trade_good2_imIND_canada%>%
+  mutate(Top3= round( trade_good2_imIND_canada[[ncol(trade_good2_imIND_canada)]]/d1*100,4))
+
+# stores the numeric value from the first row and the last column 
+d2<-as.numeric(trade_good2_imIND_CMA[1, ncol(trade_good2_imIND_CMA)])
+
+trade_good2_imIND_CMA<-trade_good2_imIND_CMA%>%
+  mutate(Top3 = round( trade_good2_imIND_CMA[[ncol(trade_good2_imIND_CMA)]]/d2*100,4))
+
+# stores the numeric value from the first row and the last column 
+d3<-as.numeric(trade_good2_imIND_nonCMA[1, ncol(trade_good2_imIND_nonCMA)])
+
+
+trade_good2_imIND_nonCMA<-trade_good2_imIND_nonCMA%>%
+  mutate(Top3 = round( trade_good2_imIND_nonCMA[[ncol(trade_good2_imIND_nonCMA)]]/d3*100,4))
+
+
+# Replace 'trade_good2_exIND_nonCMA' with the actual name of your dataset
+dataset <- trade_good2_imIND_nonCMA
+
+# Get the column names of the dataset
+column_names <- colnames(dataset)
+
+# Get the second last column name
+second_last_column <- column_names[length(column_names) - 1]
+
+
+process_selected_data <- function(data) {
+  selected_data <- data %>%
+    select(`North American Industry Classification System (NAICS)`, ncol(.)) %>%
+    slice(2:4)%>%
+  mutate(`North American Industry Classification System (NAICS)` = gsub("\\[.*", "",`North American Industry Classification System (NAICS)`))
+  
+  sum_row <- selected_data %>%
+    summarise(across(where(is.numeric), ~ 100 - sum(.))) %>%
+    mutate(`North American Industry Classification System (NAICS)` = "0thers")
+  
+  sum_row1 <- selected_data %>%
+    summarise(across(where(is.numeric), sum)) %>%
+    mutate(`North American Industry Classification System (NAICS)` = "Sum of Top 3")
+  
+  result <- bind_rows(selected_data, sum_row, sum_row1)
+  return(result)
+}
+# Call the function and pass the dataset
+processed_datacanada <- process_selected_data(trade_good2_imIND_canada)
+processed_datacma <- process_selected_data(trade_good2_imIND_CMA)
+processed_datanoncma <- process_selected_data(trade_good2_imIND_nonCMA)
+
+processed_datacanada1 <- process_selected_data(trade_good2_imIND_canada) %>%
+    slice(-5)%>%
+  mutate(category="Canada")
+
+processed_datacanada2 <-processed_datacanada1 %>%
+  arrange(`North American Industry Classification System (NAICS)`)%>%
+  mutate(`North American Industry Classification System (NAICS)` = ifelse(
+    tolower(`North American Industry Classification System (NAICS)`) == "others", 
+    "Others", 
+    `North American Industry Classification System (NAICS)`
+  ))
+
+
+
+processed_datacma1 <- process_selected_data(trade_good2_imIND_CMA) %>%
+    slice(-5)%>%
+  mutate(category="CMA")
+
+
+processed_datacma2 <-processed_datacma1%>%
+  arrange(`North American Industry Classification System (NAICS)`)
+
+processed_datanoncma1 <- process_selected_data(trade_good2_imIND_nonCMA) %>%
+    slice(-5)%>%
+  mutate(category="Non-CMA")
+
+processed_datanoncma2 <-processed_datanoncma1%>%
+  arrange(`North American Industry Classification System (NAICS)`)
+
+
+
+# Define colors for the categories
+category_colors <-c("#FFE5F8", "#FFC0CB", "#FFA6C9", "#FF69B4", "#FF00FF")
+
+
+custom_title <- paste( "Imports, ", second_last_column)
+
+
+# Create the Highchart
+pietop2graph1 <- highchart() %>%
+  hc_chart(type = "pie") %>%
+  
+  hc_series(
+    list(
+      type = "pie",
+      name = "Canada",
+      data = list_parse2(processed_datacanada2),
+      size = "70%-100%",
+      innerSize = "70%-100%",
+      dataLabels = list(distance = -1.5,
+                        format = "<b>{point.name}<br>{point.percentage:.1f}%"
+        )
+    ),
+    list(
+      type = "pie",
+      name = "Non CMA",
+      data = list_parse2(processed_datanoncma2),
+      size = "30%",
+      innerSize = "30%",
+      dataLabels = list(enabled = TRUE,
+                        distance = -0.2,
+                        format = "<br>{point.percentage:.1f}%"
+        )
+    )
+  ) %>%
+  
+  hc_tooltip(
+    pointFormat = "<b>{point.percentage:.1f}%</b><br>{series.name}"
+  ) %>%
+  hc_title(text = custom_title, align = "center")%>%
+  
+  hc_colors(colors =category_colors)%>%
+  hc_size(height = 425)
+
+
+######################################################################## export 
+# Download data and create a dataframe from the Statistics of Canada
+trade_good_exIND <- statcan_download_data("12-10-0138-01","eng")
+
+# Define a function to process data for a specific GEO value
+process_geo_data <- function(data, geo) {
+  data %>%
+    filter(GEO == geo, Estimates == "Value of exports", UOM == "Dollars") %>%
+    select(DATE, GEO, Estimates, UOM, SCALAR_FACTOR, VALUE, `North American Industry Classification System (NAICS)`) %>%
+    pivot_wider(names_from = DATE, values_from = VALUE) %>%
+    arrange(desc(.[, ncol(.)]))
+}
+
+# Extract year YYYY from DATE and store it as a new variable
+trade_good_exIND$DATE <- format(as.Date(trade_good_exIND$REF_DATE, format = "%Y.%m.%d"), "%Y")
+
+# Process data for Canada
+trade_good2_exIND_canada <- process_geo_data(trade_good_exIND, "Canada")
+
+# Process data for CMA
+trade_good2_exIND_CMA <- process_geo_data(trade_good_exIND, "Census metropolitan area (CMA)")
+
+# Process data for Non-CMA
+trade_good2_exIND_nonCMA <- process_geo_data(trade_good_exIND, "Non-Census metropolitan area")
+
+#stores the numeric value from the first row and the last column 
+d1<-as.numeric(trade_good2_exIND_canada[1, ncol(trade_good2_exIND_canada)])
+
+trade_good2_exIND_canada<-trade_good2_exIND_canada%>%
+  mutate(Top3= round( trade_good2_exIND_canada[[ncol(trade_good2_exIND_canada)]]/d1*100,4))
+
+# stores the numeric value from the first row and the last column 
+d2<-as.numeric(trade_good2_exIND_CMA[1, ncol(trade_good2_exIND_CMA)])
+
+trade_good2_exIND_CMA<-trade_good2_exIND_CMA%>%
+  mutate(Top3 = round( trade_good2_exIND_CMA[[ncol(trade_good2_exIND_CMA)]]/d2*100,4))
+
+# stores the numeric value from the first row and the last column 
+d3<-as.numeric(trade_good2_exIND_nonCMA[1, ncol(trade_good2_exIND_nonCMA)])
+
+trade_good2_exIND_nonCMA<-trade_good2_exIND_nonCMA%>%
+  mutate(Top3 = round( trade_good2_exIND_nonCMA[[ncol(trade_good2_exIND_nonCMA)]]/d3*100,4))
+
+# Replace 'trade_good2_exIND_nonCMA' with the actual name of your dataset
+dataset <- trade_good2_exIND_nonCMA
+
+# Get the column names of the dataset
+column_names <- colnames(dataset)
+
+# Get the second last column name
+second_last_column <- column_names[length(column_names) - 1]
+
+
+process_selected_data <- function(data) {
+  selected_data <- data %>%
+    select(`North American Industry Classification System (NAICS)`, ncol(.)) %>%
+    slice(2:4)%>%
+  mutate(`North American Industry Classification System (NAICS)` = gsub("\\[.*", "",`North American Industry Classification System (NAICS)`))
+  
+  sum_row <- selected_data %>%
+    summarise(across(where(is.numeric), ~ 100 - sum(.))) %>%
+    mutate(`North American Industry Classification System (NAICS)` = "0thers")
+  
+  sum_row1 <- selected_data %>%
+    summarise(across(where(is.numeric), sum)) %>%
+    mutate(`North American Industry Classification System (NAICS)` = "Sum of Top 3")
+  
+  result <- bind_rows(selected_data, sum_row, sum_row1)
+  return(result)
+}
+# Call the function and pass the dataset
+processed_datacanada <- process_selected_data(trade_good2_exIND_canada)
+processed_datacma <- process_selected_data(trade_good2_exIND_CMA)
+processed_datanoncma <- process_selected_data(trade_good2_exIND_nonCMA)
+
+processed_datacanada1 <- process_selected_data(trade_good2_exIND_canada) %>%
+    slice(-5)%>%
+  mutate(category="Canada")
+
+processed_datacanada2 <-processed_datacanada1 %>%
+  arrange(`North American Industry Classification System (NAICS)`)%>%
+  mutate(`North American Industry Classification System (NAICS)` = ifelse(
+    tolower(`North American Industry Classification System (NAICS)`) == "others", 
+    "Others", 
+    `North American Industry Classification System (NAICS)`
+  ))
+
+
+
+processed_datacma1 <- process_selected_data(trade_good2_exIND_CMA) %>%
+    slice(-5)%>%
+  mutate(category="CMA")
+
+
+processed_datacma2 <-processed_datacma1%>%
+  arrange(`North American Industry Classification System (NAICS)`)
+
+processed_datanoncma1 <- process_selected_data(trade_good2_exIND_nonCMA) %>%
+    slice(-5)%>%
+  mutate(category="Non-CMA")
+
+processed_datanoncma2 <-processed_datanoncma1%>%
+  arrange(`North American Industry Classification System (NAICS)`)
+
+
+
+
+custom_title <- paste( "Exports, ", second_last_column)
+
+# Define colors for the categories
+category_colors <- c("#f2f0f7", "#cbc9e2", "#9e9ac8", "#756bb1", "#54278f")
+
+# Create the Highchart
+pietop2graph5 <- highchart() %>%
+  hc_chart(type = "pie") %>%
+  
+  hc_series(
+    list(
+      type = "pie",
+      name = "Canada",
+      data = list_parse2(processed_datacanada2),
+      size = "70%-100%",
+      innerSize = "70%-100%",
+      dataLabels = list(distance = -3,
+                        format = "<b>{point.name}<br>{point.percentage:.1f}%"
+        )
+    ),
+    list(
+      type = "pie",
+      name = "Non CMA",
+      data = list_parse2(processed_datanoncma2),
+      size = "30%",
+      innerSize = "30%",
+      dataLabels = list(enabled = TRUE,
+                  distance = -.02,
+                        format = "{point.percentage:.1f}%"
+        )
+    )
+  ) %>%
+  
+  hc_tooltip(
+    pointFormat = "<b>{point.percentage:.1f}%</b><br>{series.name}"
+  ) %>%
+  hc_title(text = custom_title, align = "center")%>%
+  hc_colors(colors =category_colors)%>%
+  hc_size(height = 425)
+
+# Combine the title and pie charts using grid.arrange
+export1import <-highcharter::hw_grid(
+pietop2graph5,
+pietop2graph1,
+  ncol = 2
+)
+
+export1import
+```
+<font size="1">
+<strong>Note:</strong> The rural economy is measured as all non-census metropolitan areas (CMAs) as a whole. The shares of top-3 industries are calculated as industrial ratio to all industries for a given region, Canada, CMAs and non-CMAs.</font><br>
+
+<font size="1">
+<strong>Source:</strong> 
+<em>Statistics Canada Tables 12-10-0138-01 for exports and 12-10-0139-01 for imports.</em>
+</font>
+
+
+<style>
+  .subpoints {
+    font-size: 1em;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    background-color: green;
+    text-align: center;
+  }
+
+  .small-font {
+    font-size: 0.8em;
+    margin-right: 10px;
+  }
+
+  .image-container {
+    margin-top: 80px; /* Adjust the value to create more space between subpoints and image */
+    text-align: center;
+  }
+</style>
+
+<div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #58B404; text-align: center;">
+  <span class="small-font"> Economy </span>
+  <span class="small-font">- GDP</span> 
+  <strong class="small-font">- Trade</strong>
+  <span class="small-font">- Labour Market</span>
+  <span class="small-font" style="margin-left: 100px;">Demography</span>
+  <span class="small-font" style="margin-left: 100px;">Standard of Living</span>
+</div>
+
+
+<script>
+  function showSlide(slideId) {
+    var slides = document.querySelectorAll('.slide');
+    for (var i = 0; i < slides.length; i++) {
+      slides[i].style.display = 'none';
+    }
+    document.getElementById(slideId).style.display = 'block';
+  }
+</script>
+
+
+</div>
+
+---
+name: Labour_Market
+
+<div style="margin-top: 33px;"></div>
+
+<span style="color:#58B404; font-weight: bold; font-size: 23px;">
+Declining rural labour force and employment - in stark contrast to their rising urban counterparts, contribute to a widening rural-urban gap in the labour market.
+</span>
+
+
+
+```{r,message=FALSE,warning=FALSE,echo = FALSE,out.width="100%",out.height="100%"}
+
+
+# Download data and create a dataframe from the Statistics of Canada, ("36-10-0434-01") is the table number, name GDPeng, and engfra
+unemployment <- statcan_download_data("14-10-0374-01","eng")
+
+
+# Extract year YYYY from date DD.MM.YYYY as a new variable - only the year
+unemployment$DATE <- format(as.Date(unemployment$REF_DATE, format = "%Y.%m.%d"), "%Y")
+
+
+# Get the last row and extract the middle number
+last_row <- tail(unemployment, 1)
+month <- as.numeric(substr(last_row$REF_DATE, 6, 7))
+
+
+unemployment_sum<- unemployment %>% 
+  filter(`Labour force characteristics`=="Employment"|`Labour force characteristics`=="Labour force")%>%
+  filter(Sex=="Both sexes")%>%
+  filter(`Age group`=="15 years and over")%>%
+  filter(`Population centre and rural areas`=="Non-census metropolitan area and non-census agglomeration"|`Population centre and rural areas`=="Census metropolitan area and census agglomeration")%>% 
+  filter(GEO == "Canada")%>% 
+  filter(UOM == "Persons")%>%
+  select(GEO,`Labour force characteristics`,`Sex`,`Age group`,`Population centre and rural areas`,UOM,REF_DATE, DATE, VALUE) %>%
+    group_by(GEO, `Age group`,`Labour force characteristics`, `Population centre and rural areas`, DATE) %>%
+    mutate(Sum_value = sum(VALUE, na.rm = TRUE))  %>%
+    select(GEO, `Labour force characteristics`, `Population centre and rural areas`, Sum_value, DATE) %>%
+    mutate(Sum_value = round(Sum_value, 2))
+
+# Remove duplicate rows
+  unemployment_sum  <- unemployment_sum [!duplicated(unemployment_sum), ] %>%
+    pivot_wider(names_from = DATE, values_from = Sum_value)
+
+
+# Assuming you have a dataframe named unemployment_sum
+# And you have already calculated the 'day' variable
+
+# Calculate the new values and replace the old values
+unemployment_sum[, ncol(unemployment_sum)] <- (unemployment_sum[, ncol(unemployment_sum)] / month) * 12
+
+
+
+unemployment_sum_percentage <-unemployment_sum  %>%
+    mutate(
+      `Population centre and rural areas` = case_when(
+        `Population centre and rural areas` == "Census metropolitan area and census agglomeration" ~ 'Urban',
+        `Population centre and rural areas` == "Non-census metropolitan area and non-census agglomeration" ~ 'Rural',
+        TRUE ~ as.character(`Population centre and rural areas`)
+      ),
+      `Population centre and rural areas` = as.factor(`Population centre and rural areas`)
+    ) 
+
+
+for (i in 5:ncol(unemployment_sum_percentage )) {
+  unemployment_sum_percentage[, i] <- unemployment_sum_percentage[, i] /unemployment_sum[, 5] *100
+}
+
+
+
+unemployment_sum_percentage <-unemployment_sum  %>%
+    mutate(
+      `Population centre and rural areas` = case_when(
+        `Population centre and rural areas` == "Census metropolitan area and census agglomeration" ~ 'Urban',
+        `Population centre and rural areas` == "Non-census metropolitan area and non-census agglomeration" ~ 'Rural',
+        TRUE ~ as.character(`Population centre and rural areas`)
+      ),
+      `Population centre and rural areas` = as.factor(`Population centre and rural areas`)
+    ) 
+
+
+for (i in 5:ncol(unemployment_sum_percentage )) {
+  unemployment_sum_percentage[, i] <- unemployment_sum_percentage[, i] /unemployment_sum[, 5] *100
+}
+
+
+# Define a function to create highcharts
+create_chart <- function(data, title,lable) {
+  cols <- c("#286BD8","#33CC33")
+  
+  chart <- highchart() %>%
+    hc_chart(type = "column", zoomType = "xy"
+  ) %>%
+    hc_title(text = title, align = "center", style = list(fontWeight = "bold")) %>%
+    hc_xAxis(categories = as.numeric(data$`DATE`)) %>%
+    hc_add_series(
+      data = data,
+      type = 'line', 
+      hcaes(x = `DATE`, y = `value`, group = `Population centre and rural areas`)
+    )%>%
+    hc_colors(cols)%>%
+    hc_legend(layout = "horizontal", verticalAlign = "top", y = -10, align = "center")%>%
+    
+    hc_tooltip(
+        pointFormat = "<b>{point.percentage:.2f}</b><br>{series.name}"
+    )%>%
+    hc_tooltip(
+        pointFormat = "<b>{point.y:.2f}</b><br>{series.name}"  # Correct the pointFormat to display percentage values
+    )%>%
+  hc_yAxis_multiples(
+    list(
+      title = list(text = lable),
+      opposite = FALSE
+    )
+  )%>%
+  hc_xAxis(
+    plotBands = list(
+      list(from = 2014, to = 2016, color = "rgba(150, 150, 150, 0.3)"),
+      list(from = 2020, to = 2021, color = "rgba(150, 150, 150, 0.3)")
+    )
+  )%>%
+  hc_add_theme(hc_theme_elementary())%>%
+  hc_legend(layout = "horizontal", verticalAlign = "top", y = -10,align = "center")%>%
+  hc_chart(
+    events = list(
+      load = JS(
+        "function () {
+          var chart = this;
+          chart.renderer.text('Oil Price Crash', chart.plotWidth / 3, chart.plotHeight / 2.4)
+            .css({
+              color: 'black',
+              fontSize: '12px'
+            })
+            .add();
+
+      
+           chart.renderer.text('COVID-19 Pandemic', chart.plotWidth / 1.4, chart.plotHeight / 2.4)
+            .css({
+              color: 'black',
+              fontSize: '12px'
+            })
+            .add();            
+        }"
+      )
+    )
+  )%>%
+    
+    hc_tooltip(
+        pointFormat = "<b>{point.percentage:.2f}</b><br>{series.name}"
+    )%>%
+    hc_tooltip(
+        pointFormat = "<b>{point.y:.2f}</b><br>{series.name}"  # Correct the pointFormat to display percentage values
+    ) %>%
+  hc_size(height = 455)
+  
+  return(chart)
+}
+
+# Labor Force
+unemployment_sum_percentagegraph <- unemployment_sum_percentage %>%
+  ungroup(`Age group`, `Labour force characteristics`, `Population centre and rural areas`, GEO) %>%
+  filter(`Labour force characteristics` == "Labour force") %>%
+  select(-`Labour force characteristics`, -`Age group`, -`GEO`) %>%
+  pivot_longer(!`Population centre and rural areas`, names_to = "DATE", values_to = "value") %>%
+  arrange(`Population centre and rural areas`) %>%
+  mutate(value = round(value, 2))%>%
+  mutate(DATE = as.numeric(DATE))
+
+chart_labor_force <- create_chart(unemployment_sum_percentagegraph, "Labor Force (index 2011=100)","Labor Force (index 2011=100)")
+
+# Employment
+employment_sum_percentagegraph <- unemployment_sum_percentage %>%
+  ungroup(`Age group`, `Labour force characteristics`, `Population centre and rural areas`, GEO) %>%
+  filter(`Labour force characteristics` == "Employment") %>%
+  select(-`Labour force characteristics`, -`Age group`, -`GEO`) %>%
+  pivot_longer(!`Population centre and rural areas`, names_to = "DATE", values_to = "value") %>%
+  arrange(`Population centre and rural areas`) %>%
+  mutate(value = round(value, 2))%>%
+  mutate(DATE = as.numeric(DATE))
+
+chart_employment <- create_chart(employment_sum_percentagegraph, "Employment (index 2011=100)", "Employment (index 2011=100)")
+
+
+# Combine the title and pie charts using grid.arrange
+nationalemployment <-highcharter::hw_grid(
+  chart_labor_force,
+  chart_employment,
+  ncol = 2
+)
+
+
+nationalemployment 
+```
+
+
+<font size="1">
+<strong>Note:</strong> Labour force and employment series are based upon workers aged 15+. The rural economy is measured by all non-census metropolitan areas and census agglomerations
+(non-CMAs/CAs) whereas the urban economy measures all CMAs/CAs.
+</font><br>
+
+<font size="1">
+<strong>Source:</strong><em> Statistics Canada Table 14-10-0374-01.</em> 
+</font>
+
+<style>
+  .subpoints {
+    font-size: 1em;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    background-color: green;
+    text-align: center;
+  }
+
+  .small-font {
+    font-size: 0.8em;
+    margin-right: 10px;
+  }
+
+  .image-container {
+    margin-top: 80px; /* Adjust the value to create more space between subpoints and image */
+    text-align: center;
+  }
+</style>
+
+<div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #58B404; text-align: center;">
+  <span class="small-font"> Economy  </span>
+  <span class="small-font">- GDP </span> 
+  <span class="small-font">- Trade </span>
+  <strong class="small-font">- Labour Market </strong>
+  <span class="small-font" style="margin-left: 100px;">Demography</span>
+  <span class="small-font" style="margin-left: 100px;">Standard of Living</span>
+</div>
+
+---
+
+<div style="margin-top: 33px;"></div>
+
+<span style="color: #58B404; font-weight: bold; font-size: 23px;">
+Rural industrial composition in employment broadly mirrors that of urban while for rural self-employment it is more prevalent in agriculture than services.
+</span>
+
+<div style="text-align: center; font-size: 20px;">
+Share of Employment and Self-employment by Rurality in 2023
+</div>
+
+
+```{r,message=FALSE,warning=FALSE,echo = FALSE,out.width="100%",out.height="5%"}
+
+# Download data and create a dataframe from the Statistics of Canada, ("36-10-0434-01") is the table number, name GDPeng, and engfra
+employmentindustry <- statcan_download_data("14-10-0376-01","eng")
+
+
+## Employment for all employees
+#Extract year YYYY from date DD.MM.YYYY as new variable - only year
+employmentindustry $DATE<-format(as.Date(employmentindustry $REF_DATE, format = "%Y.%m.%d"), "%Y")
+
+employmentindustry1<- employmentindustry %>% 
+  filter(`Class of worker` == "Employees"|`Class of worker`=="Self-employed")%>%
+  filter(GEO == "Canada")%>% 
+  filter(UOM == "Persons")%>%
+  filter(`Population centre and rural areas`=="Non-census metropolitan area and non-census agglomeration"|`Population centre and rural areas`=="Census metropolitan area and census agglomeration")%>%
+  select(`Population centre and rural areas`,`Class of worker`,`North American Industry Classification System (NAICS)`,`DATE`,`VALUE`)%>%
+  select(`Population centre and rural areas`,`Class of worker`,`North American Industry Classification System (NAICS)`,`DATE`,`VALUE`) %>%
+    group_by(`Population centre and rural areas`,`Class of worker`,`North American Industry Classification System (NAICS)`,`DATE`) %>%
+    mutate(Sum_value = sum(VALUE, na.rm = TRUE))  %>%
+    select(`Population centre and rural areas`,`Class of worker`,`North American Industry Classification System (NAICS)`, Sum_value, DATE)%>%
+    mutate(
+      `Population centre and rural areas` = case_when(
+        `Population centre and rural areas` == "Census metropolitan area and census agglomeration" ~ 'Urban',
+        `Population centre and rural areas` == "Non-census metropolitan area and non-census agglomeration" ~ 'Rural',
+        TRUE ~ as.character(`Population centre and rural areas`)
+      ),
+      `Population centre and rural areas` = as.factor(`Population centre and rural areas`)
+    )
+
+# Remove duplicate rows
+  employmentindustry1 <- employmentindustry1 [!duplicated(employmentindustry1), ]%>%
+    ungroup(`Population centre and rural areas`,`Class of worker`,`North American Industry Classification System (NAICS)`,`DATE`) %>%
+    pivot_wider(names_from = DATE, values_from = Sum_value)%>%
+    arrange(`North American Industry Classification System (NAICS)`)
+
+# Get the last row and extract the middle number
+last_row <- tail(employmentindustry , 1)
+month <- as.numeric(substr(last_row$REF_DATE, 6, 7))
+
+  # Calculate the new values and replace the old values
+ employmentindustry1[, ncol( employmentindustry1)] <- ( employmentindustry1[, ncol( employmentindustry1)]/month) * 12
+
+
+employmentindustry2<-employmentindustry1%>%
+  filter(`North American Industry Classification System (NAICS)` == "Goods-producing sector"|`North American Industry Classification System (NAICS)` == "Services-producing sector"|`North American Industry Classification System (NAICS)` == "Total employed, all industries")%>%
+    filter(`Class of worker`=="Employees")%>%
+    select(`North American Industry Classification System (NAICS)`,`Population centre and rural areas`, `2011`, ncol(.))
+
+
+
+employmentindustry3 <- employmentindustry1 %>%
+  filter(`North American Industry Classification System (NAICS)` != "Goods-producing sector" &
+         `North American Industry Classification System (NAICS)` != "Services-producing sector" &
+         `North American Industry Classification System (NAICS)` != "Total employed, all industries")%>%
+    filter(`Class of worker`=="Employees")%>%
+    select(`North American Industry Classification System (NAICS)`,`Population centre and rural areas`,`2011`, ncol(.))
+
+# Calculate sums for numeric columns
+sum_columns <- colSums(employmentindustry3[, sapply(employmentindustry3, is.numeric)])
+
+# Create a new row with the sums and additional information
+total_row <- c("All", "Total", sum_columns)
+
+ruraloriginalemployee <- employmentindustry3%>%
+  rbind(employmentindustry2)%>%
+  filter(`Population centre and rural areas`=="Rural")%>%
+  rbind(total_row)
+
+urbanoriginalemployee <- employmentindustry3%>%
+  rbind(employmentindustry2)%>%
+  filter(`Population centre and rural areas`=="Urban")%>%
+  rbind(total_row)%>%
+    select(-`North American Industry Classification System (NAICS)`)
+
+
+
+employmentindustry4<-employmentindustry1%>%
+  filter(`North American Industry Classification System (NAICS)` == "Goods-producing sector"|`North American Industry Classification System (NAICS)` == "Services-producing sector"|`North American Industry Classification System (NAICS)` == "Total employed, all industries")%>%
+    filter(`Class of worker`=="Self-employed")%>%
+    select(`North American Industry Classification System (NAICS)`,`Population centre and rural areas`,`2011`, ncol(.))
+
+
+employmentindustry5 <- employmentindustry1 %>%
+  filter(`North American Industry Classification System (NAICS)` != "Goods-producing sector" &
+         `North American Industry Classification System (NAICS)` != "Services-producing sector" &
+         `North American Industry Classification System (NAICS)` != "Total employed, all industries")%>%
+    filter(`Class of worker`=="Self-employed")%>%
+    select(`North American Industry Classification System (NAICS)`,`Population centre and rural areas`,`2011`, ncol(.))
+
+# Calculate sums for numeric columns
+sum_columns2 <- colSums(employmentindustry5[, sapply(employmentindustry5, is.numeric)])
+
+# Create a new row with the sums and additional information
+total_row2 <- c("All", "Total", sum_columns2)
+
+ruraloriginalSelfemployed <- employmentindustry5%>%
+  rbind(employmentindustry4)%>%
+  filter(`Population centre and rural areas`=="Rural")%>%
+  rbind(total_row2)
+
+urbanoriginalSelfemployed <- employmentindustry5%>%
+  rbind(employmentindustry4)%>%
+  filter(`Population centre and rural areas`=="Urban")%>%
+  rbind(total_row2)%>%
+    select(-`North American Industry Classification System (NAICS)`)
+
+# Select the "2011" column from ruraloriginalemployee
+rural_2011 <- as.numeric(ruraloriginalemployee$`2011`)
+
+# Select the "2011" column from urbanoriginalemployee
+urban_2011 <- as.numeric(urbanoriginalemployee$`2011`)
+
+# Create two new columns by adding the corresponding values together
+result <- data.frame(rural_2011 = rural_2011, urban_2011 = urban_2011)%>%
+    mutate(total =rural_2011+urban_2011)
+
+ruraloriginalemployee1 <-ruraloriginalemployee %>%
+  mutate_at(vars(ncol(ruraloriginalemployee) - c(1, 0)), as.numeric)
+
+for (i in 3:ncol(ruraloriginalemployee1)) {
+  ruraloriginalemployee1[, i] <- ruraloriginalemployee1[, i] /result[, 3] *100
+}
+
+ruraloriginalemployee1<-ruraloriginalemployee1%>%
+  select(-ncol(.))
+
+
+# Select the last column from ruraloriginalemployee
+rural_last <- ruraloriginalemployee[, ncol(ruraloriginalemployee)]%>%
+  mutate(across(1, as.numeric))
+
+# Select the last column from urbanoriginalemployee
+urban_last <- urbanoriginalemployee[, ncol(urbanoriginalemployee)]%>%
+  mutate(across(1, as.numeric))
+
+# Create two new columns by adding the corresponding values together
+result <- data.frame(rural_last = rural_last, urban_last = urban_last)%>%
+    mutate(total =rural_last+urban_last)
+
+
+urbanoriginalemployee1 <-ruraloriginalemployee%>%
+  mutate_at(vars(ncol(ruraloriginalemployee) - c(1, 0)), as.numeric)
+
+for (i in 3:ncol(urbanoriginalemployee1)) {
+  urbanoriginalemployee1[, i] <- urbanoriginalemployee1[, i] /result[, 3] *100
+}
+
+urbanoriginalemployee1<-urbanoriginalemployee1%>%
+  select(ncol(.))
+
+
+
+
+# Select the "2011" column from ruraloriginalemployee
+rural_2011 <- as.numeric(ruraloriginalSelfemployed$`2011`)
+
+# Select the "2011" column from urbanoriginalemployee
+urban_2011 <- as.numeric(urbanoriginalSelfemployed$`2011`)
+
+# Create two new columns by adding the corresponding values together
+result <- data.frame(rural_2011 = rural_2011, urban_2011 = urban_2011)%>%
+    mutate(total =rural_2011+urban_2011)
+
+
+
+ruraloriginalSelfemployed1 <-ruraloriginalSelfemployed%>%
+  mutate_at(vars(ncol(ruraloriginalemployee) - c(1, 0)), as.numeric)
+
+for (i in 3:ncol(ruraloriginalemployee1)) {
+  ruraloriginalSelfemployed1[, i] <- ruraloriginalSelfemployed1[, i] /result[, 3] *100
+}
+
+ruraloriginalSelfemployed1<-ruraloriginalSelfemployed1%>%
+  select(-ncol(.))
+
+
+
+
+# Select the last column from ruraloriginalemployee
+rural_last <- ruraloriginalSelfemployed[, ncol(ruraloriginalSelfemployed)]%>%
+  mutate(across(1, as.numeric))
+
+# Select the last column from urbanoriginalemployee
+urban_last <- urbanoriginalSelfemployed[, ncol(urbanoriginalSelfemployed)]%>%
+  mutate(across(1, as.numeric))
+
+# Create two new columns by adding the corresponding values together
+result <- data.frame(rural_last = rural_last, urban_last = urban_last)%>%
+    mutate(total =rural_last+urban_last)
+
+
+
+
+urbanoriginalSelfemployed1 <-ruraloriginalSelfemployed%>%
+  mutate_at(vars(ncol(ruraloriginalSelfemployed) - c(1, 0)), as.numeric)
+
+for (i in 3:ncol(urbanoriginalSelfemployed1)) {
+ urbanoriginalSelfemployed1[, i] <- urbanoriginalSelfemployed1[, i] /result[, 3] *100
+}
+
+urbanoriginalSelfemployed1<-urbanoriginalSelfemployed1%>%
+  select(ncol(.))
+
+
+ruraloriginalemployee1<-ruraloriginalemployee1%>%
+  add_column(urbanoriginalemployee1)%>%
+    select(-`North American Industry Classification System (NAICS)`)%>%
+  rename( `Rural%` = `Population centre and rural areas`)%>%
+  slice(1:(n() - 4))
+
+
+
+ruraloriginalSelfemployed1 <-ruraloriginalSelfemployed1%>%
+  add_column(urbanoriginalSelfemployed1)%>%
+    select(-`North American Industry Classification System (NAICS)`)%>%
+  rename( `Rural%` = `Population centre and rural areas`)%>%
+  slice(1:(n() - 4))
+
+
+
+library(dplyr)
+
+# Define a function to perform the division and filtering
+perform_division <- function(data, division_factor, filter_area, filter_type) {
+  result <- data %>%
+    filter(`Population centre and rural areas` == filter_area) %>%
+    mutate(across(where(is.numeric), ~ . / division_factor * 100))%>%
+  mutate(`North American Industry Classification System (NAICS)` = gsub("\\[.*", "", `North American Industry Classification System (NAICS)`))
+  
+  if (filter_type == "last") {
+    result <- result %>%
+      select(ncol(.))
+  } else {
+    result <- result %>%
+      select(-ncol(.))
+  }%>%
+    group_by(`North American Industry Classification System (NAICS)`,`Population centre and rural areas`)
+  
+  return(result)
+}
+
+# Retrieve division factors
+division_factorallrural <- as.numeric(as.character(employmentindustry2[6, 3]))
+division_factorallrurallast <- as.numeric(as.character(employmentindustry2[6, 4]))
+division_factorallurban <- as.numeric(as.character(employmentindustry2[5, 3]))
+division_factorallurbanlast <- as.numeric(as.character(employmentindustry2[5, 4]))
+division_factorallruralself <- as.numeric(as.character(employmentindustry4[6, 3]))
+division_factorallruralselflast <- as.numeric(as.character(employmentindustry4[6, 4]))
+division_factorallurbanself <- as.numeric(as.character(employmentindustry4[5, 3]))
+division_factorallurbanselflast <- as.numeric(as.character(employmentindustry4[5, 4]))
+
+# Apply the function for different cases
+ruraloriginalemployeeruralall <- perform_division(employmentindustry3, division_factorallrural, "Rural", "all")
+ruraloriginalemployeeruralalllast <- perform_division(employmentindustry3, division_factorallrurallast, "Rural", "last")
+ruraloriginalemployeeurbanall <- perform_division(employmentindustry3, division_factorallurban, "Urban", "all")
+ruraloriginalemployeeurbanalllast <- perform_division(employmentindustry3, division_factorallurbanlast, "Urban", "last")
+ruraloriginalslefemployeeruralall <- perform_division(employmentindustry5, division_factorallruralself, "Rural", "all")
+ruraloriginalslefemployeeruralalllast <- perform_division(employmentindustry5, division_factorallruralselflast, "Rural", "last")
+ruraloriginalselfemployeeurbanall <- perform_division(employmentindustry5, division_factorallurbanself, "Urban", "all")
+ruraloriginalselfemployeeurbanalllast <- perform_division(employmentindustry5, division_factorallurbanselflast, "Urban", "last")
+
+ruraloriginalemployeeruralall<-ruraloriginalemployeeruralall%>%
+  add_column(ruraloriginalemployeeruralalllast)
+
+
+ruraloriginalemployeeurbanall<-ruraloriginalemployeeurbanall %>%
+  add_column(ruraloriginalemployeeurbanalllast)
+
+
+
+
+ruraloriginalselfemployeeurbanall <-ruraloriginalselfemployeeurbanall %>%
+  add_column(ruraloriginalselfemployeeurbanalllast)
+
+
+
+ruraloriginalslefemployeeruralall <-ruraloriginalslefemployeeruralall %>%
+  add_column(ruraloriginalslefemployeeruralalllast)
+
+
+
+
+# Define a function to process the data frame and calculate the summaries
+calculate_summary <- function(data) {
+  # Arrange the data frame
+  data <- data %>%
+    arrange(desc(.[, ncol(.)]))
+  
+  # Calculate the sum of the top 3 rows for each numeric column
+  sum_top_3 <- data %>%
+    summarise(across(where(is.numeric), ~ sum(sort(., decreasing = TRUE)[1:3])))
+  
+  # Calculate the sum of the top 5 rows for each numeric column
+  sum_top_5 <- data %>%
+    summarise(across(where(is.numeric), ~ sum(sort(., decreasing = TRUE)[1:5])))
+  
+  # Calculate the sum of the rows other than top 5 for each numeric column
+  otherthan_top_5 <- data %>%
+    summarise(across(where(is.numeric), ~ sum(sort(., decreasing = TRUE)[6:16])))
+  
+  # Create vectors with the calculated sum values
+  top_3_row <- c("Top 3", "Top 3", as.vector(t(sum_top_3)))
+  top_5_row <- c("Top 5", "Top 5", as.vector(t(sum_top_5)))
+  otherthantop_5_row <- c("Others ", " Others ", as.vector(t(otherthan_top_5)))
+  
+  # Add the new rows to the data frame
+  data_with_top <- rbind(data, top_3_row, top_5_row, otherthantop_5_row)
+  
+  return(data_with_top)
+}
+
+# Apply the function to different data frames
+ruraloriginalemployeeruralall_with_top <- calculate_summary(ruraloriginalemployeeruralall)
+ruraloriginalslefemployeeruralalltop <- calculate_summary(ruraloriginalslefemployeeruralall)
+ruraloriginalemployeeurbanalltop<-calculate_summary(ruraloriginalemployeeurbanall)
+ruraloriginalselfemployeeurbanalltop<-calculate_summary(ruraloriginalselfemployeeurbanall)
+
+
+library(dplyr)
+library(highcharter)
+# define color palette
+cols1 <- c("#004529", "#006837", "#238443", "#41ab5d", "#78c679", "#addd8e")
+
+cols2 <- c("#084594", "#2171b5", "#4292c6", "#6baed6", "#9ecae1", "#c6dbef")
+
+# Get the name of the 4th column
+fourth_column_name <- colnames(ruraloriginalselfemployeeurbanalltop)[4]
+
+
+# Define a function to generate the pie chart
+generate_pie_chart <- function(data, title,color) {
+  data <- data %>%
+    slice(c(1:5, n())) %>%
+    rename(recentyear = last_col()) %>%
+    mutate(recentyear = as.numeric(recentyear)) %>%
+    mutate(recentyear = round(recentyear, 2))
+  
+  pie_chart <- highchart() %>%
+    hc_chart(type = "pie") %>%
+    hc_title(text = title, align = "center") %>%
+    hc_plotOptions(
+      pie = list(
+        dataLabels = list(
+          enabled = TRUE
+        )
+      )
+    ) %>%
+    hc_tooltip(
+      pointFormat = "<b>{point.percentage:.2f}%</b>"
+    )  %>%
+    hc_add_series(
+      data = data,
+      type = "pie",
+      hcaes(x = `North American Industry Classification System (NAICS)`, y = `recentyear`),
+      name =  paste("Rural", fourth_column_name), 
+      size = "56%-100%",
+      innerSize = "56%-100%",
+      dataLabels = list(distance = 30,
+                        format = "<b>{point.name}</b>{point.percentage:.1f}%"
+        )
+    ) %>%
+  hc_colors(color)%>%
+    
+    hc_tooltip(
+        pointFormat = "<b>{point.percentage:.1f}%</b><br>{series.name}"
+    )%>%
+    hc_tooltip(
+        pointFormat = "<b>{point.y:.1f}%</b><br>{series.name}"  # Correct the pointFormat to display percentage values
+    )
+
+  
+  return(pie_chart)
+}
+
+# Generate pie charts for different data frames
+pietoprural <- generate_pie_chart(ruraloriginalemployeeruralall_with_top,  "Rural: % Employment",cols1)
+pietopselfrural <- generate_pie_chart(ruraloriginalslefemployeeruralalltop,"Rural: % Self-Employment",cols1)
+
+
+# Generate pie charts for different data frames
+pietopurban <- generate_pie_chart(ruraloriginalemployeeurbanalltop, "Urban: % Employment",cols2)
+pietopselfurban <- generate_pie_chart(ruraloriginalselfemployeeurbanalltop, "Urban: % Self-Employment",cols2)
+
+# Adjust the size of individual highchart plots
+pietoprural <- pietoprural %>% hc_size(height = 230)  # Adjust height as needed
+pietopurban <- pietopurban %>% hc_size(height = 230)
+pietopselfrural <- pietopselfrural %>% hc_size(height = 230)
+pietopselfurban <- pietopselfurban %>% hc_size(height = 230)
+
+# Combine the title and pie charts using grid.arrange
+ruralgraph <-highcharter::hw_grid(
+  pietoprural,
+pietopurban, 
+pietopselfrural,
+pietopselfurban,
+  ncol = 2
+)
+
+ruralgraph
+
+```
+
+
+<font size="1">
+<strong>Note:</strong>  Labour force and employment data are based on workers aged 15+. The rural economy includes all non-census metropolitan areas and census agglomerations (non-CMAs/CAs), while the urban economy covers all CMAs/CAs.
+</font><br>
+
+<font size="1">
+<strong>Source:</strong>
+<em>Statistics Canada Table 14-10-0376-01.</em>
+</font>
+
+<style>
+  .subpoints {
+    font-size: 1em;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    background-color: green;
+    text-align: center;
+  }
+
+  .small-font {
+    font-size: 0.8em;
+    margin-right: 10px;
+  }
+
+  .image-container {
+    margin-top: 80px; /* Adjust the value to create more space between subpoints and image */
+    text-align: center;
+  }
+</style>
+
+<div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #58B404; text-align: center;">
+  <span class="small-font"> Economy  </span>
+  <span class="small-font">- GDP </span> 
+  <span class="small-font">- Trade </span>
+  <strong class="small-font">- Labour Market </strong>
+  <span class="small-font" style="margin-left: 100px;">Demography</span>
+  <span class="small-font" style="margin-left: 100px;">Standard of Living</span>
+</div>
+
+
+---
+
+name: Demography 
+
+<div style="margin-top: 33px;"></div>
+
+<span style="color: #58B404; font-weight: bold; font-size: 23px;">
+Less than one in five Canadians live in rural areas. Rural population also grows more slowly than its urban counterpart, resulting in a steadily shrinking share of the population.
+</span>
+
+
+```{r,message=FALSE,warning=FALSE,echo = FALSE,out.width="100%",out.height="100%"}
+
+
+# Download data and create a dataframe from the Statistics of Canada, ("36-10-0434-01") is the table number, name GDPeng, and engfra
+popeng2001.2019 <- statcan_download_data("17-10-0135-01","eng")
+popeng2001.2019_prov <- statcan_download_data("17-10-0005-01","eng")
+popeng2001.2019_age_prov <- statcan_download_data("17-10-0008-01","eng")
+
+#Extract year YYYY from date DD.MM.YYYY as new variable - only year
+popeng2001.2019_prov$DATE<-format(as.Date(popeng2001.2019_prov$REF_DATE, format = "%Y.%m.%d"), "%Y")
+
+popeng2001.2019_prov1<- popeng2001.2019_prov%>%
+  mutate(
+    GEO = if_else(
+      GEO == "Alberta",
+      'AB',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "British Columbia",
+      'BC',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Manitoba",
+      'MB',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "New Brunswick",
+      'NB',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Newfoundland and Labrador",
+      'NL',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Nova Scotia",
+      'NS',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Quebec",
+      'QC',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Saskatchewan",
+      'SK',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Northwest Territories",
+      'NT',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Prince Edward Island",
+      'PE',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Nunavut",
+      'NU',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Yukon",
+      'YT',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Ontario",
+      'ON',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  ) %>%  
+  filter(VECTOR=="v466983"|VECTOR=="v467298"|VECTOR=="v467613"|VECTOR=="v467928"|VECTOR=="v468243"
+         |VECTOR=="v468558"|VECTOR=="v468873"|VECTOR=="v469188"|VECTOR=="v469503"|VECTOR=="v469818"|VECTOR=="v470133"
+         |VECTOR=="v479937"|VECTOR=="v480252") %>%
+  select(DATE,GEO,VALUE)%>% 
+  mutate_at(1, as.numeric)%>% 
+  filter(DATE>=2001)%>% 
+  pivot_wider(names_from =GEO, values_from =VALUE) 
+
+#Extract year YYYY from date DD.MM.YYYY as new variable - only year
+popeng2001.2019$DATE<-format(as.Date(popeng2001.2019$REF_DATE, format = "%Y.%m.%d"), "%Y")
+
+column_range <- 6:18
+popindex2001.2019<- popeng2001.2019%>%
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, Alberta",
+      'Non-CMAs/CAs, AB',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, British Columbia",
+      'Non-CMAs/CAs, BC',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, Manitoba",
+      'Non-CMAs/CAs, MB',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, New Brunswick",
+      'Non-CMAs/CAs, NB',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, Newfoundland and Labrador",
+      'Non-CMAs/CAs, NL',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, Nova Scotia",
+      'Non-CMAs/CAs, NS',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, Quebec",
+      'Non-CMAs/CAs, QC',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, Saskatchewan",
+      'Non-CMAs/CAs, SK',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, Northwest Territories",
+      'Non-CMAs/CAs, NT',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, Prince Edward Island",
+      'Non-CMAs/CAs, PE',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, Nunavut",
+      'Non-CMAs/CAs, NU',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, Yukon",
+      'Non-CMAs/CAs, YT',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "Area outside census metropolitan areas and census agglomerations, Ontario",
+      'Non-CMAs/CAs, ON',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "All census metropolitan areas and census agglomerations, Canada",
+      'Canada Urban',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "All areas outside census metropolitan areas and census agglomerations, Canada",
+      'Canada Rural',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "All census agglomerations, Canada",
+      'Canada,CAs',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  )%>% 
+  mutate(
+    GEO = if_else(
+      GEO == "All census metropolitan areas, Canada",
+      'Canada,CMAs',
+      GEO
+    ),
+    GEO = as.factor(GEO)
+  ) %>% 
+  filter(VECTOR == "v1462635598"|VECTOR =="v1078829663"|VECTOR=="v1078829663"|VECTOR=="v1078829318"|VECTOR=="v1078828628"|VECTOR=="v1078821878"
+         |VECTOR=="v1078822253"|VECTOR=="v1078822673"|VECTOR=="v1078823123"|VECTOR=="v1078823918"|VECTOR=="v1078824938"|VECTOR=="v1078825373"
+         |VECTOR=="v1078825868"|VECTOR=="v1078826483"|VECTOR=="v1078827218"|VECTOR=="v1078827578"|VECTOR=="v1078827938"|VECTOR=="v1078828283") %>%  
+  select(DATE,GEO,VALUE)%>%
+  pivot_wider(names_from =GEO, values_from =VALUE)%>% 
+  mutate_at(1, as.numeric)%>%
+  rename_at(vars(6:18), ~ gsub(".*?,\\s*", "", .)) %>%
+  rename_with(~ paste0(sub(".*?,\\s*", "", .), " Rural"), 6:18)
+
+
+popindex2001.20191 <- popindex2001.2019 %>%
+  select(DATE, everything()[6:18])
+
+
+
+for (i in 2:ncol(popindex2001.20191)) {
+ popindex2001.20191[, i] <-popeng2001.2019_prov1[i] - popindex2001.20191[, i] 
+}
+
+popindex2001.20192 <- popindex2001.20191%>%
+  rename_with(~ str_replace(.,"Rural",  "Urban"), .cols = 2:14) %>%
+  left_join( popeng2001.2019_prov1, popindex2001.20192,by=join_by(DATE==DATE))
+
+
+popfinal<- popindex2001.2019 %>%
+  mutate(`Consistent_Canada_rural(Non-CMAs + PE + Territories)`= `Canada,CAs`+`Canada Rural`)%>%
+  left_join(popindex2001.20192,popfinal, by=join_by(DATE==DATE)) %>%
+  rename_with(~ paste0(sub(".*?,\\s*", "", .), " Total"), 33:45)
+
+
+popfinal1<-popfinal%>%
+  select(c(1:3),c(5:18), c(33:45),c(20:32)) %>%
+  rename_with(~ if_else(. == "Canada, CMAs/CAs",
+                        "Canada Urban",
+                        if_else(. == "Canada,Non-CMAs/CAs",
+                                "Canada Rural",
+                                .)), 
+              starts_with("All"))
+
+
+popfinal2<-popfinal1%>%
+  pivot_longer(!DATE, names_to = "GEO", values_to = "value")%>%
+  arrange(`DATE`)%>% 
+  pivot_wider(names_from =DATE, values_from =value)%>%
+   arrange(GEO)
+
+
+
+# log growth table 
+pop_growth <- popfinal2
+
+
+for (i in 3:ncol(pop_growth)) {
+  pop_growth[, i]<-log(popfinal2[, i] / popfinal2[, i-1]) * 100
+}
+
+
+
+pop_growth$`2001` <- NA
+
+
+
+
+popfinalnew2<-popfinal%>%
+  select(c(1:2),c(5:18), c(33:45)) %>%
+  rename_with(~ if_else(. == "CMAs/CAs",
+                        "CMAS/CAS Urban",
+                        if_else(. == "Non-CMAs/CAs",
+                                "NON-CMAS/CAS Rural",
+                                .)), 
+              starts_with("All"))
+
+
+
+popfinalnew2 <- popfinalnew2
+
+for (i in c(4,5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16)) {
+  col_name <- colnames(popfinalnew2)[i]
+  numerator_col <- colnames(popfinalnew2)[i]
+  denominator_col <- colnames(popfinalnew2)[i + 13]
+  new_col_name <- paste0("percentage_", col_name)
+  popfinalnew2 <- popfinalnew2 %>%
+    mutate(!!new_col_name := .data[[numerator_col]] / .data[[denominator_col]]*100)
+}
+
+
+popfinalnew2percenatge<- popfinalnew2%>%
+  mutate(`percentage_Canada Rural` = `Canada Rural` / Canada * 100)%>%
+  select(DATE,c(30:43))%>%
+  pivot_longer(!DATE, names_to = "GEO", values_to = "value")%>%
+  arrange(`DATE`)%>% 
+  pivot_wider(names_from =DATE, values_from =value)%>%
+   arrange(GEO)%>%
+  mutate(GEO = str_remove(GEO, "percentage_"))%>%
+  mutate(GEO = str_remove(GEO, "Rural"))
+
+
+
+# define color palette
+cols <- colorRampPalette(brewer.pal(50, "Set3"))(50)
+
+popfinalnew2percenatge2<- popfinalnew2percenatge%>%
+  pivot_longer(!`GEO`,names_to = "year", values_to = "value")%>%
+  arrange(year)
+
+
+
+# Replace 'trade_good2_exIND_nonCMA' with the actual name of your dataset
+dataset <- popfinalnew2percenatge
+
+# Get the column names of the dataset
+column_names <- colnames(dataset)
+
+# Get the second last column name
+second_last_column <- column_names[length(column_names)]
+
+
+
+
+
+
+# Assuming you have a dataframe called 'dfallnoncma'
+if (identical(popfinalnew2percenatge[, ncol(popfinalnew2percenatge) - 1],popfinalnew2percenatge[, ncol(popfinalnew2percenatge)])) {
+  selected_columns_per <- popfinalnew2percenatge[, c(1, seq(2, ncol(popfinalnew2percenatge) - 1, 10))]
+} else {
+  selected_columns_per <- popfinalnew2percenatge[, c(1, seq(2, ncol(popfinalnew2percenatge) - 1, 10), ncol(popfinalnew2percenatge))]
+}
+
+
+
+
+
+pop_first <- popfinal1%>%
+  select(DATE, Canada,`Canada Rural`,`Canada Urban`)%>%
+  mutate(Relative_Importance_Ratio_Rural= `Canada Rural`/Canada*100)%>%
+  mutate(Relative_Importance_Ratio_Urban= `Canada Urban`/Canada*100)
+  
+
+
+# Initialize an empty vector to store the growth rates
+log_Relative_Importance_growth_rates_Rural<- vector("numeric", nrow(pop_first))
+
+# Compute the growth rates using a for loop
+for (i in 2:nrow(pop_first)) {
+  log_Relative_Importance_growth_rates_Rural[i] <- 100 * log(pop_first$Relative_Importance_Ratio_Rural[i] / pop_first$Relative_Importance_Ratio_Rural[i - 1])
+}
+
+
+# Add the growth_rates column to the data frame
+pop_first$log_Relative_Importance_growth_rate_Rural <- log_Relative_Importance_growth_rates_Rural
+
+
+# Initialize an empty vector to store the growth rates
+log_Relative_Importance_growth_rates_Urban <- vector("numeric", nrow(pop_first))
+
+# Compute the growth rates using a for loop
+for (i in 2:nrow(pop_first)) {
+  log_Relative_Importance_growth_rates_Urban[i] <- 100 * log(pop_first$Relative_Importance_Ratio_Urban[i] / pop_first$Relative_Importance_Ratio_Urban[i - 1])
+}
+
+# Add the growth_rates column to the data frame
+pop_first$log_Relative_Importance_growth_rate_Urban <- log_Relative_Importance_growth_rates_Urban
+
+
+
+
+
+# Initialize an empty vector to store the growth rates
+Ratio_Rural<- vector("numeric", nrow(pop_first))
+
+# Compute the growth rates using a for loop
+for (i in 1:nrow(pop_first)) {
+  
+  Ratio_Rural[i] <- 100 * (pop_first$`Canada Rural`[i] / pop_first$`Canada Rural`[ 1])
+
+}
+
+
+# Add the growth_rates column to the data frame
+pop_first$Ratio_Rural <- Ratio_Rural
+
+
+
+# Initialize an empty vector to store the growth rates
+Ratio_Urban<- vector("numeric", nrow(pop_first))
+
+# Compute the growth rates using a for loop
+for (i in 1:nrow(pop_first)) {
+  Ratio_Urban[i] <- 100 * (pop_first$`Canada Urban`[i] / pop_first$`Canada Urban`[1])
+}
+
+
+# Add the growth_rates column to the data frame
+pop_first$Ratio_Urban <- Ratio_Urban
+
+
+# Initialize an empty vector to store the growth rates
+log_growth_rates_Rural<- vector("numeric", nrow(pop_first))
+
+# Compute the growth rates using a for loop
+for (i in 2:nrow(pop_first)) {
+  log_growth_rates_Rural[i] <- 100 * log(pop_first$Ratio_Rural[i] / pop_first$Ratio_Rural[i - 1])
+}
+
+
+# Add the growth_rates column to the data frame
+pop_first$log_growth_rate_Rural <- log_growth_rates_Rural
+
+
+# Initialize an empty vector to store the growth rates
+log_growth_rates_Urban <- vector("numeric", nrow(pop_first))
+
+# Compute the growth rates using a for loop
+for (i in 2:nrow(pop_first)) {
+  log_growth_rates_Urban[i] <- 100 * log(pop_first$Ratio_Urban[i] / pop_first$Ratio_Urban[i - 1])
+}
+
+# Add the growth_rates column to the data frame
+pop_first$log_growth_rate_Urban <- log_growth_rates_Urban
+
+
+
+pop_first_summary <-pop_first%>%
+  select(log_growth_rate_Rural,log_growth_rate_Urban,log_Relative_Importance_growth_rate_Rural,log_Relative_Importance_growth_rate_Urban)%>%
+ summary()
+
+
+
+
+popfirst_all <-pop_first%>%
+  select(DATE, Ratio_Rural)%>%
+  pivot_longer(!DATE, names_to = "Category", values_to = "value")%>% 
+  mutate_at(3, as.numeric)
+
+
+popfirst_all2 <-pop_first%>%
+  select(DATE, Ratio_Urban)%>%
+  pivot_longer(!DATE, names_to = "Category", values_to = "value")%>% 
+  mutate_at(3, as.numeric)
+
+
+
+popfirst_all1 <-pop_first%>%
+  select(DATE, Relative_Importance_Ratio_Rural)%>%
+  pivot_longer(!DATE, names_to = "Category", values_to = "value")%>% 
+  mutate_at(3, as.numeric)
+
+popfirst_allgraph1 <- highchart()  %>%
+  hc_chart(type = "line", zoomType = "xy") %>%
+  hc_title(text = "Population (left, index 2001=100) and Its Rural Share (right, %)", align = "center",style = list(fontWeight = "bold"))%>%
+  hc_xAxis(categories = as.character(popfirst_all2$`DATE`))%>%
+  hc_yAxis_multiples(
+    list(
+      title = list(text = "Population Index (2001=100)"),
+      opposite = FALSE
+    ),
+    list(
+      title = list(text = "Share of Rural Population (%)"),
+      showLastLabel = FALSE,
+      labels = list(format = '{value}%'),
+      opposite = TRUE
+    )
+  ) %>%
+  hc_legend(layout = "vertical", align = "right", verticalAlign = "middle") %>%
+  hc_add_series(
+    name = "Urban",
+    type = "line",
+    data = popfirst_all2$value,
+    yAxis = 0
+  ) %>%
+  hc_legend(layout = "vertical", align = "right", verticalAlign = "middle") %>%
+  hc_add_series(
+    name = "Rural",
+    type = "line",
+    data = popfirst_all$value,
+    yAxis = 0
+  ) %>%
+  hc_add_series(
+    name = "Share of Rural Population",
+    type = "line",
+    data = popfirst_all1$value,
+    yAxis = 1
+  )%>%
+  hc_add_theme(hc_theme_elementary()) %>%
+  hc_plotOptions(series = list(label = list(connectorAllowed = FALSE), pointStart = 2001)) %>%
+  hc_colors(colors = c( "#286BD8","#33CC33","red")) %>%
+  hc_legend(layout = "horizontal", verticalAlign = "top", y = -10,align = "center")%>%
+
+  hc_tooltip(
+    pointFormat = "<b>{point.percentage:.2f}</b><br>{series.name}"
+  )%>%
+  hc_tooltip(
+    pointFormat = "<b>{point.y:.2f}</b><br>{series.name}"  # Correct the pointFormat to display percentage values
+  )%>%
+  hc_tooltip(
+  formatter = JS("function () {
+    var xAxisValue = this.x;  // Get the x-axis value
+    var yAxisValue = this.y;  // Get the y-axis value
+
+    if (this.series.yAxis.options.index === 1) {
+      return '<b>' + xAxisValue + '</b><br>' +
+             '<b>' + Highcharts.numberFormat(yAxisValue, 2) + '%</b><br>' +
+             this.series.name;
+    } else {
+      return '<b>' + xAxisValue + '</b><br>' +
+             '<b>' + Highcharts.numberFormat(yAxisValue, 2) + '</b><br>' +
+             this.series.name;
+    }
+  }")
+)%>%
+  hc_xAxis(
+    plotBands = list(
+      list(from = 2020, to = 2021, color = "rgba(150, 150, 150, 0.3)")
+    )
+  )%>%
+  hc_chart(
+    events = list(
+      load = JS(
+        "function () {
+          var chart = this;
+          chart.renderer.text('Covid 19 Pandemic', chart.plotWidth / 1.1, chart.plotHeight / 1.9)
+            .css({
+              color: 'black',
+              fontSize: '12px'
+            })
+            .add();
+
+                   
+        }"
+      )
+    )
+  )
+
+popfirst_allgraph1 <- popfirst_allgraph1 %>%
+  hc_size(height = 455)
+popfirst_allgraph1
+```
+
+<font size="1">
+<strong>Note:</strong>
+
+The rural economy is measured by all non-census metropolitan areas and census agglomerations (non-CMAs/CAs) whereas the urban economy measures all CMAs/CAs. Relative importance measures the rural economy as a share of the total economy in respective activities.</font><br>
+
+<font size="1">
+<strong>Source:</strong>
+<em>Statistics Canada Table 17-10-0135-01.</em></font>
+
+<style>
+  .subpoints {
+    font-size: 1em;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    background-color: green;
+    text-align: center;
+  }
+
+  .small-font {
+    font-size: 0.8em;
+    margin-right: 10px;
+  }
+
+  .image-container {
+    margin-top: 80px; /* Adjust the value to create more space between subpoints and image */
+    text-align: center;
+  }
+</style>
+
+<div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #58B404; text-align: center;">
+  <span class="small-font"> Economy  </span>
+  <span class="small-font">- GDP </span> 
+  <span class="small-font">- Trade </span>
+  <span class="small-font">- Labour Market </span>
+   <strong class="small-font" style="margin-left: 100px;">Demography</strong>
+  <span class="small-font" style="margin-left: 100px;">Standard of Living</span>
+</div>
+
+
+
+---
+<div style="margin-top: 33px;"></div>
+
+<span style="color: #58B404; font-weight: bold; font-size: 23px;">
+A faster rising share of aging population, combined with declining shares of youth and core-age population, presents acute challenges on the sustainability of potential labour market.
+</span>
+
+```{r,message=FALSE,warning=FALSE,echo = FALSE,out.width="100%",out.height="100%"}
+
+popeng2001.2019_prov_age<- popeng2001.2019_prov%>%  
+  filter(`Age group`=="25 to 44 years"|`Age group`=="45 to 64 years"|`Age group`=="90 years and over"|`Age group`=="85 to 89 years"
+         |`Age group`=="80 to 84 years"|`Age group`=="75 to 79 years"|`Age group`=="70 to 74 years"|`Age group`=="65 to 69 years"
+         |`Age group`=="60 to 64 years"|`Age group`=="55 to 59 years"|`Age group`=="50 to 54 years"|`Age group`=="45 to 49 years"
+         |`Age group`=="40 to 44 years" |`Age group`=="35 to 39 years"|`Age group`=="30 to 34 years"|`Age group`=="25 to 29 years"|
+           `Age group`=="20 to 24 years"|`Age group`=="15 to 19 years"|`Age group`=="0 to 14 years"|`Age group`=="All ages")%>%
+  select(DATE,GEO,Sex,`Age group`,VALUE)%>% 
+  mutate_at(1, as.numeric)%>% 
+  filter(DATE>=2001)%>% 
+  arrange (`Age group`)
+
+
+popeng2001.2019_prov_25_64<- popeng2001.2019_prov_age%>% 
+  pivot_wider(names_from =`Age group`, values_from =VALUE)%>%
+  mutate(`25 to 64 years`= `25 to 44 years`+`45 to 64 years`)
+  
+
+pop2001.2019_0_90<- popeng2001.2019 %>%  
+  filter(`Age group`=="90 years and older"|`Age group`=="25 to 44 years"|`Age group`=="15 to 64 years"|`Age group`=="85 to 89 years"
+         |`Age group`=="80 to 84 years"|`Age group`=="75 to 79 years"|`Age group`=="70 to 74 years"|`Age group`=="65 to 69 years"
+         |`Age group`=="60 to 64 years"|`Age group`=="55 to 59 years"|`Age group`=="50 to 54 years"|`Age group`=="45 to 49 years"
+         |`Age group`=="40 to 44 years" |`Age group`=="35 to 39 years"|`Age group`=="30 to 34 years"|`Age group`=="25 to 29 years"
+         |`Age group`=="20 to 24 years"|`Age group`=="15 to 19 years"|`Age group`=="0 to 14 years"|`Age group`=="All ages")%>%  
+  filter(str_detect(GEO, "Area outside census metropolitan areas and census agglomerations")|GEO=="All census metropolitan areas and census agglomerations, Canada"|GEO=="All census agglomerations, Canada"|GEO=="All areas outside census metropolitan areas and census agglomerations, Canada")%>%
+  select(DATE,GEO,Sex,`Age group`,VALUE)%>% 
+  mutate_at(1, as.numeric)%>% 
+  filter(DATE>=2001)
+
+
+pop2001.2019_25_64_all<- pop2001.2019_0_90 %>% 
+  pivot_wider(names_from =`Age group`, values_from =VALUE)%>%
+  mutate(`25 to 64 years`= `15 to 64 years`-`15 to 19 years`-`20 to 24 years`)%>%
+  filter (Sex== "Both sexes")%>%
+  select(DATE, GEO,`25 to 64 years`)%>% 
+  pivot_wider(names_from =GEO, values_from =`25 to 64 years`)%>%
+  rename_at(vars(5:17), ~ gsub(".*?,\\s*", "", .)) %>%
+  rename_with(~ paste0(sub(".*?,\\s*", "", .), " Rural"), 5:17)
+
+
+
+pop2001.2019_25_64_all1 <- pop2001.2019_25_64_all %>%
+  select(DATE, everything()[5:17])
+
+
+popeng2001.2019_prov_25_64_all<- popeng2001.2019_prov_25_64%>%
+  filter (Sex == "Both sexes")%>%
+  select(DATE, GEO,`25 to 64 years`)%>% 
+  pivot_wider(names_from =GEO, values_from =`25 to 64 years`)%>%
+  select(-Canada)
+
+ 
+
+
+for (i in 2:ncol(pop2001.2019_25_64_all1)) {
+ pop2001.2019_25_64_all1[, i] <-popeng2001.2019_prov_25_64_all[i] - pop2001.2019_25_64_all1[, i] 
+}
+
+
+
+popeng2001.2019_prov_25_64_all2 <-pop2001.2019_25_64_all1%>%
+  rename_with(~ str_replace(.,"Rural",  "Urban"), .cols = 2:14) %>%
+  left_join( popeng2001.2019_prov_25_64_all, popeng2001.2019_prov_25_64_all2,by=join_by(DATE==DATE))
+
+
+popfinal_pop2001.2019_25_64_all3<- pop2001.2019_25_64_all %>%
+  left_join(popeng2001.2019_prov_25_64_all2,popfinal_pop2001.2019_25_64_all3, by=join_by(DATE==DATE))
+
+
+
+popeng2001.2019_prov_25_64_all_canada<- popeng2001.2019_prov_25_64%>%
+  filter (Sex == "Both sexes")%>%
+  select(DATE, GEO,`25 to 64 years`)%>% 
+  pivot_wider(names_from =GEO, values_from =`25 to 64 years`)%>%
+  select(Canada)
+
+
+popfinal_pop2001.2019_25_64_all2<-popfinal_pop2001.2019_25_64_all3%>%
+  select(c(1:2),c(4:18), c(20:43)) %>%
+  rename_with(~ if_else(. == "All census metropolitan areas and census agglomerations, Canada",
+                        "Canada (CMAS/CAS) Urban",
+                        if_else(. == "All areas outside census metropolitan areas and census agglomerations, Canada",
+                                "Canada (NON-CMAS/CAS) Rural",
+                                .)), 
+              starts_with("All"))%>%
+  cbind( popeng2001.2019_prov_25_64_all_canada)
+
+
+popfinal2_25_64<-popfinal_pop2001.2019_25_64_all2%>%
+  pivot_longer(!DATE, names_to = "Category_age(25-64)", values_to = "value")%>% 
+  pivot_wider(names_from =DATE, values_from =value)%>% 
+  arrange(`Category_age(25-64)`)
+
+
+# log growth table 
+pop_growth_25_64 <- popfinal2_25_64
+
+
+for (i in 3:ncol(pop_growth_25_64)) {
+  pop_growth_25_64[, i]<-log(popfinal2_25_64[, i] / popfinal2_25_64[, i-1]) * 100
+}
+
+pop_growth_25_64$`2001` <- NA
+
+
+# Remove  Columns in List
+pop_growth_25_64 <-pop_growth_25_64%>%
+  arrange(`Category_age(25-64)`)%>%
+  rename_with(~ if_else(. == "Category_age(25-64)", "Growth rate_Category_age(25-64)", .))
+
+
+
+
+# pop age 
+popage_group<-pop2001.2019_0_90 %>%
+  filter(`Sex`=="Both sexes")%>%
+  select(DATE,GEO,"Age group",VALUE)%>%
+  pivot_wider(names_from = GEO, values_from =VALUE)%>%
+  select(DATE,`Age group`,`All census metropolitan areas and census agglomerations, Canada`,`All areas outside census metropolitan areas and census agglomerations, Canada`)%>%
+  arrange(`Age group`) %>%
+  rename_with(~ if_else(. == "All census metropolitan areas and census agglomerations, Canada",
+                        "Canada (CMAS/CAS) Urban",
+                        if_else(. == "All areas outside census metropolitan areas and census agglomerations, Canada",
+                                "Canada (NON-CMAS/CAS) Rural",
+                                .)), 
+              starts_with("All"))
+
+
+
+
+# Rural
+popage_group_rural<-popage_group%>%
+  select(DATE,`Age group`,`Canada (NON-CMAS/CAS) Rural`)%>%
+  pivot_wider(names_from =`DATE`, values_from =`Canada (NON-CMAS/CAS) Rural`)
+
+popage_group_rural1<-popage_group_rural[-3,]
+
+
+
+
+# percentage -with different age group -Rural 
+popage_group_rural_per1 <- popage_group_rural
+last_row <- tail(popage_group_rural_per1, 1)
+
+# Perform division using a for loop
+for (i in 2:ncol(popage_group_rural_per1)) {
+  popage_group_rural_per1[, i] <- last_row[, i]
+}
+
+
+popage_group_rural_per <- popage_group_rural
+# Perform division using a for loop
+for (i in 2:ncol(popage_group_rural_per)) {
+  popage_group_rural_per[, i] <- popage_group_rural_per[, i] /popage_group_rural_per1[, i] *100
+}
+
+
+# Remove  Columns in List
+pop_growth_0_90_rural <-popage_group_rural_per%>%
+  rename_with(~ if_else(. =="Age group",
+                        "%Age group",
+                       .), starts_with("Age"))
+
+pop_growth_0_90_rural1<-pop_growth_0_90_rural[-3,]
+
+
+
+# Create row names
+row_name1 <- "0 to 14"
+row_name2 <- "15 to 24"
+row_name3 <- "0 to 24"
+row_name4 <- "25 to 54"
+row_name5 <- "55 Plus"
+row_name6 <- "25 Plus"
+
+# Select the desired rows and exclude the first column
+selected_rows1 <- pop_growth_0_90_rural[c(1), -1]
+selected_rows2 <- pop_growth_0_90_rural[c(2, 4), -1]
+selected_rows3 <- pop_growth_0_90_rural[c(1, 2, 4), -1]
+selected_rows4 <- pop_growth_0_90_rural[c(5, 6, 7, 8, 9, 10), -1]
+selected_rows5 <- pop_growth_0_90_rural[c(11, 12, 13, 14, 15, 16, 17, 18), -1]
+selected_rows6 <- pop_growth_0_90_rural[c(5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18), -1]
+
+# Create new rows with row names and column sums
+new_row1 <- c(row_name1, colSums(selected_rows1))
+new_row2 <- c(row_name2, colSums(selected_rows2))
+new_row3 <- c(row_name3, colSums(selected_rows3))
+new_row4 <- c(row_name4, colSums(selected_rows4))
+new_row5 <- c(row_name5, colSums(selected_rows5))
+new_row6 <- c(row_name6, colSums(selected_rows6))
+
+
+# Append the new rows to the data frame
+pop_growth_0_90_rural_more1 <- rbind(pop_growth_0_90_rural, new_row1, new_row2, new_row3, new_row4, new_row5, new_row6)%>%
+  slice(20:26)
+
+pop_growth_0_90_rural_more2 <- rbind(pop_growth_0_90_rural, new_row1, new_row2, new_row3, new_row4, new_row5, new_row6)%>%
+  slice(0:19)
+
+
+
+pop_growth_0_90_rural_more21<-pop_growth_0_90_rural_more2[-3,]
+
+# Urban 
+popage_group_urban<- popage_group %>%
+  select(DATE,`Age group`,`Canada (CMAS/CAS) Urban`)%>%
+  pivot_wider(names_from = DATE, values_from =`Canada (CMAS/CAS) Urban`)
+popage_group_urban1 <-popage_group_urban[-3,]
+
+# percentage -with different age group -Rural 
+popage_group_urban_per1 <- popage_group_urban
+last_row_urban <- tail(popage_group_urban_per1, 1)
+
+# Perform division using a for loop
+for (i in 2:ncol(popage_group_urban_per1)) {
+ popage_group_urban_per1[, i] <- last_row_urban[, i]
+}
+
+
+popage_group_urban_per <- popage_group_urban
+# Perform division using a for loop
+for (i in 2:ncol(popage_group_urban_per)) {
+ popage_group_urban_per[, i] <- popage_group_urban_per[, i] /popage_group_urban_per1[, i] *100
+}
+
+# Remove  Columns in List
+pop_growth_0_90_urban <-popage_group_urban_per%>%
+  rename_with(~ if_else(. =="Age group",
+                        "%Age group",
+                       .), starts_with("Age"))
+pop_growth_0_90_urban1<-pop_growth_0_90_urban[-3,]
+
+
+# Create row names
+# Create row names
+row_name1 <- "0 to 14"
+row_name2 <- "15 to 24"
+row_name3 <- "0 to 24"
+row_name4 <- "25-54"
+row_name5 <- "55 Plus"
+row_name6 <- "25 Plus"
+
+# Select the desired rows and exclude the first column
+selected_rows7 <- pop_growth_0_90_urban[c(1), -1]
+selected_rows8 <- pop_growth_0_90_urban[c(2, 4), -1]
+selected_rows9 <- pop_growth_0_90_urban[c(1, 2, 4), -1]
+selected_rows10 <-pop_growth_0_90_urban[c(5, 6, 7, 8, 9, 10), -1]
+selected_rows11<- pop_growth_0_90_urban[c(11, 12, 13, 14, 15, 16, 17, 18), -1]
+selected_rows12 <- pop_growth_0_90_urban[c(5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18), -1]
+
+# Create new rows with row names and column sums
+new_row7 <- c(row_name1, colSums(selected_rows7))
+new_row8 <- c(row_name2, colSums(selected_rows8))
+new_row9 <- c(row_name3, colSums(selected_rows9))
+new_row10 <- c(row_name4, colSums(selected_rows10))
+new_row11 <- c(row_name5, colSums(selected_rows11))
+new_row12 <- c(row_name6, colSums(selected_rows12))
+
+# Append the new rows to the data frame
+pop_growth_0_90_urban_more1 <- rbind(pop_growth_0_90_urban, new_row7, new_row8,new_row9, new_row10,new_row11, new_row12)%>%
+  slice(20:26)
+pop_growth_0_90_urban_more2 <- rbind(pop_growth_0_90_urban, new_row7, new_row8,new_row9, new_row10,new_row11, new_row12)%>%
+  slice(0:19)
+
+
+pop_growth_0_90_urban_more21<-pop_growth_0_90_urban_more2[-3,]
+
+
+
+
+# Final Urban 1
+
+# Assuming you have a dataframe called 'dfallnoncma'
+if (identical(pop_growth_0_90_urban_more1[, ncol(pop_growth_0_90_urban_more1) - 1],pop_growth_0_90_urban_more1[, ncol(pop_growth_0_90_urban_more1)])) {
+  selected_columns_per_urban <- pop_growth_0_90_urban_more1[, c(1, seq(2, ncol(pop_growth_0_90_urban_more1) - 1, 10))]
+} else {
+  selected_columns_per_urban <- pop_growth_0_90_urban_more1[, c(1, seq(2, ncol(pop_growth_0_90_urban_more1) - 1, 10), ncol(pop_growth_0_90_urban_more1))]
+}
+
+popage_group11<- selected_columns_per_urban %>%
+  pivot_longer(!`%Age group`,names_to = "year", values_to = "value")
+
+
+# Add a new column with the same word in all rows using rep()
+popage_group11$Sex <- rep("Both Sex", nrow(popage_group11))
+popage_group11$Location <- rep("Urban", nrow(popage_group11))
+
+
+
+popage_group1<- pop_growth_0_90_urban_more1 %>%
+  pivot_longer(!`%Age group`,names_to = "year", values_to = "value")
+
+
+# Add a new column with the same word in all rows using rep()
+popage_group1$Sex <- rep("Both Sex", nrow(popage_group1))
+popage_group1$Location <- rep("Urban", nrow(popage_group1))
+
+
+
+
+# Final Urban 2
+popage_group2<- pop_growth_0_90_urban_more2 %>%
+  pivot_longer(!`%Age group`,names_to = "year", values_to = "value")
+
+
+# Add a new column with the same word in all rows using rep()
+popage_group2$Sex <- rep("Both Sex", nrow(popage_group2))
+popage_group2$Location <- rep("Urban", nrow(popage_group2))
+
+
+
+
+
+# final Rural 1
+# Assuming you have a dataframe called 'dfallnoncma'
+if (identical(pop_growth_0_90_rural_more1[, ncol(pop_growth_0_90_rural_more1) - 1],pop_growth_0_90_rural_more1[, ncol(pop_growth_0_90_rural_more1)])) {
+  selected_columns_per_rural <- pop_growth_0_90_rural_more1[, c(1, seq(2, ncol(pop_growth_0_90_rural_more1) - 1, 10))]
+} else {
+  selected_columns_per_rural <- pop_growth_0_90_rural_more1[, c(1, seq(2, ncol(pop_growth_0_90_rural_more1) - 1, 10), ncol(pop_growth_0_90_rural_more1))]
+}
+
+
+popage_group33<- selected_columns_per_rural %>%
+  pivot_longer(!`%Age group`,names_to = "year", values_to = "value")
+
+# Add a new column with the same word in all rows using rep()
+popage_group33$Sex <- rep("Both Sex", nrow(popage_group33))
+popage_group33$Location <- rep("Rural", nrow(popage_group33))
+
+
+
+
+popage_group3<- pop_growth_0_90_rural_more1 %>%
+  pivot_longer(!`%Age group`,names_to = "year", values_to = "value")
+
+# Add a new column with the same word in all rows using rep()
+popage_group3$Sex <- rep("Both Sex", nrow(popage_group3))
+popage_group3$Location <- rep("Rural", nrow(popage_group3))
+
+
+
+# final Rural 1
+popage_group4<- pop_growth_0_90_rural_more2 %>%
+  pivot_longer(!`%Age group`,names_to = "year", values_to = "value")
+
+# Add a new column with the same word in all rows using rep()
+popage_group4$Sex <- rep("Both Sex", nrow(popage_group4))
+popage_group4$Location <- rep("Rural", nrow(popage_group4))
+
+
+
+
+
+# Define a function to select columns with a given step size
+select_columns_with_step <- function(df, step_size) {
+  last_col <- ncol(df)
+  cols_to_select <- c(1, seq(2, last_col - 1, step_size))
+  
+  if (identical(df[, last_col - 1], df[, last_col])) {
+    selected_columns <- df[, cols_to_select]
+  } else {
+    selected_columns <- df[, c(cols_to_select, last_col)]
+  }
+  
+  return(selected_columns)
+}
+
+# Assuming you have a dataframe called 'pop_growth_0_90_rural1'
+selected_columns_per2 <- select_columns_with_step(pop_growth_0_90_rural1, 10)
+
+# Assuming you have a dataframe called 'popage_group_rural1'
+selected_columns_per1 <- select_columns_with_step(popage_group_rural1, 10)
+
+# Assuming you have a dataframe called 'popage_group_rural1'
+selected_columns_per3 <- select_columns_with_step(pop_growth_0_90_rural_more1, 10)
+
+# Assuming you have a dataframe called 'popage_group_rural1'
+selected_columns_per4 <- select_columns_with_step(pop_growth_0_90_rural_more21, 10)
+
+# Assuming you have a dataframe called 'popage_group_rural1'
+selected_columns_per5 <- select_columns_with_step(popage_group_urban1, 10)
+
+# Assuming you have a dataframe called 'popage_group_rural1'
+selected_columns_per6 <- select_columns_with_step(pop_growth_0_90_urban1, 10)
+
+# Assuming you have a dataframe called 'popage_group_rural1'
+selected_columns_per7 <- select_columns_with_step(pop_growth_0_90_urban_more1, 10)
+
+# Assuming you have a dataframe called 'popage_group_rural1'
+selected_columns_per8 <- select_columns_with_step(pop_growth_0_90_urban_more21, 10)
+
+
+# Function to process each dataset
+process_dataset <- function(dataset) {
+  dataset %>%
+    mutate_at(3, as.numeric) %>%
+    mutate_at(1, as.character) %>%
+    arrange(year) %>%
+    filter(`%Age group` != "25 Plus")
+}
+
+# List of datasets
+datasets <- list(
+  allUrban = popage_group1,
+  allrural = popage_group3,
+  allUrban_selected = popage_group11,
+  allrural_selected = popage_group33
+)
+
+# Process all datasets using lapply
+processed_datasets <- lapply(datasets, process_dataset)
+
+# Assign the processed datasets to variables
+list2env(processed_datasets, envir = .GlobalEnv)
+
+# Function to generate highcharts
+generate_highchart <- function(data, title, yAxisTitle, custom_caption = NULL, cols = NULL, legend_enabled = TRUE) {
+  chart <- highchart() %>%
+    hc_chart(type = "column", zoomType = "xy") %>%
+    hc_title(text = title, align = "center") %>%
+    hc_xAxis(categories = as.character(data$`%Age group`)) %>%
+    hc_add_series(
+      data = data,
+      type = 'column', 
+      hcaes(x = `%Age group`, y = value, group = year)
+    ) %>%
+    hc_yAxis_multiples(
+      list(
+        title = list(text = yAxisTitle),
+        labels = list(format = '{value}%'),
+        opposite = FALSE
+      )
+    ) %>%
+    hc_caption(
+      text = custom_caption
+    ) %>%
+    hc_yAxis_multiples(
+      list(
+        title = list(text = yAxisTitle),
+        labels = list(format = '{value}%'),
+        opposite = FALSE
+      )
+    ) %>%
+    hc_legend(layout = "horizontal", verticalAlign = "top", y = -10, align = "center") %>%
+    hc_title(text = title, align = "center")  %>%
+    hc_tooltip(
+      pointFormat = "<b>{point.y:.2f}%</b><br>{series.name}"  # Correct the pointFormat to display percentage values
+    )%>%
+    hc_size(height = 435) 
+}
+
+
+
+allruralgraph_selected <- generate_highchart(allrural_selected, 
+                                            "Rural Population by Age Group (%), Selected Years", 
+                                            "Rural Population by Age Group(%)")%>%
+  hc_colors(colorRampPalette(brewer.pal(3, "Greens"))(7))
+
+urban_selected_graph <- generate_highchart(allUrban_selected, 
+                                           "Urban Population by Age Group (%), Selected Years", 
+                                           "Urban Population by Age Group(%)")%>%
+  hc_colors(colorRampPalette(brewer.pal(3, "Blues"))(7)) 
+
+# Combine the title and pie charts using grid.arrange
+urbanrural<-highcharter::hw_grid(
+ allruralgraph_selected,
+ urban_selected_graph,
+  ncol = 2
+)
+
+
+urbanrural
+
+
+```
+<font size="1">
+<strong>Note:</strong>
+The rural economy is measured by all non-census metropolitan areas and census agglomerations (non-CMAs/CAs) whereas the urban economy measures all CMAs/CAs. Relative importance measures the rural economy as a share of the total economy in respective activities.</font><br>
+
+<font size="1">
+<strong>Source:</strong>
+<em> Statistics Canada Table 17-10-0135-01.</em></font>
+  
+<style>
+  .subpoints {
+    font-size: 1em;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    background-color: green;
+    text-align: center;
+  }
+
+  .small-font {
+    font-size: 0.8em;
+    margin-right: 10px;
+  }
+
+  .image-container {
+    margin-top: 80px; /* Adjust the value to create more space between subpoints and image */
+    text-align: center;
+  }
+</style>
+
+<div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #58B404; text-align: center;">
+  <span class="small-font"> Economy  </span>
+  <span class="small-font">- GDP </span> 
+  <span class="small-font">- Trade </span>
+  <span class="small-font">- Labour Market </span>
+   <strong class="small-font" style="margin-left: 100px;">Demography</strong>
+  <span class="small-font" style="margin-left: 100px;">Standard of Living</span>
+</div>
+
+
+
+---
+<div style="margin-top: 33px;"></div>
+
+<span style="color: #58B404; font-weight: bold; font-size: 23px;">
+The decline in the share of rural population is widespread across the country, with its lowest share among the most populous provinces.
+</span>
+
+```{r,message=FALSE,warning=FALSE,echo = FALSE,out.width="100%",out.height="100%"}
+
+
+cols <- colorRampPalette(brewer.pal(3, "Greens"))(7)
+popfinalnew2percenatge5<- selected_columns_per%>%
+  pivot_longer(!`GEO`,names_to = "year", values_to = "value")%>%
+  arrange(year)
+
+
+graph4<- highchart() %>%
+  hc_chart(type = "column", zoomType = "xy") %>%
+  hc_xAxis(categories = as.character(popfinalnew2percenatge5$`GEO`)) %>%
+  hc_add_series(
+    data = popfinalnew2percenatge5,
+    type = 'column', 
+    hcaes(x = `GEO`, y = `value`, group = year)
+  ) %>%
+  hc_colors(cols)  %>%
+  hc_yAxis_multiples(
+    list(
+      title = list(text = "% Population Living in Rural Areas "),
+      labels = list(format = '{value}%'),
+      opposite = FALSE
+    )
+  ) %>%
+  hc_legend(layout = "horizontal", verticalAlign = "top", y = -10,align = "center")%>%
+  hc_title(text = "Proportion of Population Living in Rural Areas, Selected Years", align = "center")%>%
+  
+  hc_tooltip(
+    pointFormat = "<b>{point.percentage:.2f}%</b><br>{series.name}"
+  )%>%
+  hc_tooltip(
+    pointFormat = "<b>{point.y:.2f}%</b><br>{series.name}"  # Correct the pointFormat to display percentage values
+  )
+
+graph4 <- graph4%>%
+  hc_size(height = 430)
+
+graph4
+
+```
+
+<font size="1">
+<strong>Note:</strong>
+The rural economy is measured by all non-census metropolitan areas and census agglomerations (non-CMAs/CAs) whereas the urban economy measures all CMAs/CAs. Relative importance measures the rural economy as a share of the total economy in respective activities. Population composition is calculated as region specific share of the total population in a given year. Nunavut (NU) has no CMA/CAs and is accordingly deemed rural by the aforementioned definition. Note that this differs from the Census definition of rural as non-population centres.</font><br>
+
+<font size="1">
+<strong>Source:</strong>
+<em> Statistics Canada Table 17-10-0135-01.</em></font>
+  
+
+
+<style>
+  .subpoints {
+    font-size: 1em;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    background-color: green;
+    text-align: center;
+  }
+
+  .small-font {
+    font-size: 0.8em;
+    margin-right: 10px;
+  }
+
+  .image-container {
+    margin-top: 80px; /* Adjust the value to create more space between subpoints and image */
+    text-align: center;
+  }
+</style>
+
+<div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #58B404; text-align: center;">
+  <span class="small-font"> Economy  </span>
+  <span class="small-font">- GDP </span> 
+  <span class="small-font">- Trade </span>
+  <span class="small-font">- Labour Market </span>
+   <strong class="small-font" style="margin-left: 100px;">Demography</strong>
+  <span class="small-font" style="margin-left: 100px;">Standard of Living</span>
+</div>
+
+
+---
+<div style="margin-top: 33px;"></div>
+
+<span style="color:#58B404; font-weight: bold; font-size: 23px;">
+Immigration has remained the engine of Canada's population growth in recent decades, yet net interprovincial migration has become increasingly important for the Atlantic regions, even before the pandemic years.
+</span>
+
+<div style="text-align: center; font-size: 18px;">
+Population Growth by Geography and Component (%), Selected Periods
+</div>
+
+
+```{r,message=FALSE,warning=FALSE,echo = FALSE,out.width="100%",out.height="100%"}
+
+growth_persons1<- statcan_download_data("17-10-0005-01","eng")
+ 
+
+
+growth_persons1$DATE<-format(as.Date(growth_persons1$REF_DATE, format = "%Y.%m.%d"), "%Y")
+
+growth_persons_raw <- growth_persons1 %>%
+  filter(Sex == "Both sexes") %>%
+  filter(`Age group` == "All ages") %>%
+  select(DATE, GEO, VALUE) %>%
+  pivot_wider(names_from = `GEO`, values_from = VALUE) %>%
+  mutate(
+    `Territories` = ifelse(
+      !is.na(`Northwest Territories including Nunavut`),
+      `Yukon` + `Northwest Territories including Nunavut`,
+      `Yukon` + `Northwest Territories` + `Nunavut`
+    )
+  ) %>%
+  mutate(`Atlantic` = `Newfoundland and Labrador` + `Prince Edward Island` + `Nova Scotia` + `New Brunswick`)
+
+
+
+# Initialize an empty dataframe with the same structure as growth_persons_raw
+growth_persons <- data.frame(matrix(NA, nrow = nrow(growth_persons_raw), ncol = 18))
+
+# Set column names for growth_persons
+colnames(growth_persons) <- colnames(growth_persons_raw)[2:18]
+
+# Create a for loop to iterate through columns 2 to 17
+for (col_index in 2:18) {
+  col_name <- names(growth_persons_raw)[col_index]
+  
+  # Calculate the differences for the current column and store them in growth_persons
+  growth_persons[, col_name] <- c(0, diff(growth_persons_raw[[col_name]]))
+}
+
+
+# Remove the first row from Component_Growth
+growth_persons<- growth_persons[-1, ]
+
+
+
+# Custom function to calculate differences as (current/previous - 1) * 100,
+# The default = 0 argument specifies that if there is no previous element (e.g., for the first element of the column), it should be filled with the default value of 0. In other words, it ensures that the calculation works for the first element without errors.
+calculate_percentage_difference <- function(column) {
+  return(100 * (column / lag(column, default = 0) - 1))
+}
+
+# Initialize an empty dataframe with the same structure as growth_persons_raw
+growth_percentage <- data.frame(matrix(NA, nrow = nrow(growth_persons_raw), ncol = 17))
+
+# Set column names for growth_percentage
+colnames(growth_percentage) <- colnames(growth_persons_raw)[2:18]
+
+# Create a for loop to iterate through columns 2 to 17
+for (col_index in 2:18) {
+  col_name <- names(growth_persons_raw)[col_index]
+  
+  # Calculate the differences for the current column and store them in growth_percentage
+  growth_percentage[, col_name] <- calculate_percentage_difference(growth_persons_raw[[col_name]])
+}
+
+# Convert the "DATE" column to numeric, handling non-numeric values as NA
+growth_percentage$DATE <- as.numeric(as.character(growth_persons_raw$DATE))
+
+# Modify the DATE column to format as "previous number / current number",# paste0 to concatenate the previous number,
+growth_percentage$DATE <- ifelse(is.na(growth_percentage$DATE), "", paste0(growth_percentage$DATE - 1, "/", growth_percentage$DATE))
+
+
+
+
+components_of_demographic_growth<- statcan_download_data("17-10-0008-01","eng")
+
+components_of_demographic_growth$DATE<-format(as.Date(components_of_demographic_growth$REF_DATE, format = "%Y.%m.%d"), "%Y")
+
+
+components_of_demographic_growth_raw<-components_of_demographic_growth %>%
+  select(DATE, GEO, `Components of population growth`, VALUE) %>%
+  group_by(DATE,GEO,`Components of population growth`)%>%
+    pivot_wider(names_from = `GEO`, values_from = VALUE)%>%
+  mutate(
+    `Territories` = ifelse(
+      !is.na(`Northwest Territories including Nunavut`),
+      `Yukon` + `Northwest Territories including Nunavut`,
+      `Yukon` + `Northwest Territories` + `Nunavut`
+    )
+  )%>%
+  mutate(`Atlantic`= `Newfoundland and Labrador`+`Prince Edward Island`+`Nova Scotia`+`New Brunswick`)
+
+
+# Define a vector of all possible categories
+all_categories <- c("Births", "Deaths", "Immigrants", "Emigrants", "Returning emigrants",
+                    "Net non-permanent residents", "Residual deviation",
+                    "Net interprovincial migration", "Net temporary emigrants")
+
+# Group the data by DATE and GEO
+components_of_demographic_growth_raw <- components_of_demographic_growth_raw %>%
+  group_by(DATE)%>%
+  complete(`Components of population growth` = all_categories) %>%
+  arrange(`Components of population growth`)
+
+# Create a copy of the Component_Growth dataset
+Component_Growth <- components_of_demographic_growth_raw
+
+
+
+
+# Determine the number of columns to loop through
+num_columns <- ncol(Component_Growth)
+
+# Loop through columns 2 to num_columns
+for (i in 3:num_columns) {
+  # Get the column name from Component_Growth
+  col_name <- names(Component_Growth)[i]
+  
+  # Check if the columns in both datasets are numeric
+  if (is.numeric(Component_Growth[[col_name]]) && is.numeric(growth_persons[[col_name]])) {
+    # Divide the current column in Component_Growth by the corresponding column in growth_persons_raw
+    Component_Growth[[col_name]] <- round(Component_Growth[[col_name]] / growth_persons[[col_name]] * 100, 0)
+  } else {
+    # Handle non-numeric columns (e.g., you can choose to skip or handle them in a different way)
+    print(paste("Skipping non-numeric column:", col_name))
+  }
+}
+
+# Now, Component_Growth contains the divided values for numeric columns rounded to two decimal places
+
+# Assuming your data frame is named 'Net_Component_Growth'
+
+Net_Component_Growth <- components_of_demographic_growth_raw %>%
+  mutate(across(`Canada`:last_col(), as.character)) %>%
+  group_by(DATE, `Components of population growth`) %>%
+  pivot_longer(`Canada`:last_col(), names_to = "GEO", values_to = "value")%>%
+  mutate(value = as.numeric(value))%>%
+  pivot_wider(names_from = `Components of population growth`, values_from =value)%>%
+  mutate(`Net birth`= `Births`- `Deaths`)%>%
+  mutate(`Net immigration`= `Immigrants`-Emigrants+`Returning emigrants`)%>%
+  pivot_longer(`Births`:last_col(), names_to = "Components of population growth", values_to = "value")%>%
+  mutate(value = as.numeric(value))%>%
+  pivot_wider(names_from = `GEO`, values_from =value)%>%
+  filter(`Components of population growth` %in% c("Net birth", "Net immigration", "Net interprovincial migration", "Net non-permanent residents", "Residual deviation"))%>%
+  arrange(`Components of population growth`)
+
+# Display the resulting data frame
+Realative_Net_Component_Growth <-Net_Component_Growth
+
+# Determine the number of columns to loop through
+num_columns <- ncol(Realative_Net_Component_Growth)
+
+# Loop through columns 2 to num_columns
+for (i in 3:num_columns) {
+  # Get the column name from Component_Growth
+  col_name <- names(Realative_Net_Component_Growth)[i]
+  
+  # Check if the columns in both datasets are numeric
+  if (is.numeric(Realative_Net_Component_Growth[[col_name]]) && is.numeric(growth_persons[[col_name]])) {
+    # Divide the current column in Component_Growth by the corresponding column in growth_persons_raw
+   Realative_Net_Component_Growth[[col_name]] <- round(Realative_Net_Component_Growth[[col_name]] / growth_persons[[col_name]] * 100, 0)
+  } else {
+    # Handle non-numeric columns (e.g., you can choose to skip or handle them in a different way)
+    print(paste("Skipping non-numeric column:", col_name))
+  }
+}
+# Display the resulting data frame
+Realative_Net_Component_Growth <- Realative_Net_Component_Growth %>%
+  select(DATE, `Components of population growth`,`Canada`,`Atlantic`,`Quebec`,`Ontario`,`Manitoba`,`Saskatchewan`,`Alberta`,`British Columbia`,`Territories`)%>%
+  rename(QC="Quebec")%>%
+  rename(ON="Ontario")%>%
+  rename(MB="Manitoba")%>%
+  rename(SK="Saskatchewan")%>%
+  rename(AB="Alberta")%>%
+  rename(BC="British Columbia")
+
+
+# Convert the "DATE" column to numeric, handling non-numeric values as NA
+Realative_Net_Component_Growth $DATE <- as.numeric(as.character(Realative_Net_Component_Growth $DATE))
+
+# Modify the DATE column to format as "previous number / current number"
+Realative_Net_Component_Growth$DATE <- ifelse(is.na(Realative_Net_Component_Growth $DATE), "", paste0(Realative_Net_Component_Growth $DATE - 1, "/", Realative_Net_Component_Growth$DATE))
+
+# Get the current year
+current_year <- as.numeric(format(Sys.Date(), "%Y"))
+
+# Calculate the starting year (1971) and create year ranges every 10 years
+start_year <- 1971
+year_ranges <- character()
+for (year in seq(start_year, current_year, by = 10)) {
+  year_range <- paste(year, year + 1, sep = "/")
+  year_ranges <- c(year_ranges, year_range)
+}
+
+# Include the most recent year
+year_ranges_all<- c(year_ranges, paste(current_year - 1,current_year, sep = "/"))
+
+# Filter rows where DATE is in the specified years
+Selected_Realative_Net_Component_Growth <- Realative_Net_Component_Growth %>%
+  filter(DATE %in% year_ranges)%>%
+  select(DATE, `Components of population growth`,`Canada`)%>%
+  pivot_longer(`Canada`:last_col(), names_to = "GEO", values_to = "value")
+
+
+# Now, 'Net_Component_Growth' contains the desired calculations
+
+
+# Calculate the year from 5 years ago
+year_5_years_ago <- current_year - 7
+# Calculate the year from 4 years ago
+year_4_years_ago <- current_year - 6
+
+# Create the year range from 10 years ago to the current year
+year_range_5year <- paste(year_5_years_ago, year_4_years_ago, sep = "/")
+
+
+# Filter rows where DATE is in the specified year range
+Selected5year_Realative_Net_Component_Growth <- Realative_Net_Component_Growth %>%
+  filter(DATE == year_range_5year)%>%
+  pivot_longer(`Canada`:last_col(), names_to = "GEO", values_to = "value")
+
+
+# Create the year range to the current year
+year_ranges_recent<- c( paste(current_year - 2,current_year-1, sep = "/"))
+# Filter rows where DATE is in the specified year range
+Selected_current_Realative_Net_Component_Growth <- Realative_Net_Component_Growth %>%
+  filter(DATE == year_ranges_recent)%>%
+  pivot_longer(`Canada`:last_col(), names_to = "GEO", values_to = "value")
+
+################################################
+
+data_frames_list1 <- list(Selected5year_Realative_Net_Component_Growth,Selected_current_Realative_Net_Component_Growth,Selected_Realative_Net_Component_Growth )
+
+# Create an empty vector to store the highest values
+highest_values1 <- vector("numeric", length(data_frames_list1))
+
+
+# Loop through each data frame and find the highest value in the selected column
+for (i in seq_along(data_frames_list1)) {
+  selected_column1 <- data_frames_list1[[i]][, 4:ncol(data_frames_list1[[i]])]
+  highest_values1[i] <- max(selected_column1, na.rm = TRUE)
+}
+
+
+# highest_values1 now contains the highest value from each data frame
+max_value1 <- max(highest_values1)
+
+
+# Loop through each data frame and find the highest value in the selected column
+for (i in seq_along(data_frames_list1)) {
+  selected_column1 <- data_frames_list1[[i]][, 4:ncol(data_frames_list1[[i]])]
+  highest_values1[i] <- min(selected_column1, na.rm = TRUE)
+}
+
+# highest_values1 now contains the highest value from each data frame
+min_value1 <- min(highest_values1)
+
+# define color palette
+cols <- brewer.pal(54, "Set2")
+
+
+
+# Define a function to create Highcharts
+create_highchart <- function(data, x_column, custom_title) {
+  highchart() %>%
+    hc_chart(type = "column", zoomType = "xy") %>%
+    hc_title(text = custom_title, align = "center") %>%
+    hc_xAxis(categories = as.character(data[[x_column]])) %>%
+    hc_add_series(
+      data = data,
+      type = 'column', 
+      hcaes(x = !!sym(x_column), y = value, group = `Components of population growth`)
+    ) %>%
+    hc_colors(cols) %>%
+    hc_yAxis_multiples(
+      list(
+        title = list(text = "Population Growth (%)"),
+        labels = list(format = '{value}%'),
+        opposite = FALSE,
+        max = max_value1,
+        min = min_value1
+      )
+    ) %>%
+    hc_legend(
+      layout = "horizontal",
+      verticalAlign = "top",
+      y = -10,
+      align = "center",
+      itemWidth = 150,  # Adjust the item width for two items per line
+      itemStyle = list(fontSize = "7.7px")  # Reduce font size
+    ) %>%
+    hc_tooltip(
+      pointFormat = "<b>{point.percentage:.2f}%</b><br>{series.name}"
+    ) %>%
+    hc_tooltip(
+      pointFormat = "<b>{point.y:.2f}%</b><br>{series.name}"
+    ) %>%
+    hc_size(height = 420) 
+}
+
+
+
+# Create Highcharts for different datasets and date ranges
+firsttime_period <- create_highchart(Selected5year_Realative_Net_Component_Growth, "GEO", unique(Selected5year_Realative_Net_Component_Growth$DATE))%>%
+    hc_yAxis_multiples(
+      list(
+        title = list(text = ""),
+        labels = list(enabled = FALSE),  # Disable labels to remove the scale
+        opposite = FALSE,
+        max = max_value1,
+        min = min_value1
+      )
+    ) 
+secondtime_period <- create_highchart(Selected_current_Realative_Net_Component_Growth, "GEO", unique(Selected_current_Realative_Net_Component_Growth$DATE))%>%
+    hc_yAxis_multiples(
+      list(
+        title = list(text = ""),
+        labels = list(enabled = FALSE),  # Disable labels to remove the scale
+        opposite = FALSE,
+        max = max_value1,
+        min = min_value1
+      )
+    ) 
+alltime_period <- create_highchart(Selected_Realative_Net_Component_Growth, "DATE", "National") 
+
+
+# Combine the title and pie charts using grid.arrange
+bithimmigration<-highcharter::hw_grid(
+  alltime_period, 
+ firsttime_period,
+secondtime_period,
+  ncol = 3
+)
+bithimmigration
+
+
+
+```
+
+
+<font size="1">
+<strong>Note:</strong>
+Net birth is birth net of death; Net immigration is the sum of immigrants and returning immigrants net of emigrants. Net interprovincial migration represents net inflows of population into a given province or territory from the rest of the country, involving a change in usual place of residence. Population growth measures component growth in persons as a share of total growth also in persons. </font> <br>
+
+<font size="1">
+<strong>Source:</strong>
+<em> Statistics Canada Tables 17-10-0135-01 for annual population, and 17-10-0008-01 for population growth component.</em></font>
+
+<style>
+  .subpoints {
+    font-size: 1em;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    background-color: green;
+    text-align: center;
+  }
+
+  .small-font {
+    font-size: 0.8em;
+    margin-right: 10px;
+  }
+
+  .image-container {
+    margin-top: 80px; /* Adjust the value to create more space between subpoints and image */
+    text-align: center;
+  }
+</style>
+
+<div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #58B404; text-align: center;">
+  <span class="small-font"> Economy  </span>
+  <span class="small-font">- GDP </span> 
+  <span class="small-font">- Trade </span>
+  <span class="small-font">- Labour Market </span>
+   <strong class="small-font" style="margin-left: 100px;">Demography</strong>
+  <span class="small-font" style="margin-left: 100px;">Standard of Living</span>
+</div>
+
+---
+
+name: Standard_of_Living
+
+<div style="margin-top: 33px;"></div>
+
+<span style="color: #58B404; font-weight: bold; font-size: 23px;">
+Underlying rural's lower level of standard of living (or GDP per capita) is its lower share of GDP relative to that of the population, the volatility of which reflects a heavily resource-driven rural economy.
+</span>
+
+```{r,message=FALSE,warning=FALSE,echo = FALSE,out.width="100%",out.height="100%"}
+GDP2001.2019_14graph2<- highchart() %>%
+  hc_chart(type = "line", zoomType = "xy") %>%
+  hc_title(text = "Rural- Urban Ratio", align = "center", style = list(fontWeight = "bold")) %>%
+  hc_xAxis(categories = `GDP2001.2019_77`$Year) %>%
+  hc_yAxis_multiples(
+    list(
+      title = list(text = "Rural/Urban Ratio"),
+      opposite = FALSE
+    )
+  )  %>%
+  hc_add_series(
+    name = "Population",
+    type = "line",
+    data =  `DF`$`Rural-urban Ratio-Population`,
+    yAxis = 0
+  )  %>%
+  hc_add_series(
+    name = "GDP",
+    type = "line",
+    data =  `DF`$`Rural-urban Ratio-GDP`,
+    yAxis = 0
+  )%>%
+  hc_add_series(
+    name = "GDP Per Capital",
+    type = "line",
+    data = `DF`$`Rural-urban Ratio-GDP per Capita`,
+    yAxis = 0
+  )%>%
+  hc_add_theme(hc_theme_elementary()) %>%
+  hc_plotOptions(series = list(label = list(connectorAllowed = FALSE), pointStart = 2001))%>%
+  hc_colors(colors = c("#FF0000","#009900","#6BF030")) %>%
+  hc_legend(layout = "horizontal", verticalAlign = "top", y = -10,align = "center") %>%
+  hc_xAxis(
+    plotBands = list(
+      list(from = 2014, to = 2016, color = "rgba(150, 150, 150, 0.3)"),
+      list(from = 2008, to = 2009, color = "rgba(150, 150, 150, 0.3)"),
+      list(from = 2020, to = 2021, color = "rgba(150, 150, 150, 0.3)")
+    )
+  )%>%
+  hc_legend(layout = "horizontal", verticalAlign = "top", y = -10,align = "center")%>%
+  hc_chart(
+    events = list(
+      load = JS(
+        "function () {
+          var chart = this;
+          chart.renderer.text('Financial Crisis', chart.plotWidth / 3, chart.plotHeight / 2.7)
+            .css({
+              color: 'black',
+              fontSize: '12px'
+            })
+            .add();
+
+          chart.renderer.text('Oil Price Crash', chart.plotWidth / 1.4, chart.plotHeight / 2.7)
+            .css({
+              color: 'black',
+              fontSize: '12px'
+            })
+            .add();  
+           chart.renderer.text('COVID -19 Pandemic', chart.plotWidth / 1.1, chart.plotHeight / 2.7)
+            .css({
+              color: 'black',
+              fontSize: '12px'
+            })
+            .add();            
+        }"
+      )
+    )
+  )%>%
+  hc_size(height = 434)%>%
+    hc_tooltip(
+        pointFormat = "<b>{point.y:.2f}</b><br>{series.name}"  # Correct the pointFormat to display percentage values
+    )
+
+GDP2001.2019_14graph2
+```
+
+
+<span style="line-height: 1;">
+<font size="1">
+<strong>Note:</strong>  Nominal GDP is at basic price and is not inflation adjusted. For the rural economy, GDP and population respectively measures that from non-census metropolitan areas (non-CMAs), including Prince Edward Island, and Territories. The urban economy makes up the remainder.
+</font><br>
+
+<font size="1">
+<strong>Source:</strong>
+<em> Statistics Canada Tables 36-10-0423-01 for 2001-2008 GDP; 36-10-0468-01 for 2009 and onwards (unadjusted for inflation), and 17-10-0135-01 for population.</em></font>
+
+</span>
+
+<style>
+  .subpoints {
+    font-size: 1em;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    background-color: green;
+    text-align: center;
+  }
+
+  .small-font {
+    font-size: 0.8em;
+    margin-right: 10px;
+  }
+
+  .image-container {
+    margin-top: 80px; /* Adjust the value to create more space between subpoints and image */
+    text-align: center;
+  }
+</style>
+
+<div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #58B404; text-align: center;">
+  <span class="small-font"> Economy  </span>
+  <span class="small-font">- GDP </span> 
+  <span class="small-font">- Trade </span>
+  <span class="small-font">- Labour Market </span>
+   <span class="small-font" style="margin-left: 100px;">Demography</span>
+  <strong class="small-font" style="margin-left: 100px;">Standard of Living</strong>
+</div>
+
+---
+
+class: inverse, middle, center
+background-image: url(https://policyoptions.irpp.org/wp-content/uploads/sites/2/2019/11/Facebook-Premiers-should-rally-behind-struggling-rural-Canada.jpg)
+background-size: contain
+
+<span style="font-size: 32px; color: black !important;">[Back To Roadmap](#Roadmap)</span>
+
