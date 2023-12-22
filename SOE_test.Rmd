@@ -1,7 +1,7 @@
 ---
 title: "The State of the Canadian Economy"
-author: "ERA"
-date: "2024"
+author: "Presentation to DGPC"
+date: "January 16, 2024"
 output:
   xaringan::moon_reader:
     self_contained: true
@@ -20,14 +20,21 @@ options(htmltools.dir.version = FALSE)
 ```
 .left[
 ## Key Messages
-- <span style="font-size: 32px;"> 
+.pull-left[
+- <span style="font-size: 22px;"> 
 Higher interest rates will continue to weigh on economic activity. While a soft landing is within reach, <strong>Canadian consumers and businesses are under pressure </strong>from rising costs, which could limit growth prospects in 2024.
- 
+
+- <span style = "font-size:22px;">
+Tackling weak productivity growth in Canada remains a critical economic challenge. The <strong>twin transitions of green and digital present opportunities to unlock new productivity avenues</strong>.
+
+- <span style = "font-size:22px;">
+<strong>Sub-optimal business investment</strong> should continue to <strong>raise alarm bells </strong>as it is a key factor for higher incomes and living standards in Canada
 </span>
+]
 ]
 
 .pull-right[
-<img src = "keymessages.jpg" width = "100%"/>
+<img src = "keymessages.jpg" width = "90%"/>
 ]
 
 ---
