@@ -180,8 +180,8 @@ monetary1<- monetary %>%
 
 monetary1
 ```
-.pull-right[
-```{r MONETARY, echo=FALSE, fig.align='center', fig.width=10, fig.height=6}
+
+```{r MONETARY, echo=FALSE, include=FALSE}
 monetary3 <- highchart() %>%
   hc_chart(type = "column", zoomType = "xy") %>%
   hc_title(text = "GDP growth, monthly (left, %), Bank of Canada policy interest rate (right, %) ") %>%
@@ -233,11 +233,10 @@ monetary3 <- highchart() %>%
 
 ```
 
-```{r, echo=FALSE, fig.align='center', fig.width=10, fig.height=6}
+.pull-right[
+```{r, fig.align='center', fig.width=10, fig.height=6}
 monetary3
 ```
-
-
 ]
 ---
 ###What's the economic outlook?
@@ -314,7 +313,6 @@ CORPORATE DEBT INSOLVENCIES
 
 ]
 ```{r, echo=FALSE, fig.align='center', fig.width=10, fig.height=6, warning=FALSE}
-library(readxl)
 cons <- read_excel("C:/Users/davreuxa/Documents/soe/construction.xlsx")
 
 
