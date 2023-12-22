@@ -70,33 +70,7 @@ Tackling weak productivity growth in Canada remains a critical economic challeng
 <center>
 <img src = "recentdev.jpg" width = "80%"/>
 </center>
----
-class: inverse
-```{css, echo=FALSE}
-.inverse {
-  background-color: #4F6367; /* Replace with your desired color code */
-}
-```
-.left[
-##Recent Developments
-.pull-left[
-<img src="gan.jpg" width="90%"/>
-]
-]
 
-.pull-right[
-- <span style="font-size: 32px;"> 
-ECONOMIC DASHBAORD 
-</span>
-  
-- <span style="font-size: 32px;">
-SECTOR SNAPSHOT
-</span>
-
-- <span style="font-size: 32px;">
-LOOKING AHEAD
-</span>
-]
 ---
 
 ```{r Econ dashboard called Test, include=FALSE, echo=FALSE}
@@ -232,6 +206,11 @@ monetary_chart <- highchart() %>%
 ```{r, echo=FALSE}
 monetary_chart
 ```
+<div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #FE5F55; text-align: center;">
+ <span class="small-font"> Economic dashboard</span> 
+  <span class="small-font" style="margin-left: 100px;"><strong>Monetary policy</strong></span>
+  <span class="small-font" style="margin-left: 100px;">Standard of Living</span>
+</div>
 
 ---
 ###What's the economic outlook?
