@@ -14,6 +14,11 @@ output:
 class: middle, center, title-slide-background
 background-size: contain
 ---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE, htmltools.preserve.raw = FALSE)
+```
+
 ```{r, echo=FALSE, include=FALSE}
 library(OECD)
 library(rmarkdown)
@@ -29,13 +34,11 @@ library(ggplot2)
 library(rCharts)
 library(dplyr)
 library(tidyr)
-library(plotly)
 library(ggcharts)
 library(ggpol)
 library(RColorBrewer)
 library(highcharter)
 library(vtable)
-library(htmlwidgets)
 library(webshot)
 library(scales)
 library(statcanR)
@@ -43,13 +46,8 @@ library(tidyverse)
 library(writexl)
 library(highcharter)  # Make sure you have the highcharter library installed
 library(readxl)
-
-
 ```
 
-```{r setup, include=FALSE}
-options(htmltools.dir.version = FALSE)
-```
 .left[
 ## Key Messages
 .pull-left[
@@ -79,7 +77,6 @@ class: inverse
   background-color: #4F6367; /* Replace with your desired color code */
 }
 ```
-
 .left[
 ##Recent Developments
 .pull-left[
@@ -101,7 +98,6 @@ LOOKING AHEAD
 </span>
 ]
 ---
-
 
 ```{r Econ dashboard called Test, include=FALSE, echo=FALSE}
 
@@ -171,20 +167,17 @@ Recent private sector forecasts project either <strong>weak or negative growth o
 
 </span>
 ]
-```{r, echo=FALSE, include=FALSE}
+
+
+```{r, echo=FALSE}
 monetary <- read_excel("C:/Users/davreuxa/Documents/soe/monetary.xlsx")
 
 monetary1<- monetary %>%
   pivot_longer(-indicator, names_to = "Quarter", values_to = "Value")%>%
   pivot_wider(names_from = `indicator`, values_from = `Value`)
 
-monetary1
-```
-
-```{r MONETARY, echo=FALSE, include=FALSE}
-monetary3 <- highchart() %>%
+monetary_chart <- highchart() %>%
   hc_chart(type = "column", zoomType = "xy") %>%
-  hc_title(text = "GDP growth, monthly (left, %), Bank of Canada policy interest rate (right, %) ") %>%
   hc_xAxis(categories = monetary1$Quarter) %>%
   hc_yAxis_multiples(
     list(
@@ -199,8 +192,8 @@ monetary3 <- highchart() %>%
   hc_add_series(
     name = "GDP quarterly growth",
     data = monetary1$`GDP Quarterly Growth`,
-    type = "column",
-    yAxis = 0
+    type = "column", # Specify the series type
+    yAxis = 0 # Associate with the first y-axis
   ) %>%
   hc_plotOptions(
     column = list(
@@ -211,33 +204,35 @@ monetary3 <- highchart() %>%
   hc_add_series(
     name = "Bank of Canada Policy Interest Rate",
     data = monetary1$`Bank of Canada Policy Interest Rate`,
-    type = "line",
-    yAxis = 1
+    type = "line", # Specify the series type
+    yAxis = 1 # Associate with the second y-axis
   ) %>%
   hc_caption(
     text = "Statistics Canada, Table 36-10-0434-01; Gross domestic product (GDP) at basic prices, by industry, monthly (x 1,000,000), Bank of Canada, target for the overnight rate"
   ) %>%
   hc_add_theme(hc_theme_bloom()) %>%
   hc_tooltip(
-    useHTML = TRUE,
     formatter = JS("function () {
-      var pointIndex = this.point.index;
-      var gdpGrowth = this.series.chart.series[0].data[pointIndex].y;
-      var policyRate = this.series.chart.series[1].data[pointIndex].y;
+      var xAxisValue = this.x;  // Get the x-axis value
+      var yAxisValue = this.y;  // Get the y-axis value
 
-      return '<b>' + this.x + '</b><br>' +
-             'GDP Quarterly Growth: ' + Highcharts.numberFormat(gdpGrowth, 2) + '<br>' +
-             'Policy Interest Rate: ' + Highcharts.numberFormat(policyRate, 2) + '%';
+      if (this.series.yAxis.options.index === 1) {
+        return '<b>' + xAxisValue + '</b><br>' +
+               '<b>' + Highcharts.numberFormat(yAxisValue, 2) + '%</b><br>' +
+               this.series.name;
+      } else {
+        return '<b>' + xAxisValue + '</b><br>' +
+               '<b>' + Highcharts.numberFormat(yAxisValue, 2) + '</b><br>' +
+               this.series.name;
+      }
     }")
   )
-
 ```
 
-.pull-right[
-```{r, fig.align='center', fig.width=10, fig.height=6}
-monetary3
+```{r, echo=FALSE}
+monetary_chart
 ```
-]
+
 ---
 ###What's the economic outlook?
 ```{r, echo=FALSE, fig.align='center', fig.width=10, fig.height=6}
@@ -412,7 +407,7 @@ debt1 <- highchart() %>%
 ```
 
 .pull-right[
-```{r, echo=FALSE, fig.align='center', fig.width=7, fig.height=6, warning=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 debt1
 ```
 
