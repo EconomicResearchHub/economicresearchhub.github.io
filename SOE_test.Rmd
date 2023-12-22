@@ -14,6 +14,38 @@ output:
 class: middle, center, title-slide-background
 background-size: contain
 ---
+```{r, echo=FALSE, include=FALSE}
+library(OECD)
+library(rmarkdown)
+library(tidyverse)
+library(forecast)
+library(xts)
+library(rmarkdown)
+library(openxlsx)
+library(XML)
+library(reshape2)
+library(plyr)
+library(ggplot2)
+library(rCharts)
+library(dplyr)
+library(tidyr)
+library(plotly)
+library(ggcharts)
+library(ggpol)
+library(RColorBrewer)
+library(highcharter)
+library(vtable)
+library(htmlwidgets)
+library(webshot)
+library(scales)
+library(statcanR)
+library(tidyverse)
+library(writexl)
+library(highcharter)  # Make sure you have the highcharter library installed
+library(readxl)
+
+
+```
 
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE)
@@ -36,7 +68,10 @@ Tackling weak productivity growth in Canada remains a critical economic challeng
 .pull-right[
 <img src = "keymessages.jpg" width = "90%"/>
 ]
-
+---
+<center>
+<img src = "recentdev.jpg" width = "80%"/>
+</center>
 ---
 class: inverse
 ```{css, echo=FALSE}
@@ -66,13 +101,9 @@ LOOKING AHEAD
 </span>
 ]
 ---
-```{r Econ dashboard, echo=FALSE, include = FALSE, warning = FALSE }
-library(highcharter)
 
-```
 
-```{r Econ dashboard called Test, echo=FALSE}
-library(highcharter)
+```{r Econ dashboard called Test, include=FALSE, echo=FALSE}
 
 # Data similar to the one in the image uploaded
 data <- data.frame(
@@ -112,108 +143,104 @@ test<-highchart() %>%
 
 ###Growth comes to a halt as higher rates start to impact businesses and labor
 
-```{r, echo=FALSE, out.width='100%', fig.align='center', class='centered-plot'}
+```{r, echo=FALSE, out.width='100%', include=FALSE, fig.align='center', class='centered-plot'}
 test
 ```
-
-<div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #FE5F55; text-align: center;">
- <span class="small-font"> <strong>Economic dashboard</strong></span> 
-  <span class="small-font" style="margin-left: 100px;">Demography</span>
-  <span class="small-font" style="margin-left: 100px;">Standard of Living</span>
-</div>
----
-###Tourism and Transportation have yet to recover from the Pandemic while Construction and Agriculture dip back below their pre-pandemic levels
-```{r, echo=FALSE, include=FALSE}
-
-# Create a data frame with the GDP growth information
-gdp_growth <- data.frame(
-  Industry = c(
-    "Professional services", "Public administration", "Finance and insurance", 
-    "Health care and social assistance", "Educational services", "Real estate and rental and leasing", 
-    "Retail trade", "Information and cultural industries", "Other services", "Wholesale trade", 
-    "Energy and mining", "Manufacturing", "Construction", "Transportation and warehousing", 
-    "Utilities", "Administrative and support", "Accommodation and food services", 
-    "Agriculture, forestry, fishing and hunting", "Arts, entertainment and recreation"
-  ),
-  RelativeToPrePandemic = c(
-    11.6, 9.1, 8.7, 8.6, 6.7, 5.8, 3.4, 3.4, 3.2, 2.3, 1.3, 0.2, -0.2, -2.4, 
-    -4.1, -5.3, -7.0, -8.9, -7.3
-  ),
-  PastYear = c(
-    1.8, 3.6, 1.2, 2.9, 2.7, 2.2, -0.8, -0.9, 1.3, 1.7, 0.9, -0.2, -0.7, 4.5, 
-    -6.4, 0.1, 0.0, -15.7, 7.4
-  ),
-  PastThreeMonths = c(
-    -0.2, 0.9, 0.7, 0.6, 0.3, 0.4, -1.3, -1.8, -0.1, 0.8, 3.2, -2.0, -0.7, 0.1, 
-    -2.2, -0.6, -1.0, 1.0, -7.5
-  )
-)
-
-# Create the Highchart
-sect<-highchart() %>%
-  hc_chart(type = "bar") %>%
-  hc_title(text = "Sector Snapshot") %>%
-  hc_subtitle(text = "Tourism and Transportation have yet to recover from the Pandemic while Construction and Agriculture dip back below their pre-pandemic levels") %>%
-  hc_xAxis(categories = gdp_growth$Industry) %>%
-  hc_yAxis(title = list(text = "GDP growth (%)")) %>%
-  hc_add_series(name = "Relative to pre-pandemic", data = gdp_growth$RelativeToPrePandemic) %>%
-  hc_add_series(name = "Past year", data = gdp_growth$PastYear) %>%
-  hc_add_series(name = "Past three months", data = gdp_growth$PastThreeMonths) %>%
-  hc_legend(enabled = TRUE) %>%
-  hc_plotOptions(series = list(stacking = "normal")) %>%
-  hc_tooltip(pointFormat = "<span style='color:{point.color}'>\u25CF</span> {series.name}: <b>{point.y}%</b><br/>")
-
-sect
-
-```
-```{r,echo=FALSE}
-industries <- c("Professional services", "Public administration", "Finance and insurance",
-                "Health care and social assistance", "Educational services",
-                "Real estate and rental and leasing", "Retail trade",
-                "Information and cultural industries", "Other services", "Wholesale trade",
-                "Energy and mining", "Manufacturing", "Construction",
-                "Transportation and warehousing", "Utilities", "Administrative and support",
-                "Accommodation and food services", "Agriculture, forestry, fishing and hunting",
-                "Arts, entertainment and recreation")
-
-pre_pandemic <- c(11.6, 9.1, 8.7, 8.6, 6.7, 5.8, 3.4, 3.4, 3.2, 2.3, 1.3, 0.2, -1.2, -2.4, -4.1, -5.3, -7.0, -7.3, -8.9)
-past_year <- c(1.8, 3.6, 1.2, 2.9, 2.7, 2.2, -0.8, -0.9, 1.3, 1.7, 0.9, -0.2, -1.7, 4.5, -6.4, 0.1, 0.0, -15.7, 7.4)
-past_three_months <- c(-0.2, 0.9, 0.7, 0.6, 0.3, 0.4, -1.3, -1.8, -0.1, 0.8, 3.2, -2.0, -0.7, 0.1, -2.2, -0.6, -1.0, 1.0, -7.5)
-
-# Create a list of lists for highcharter
-data_for_chart <- list(
-  list(name = 'Relative to pre-pandemic', data = pre_pandemic),
-  list(name = 'Past year', data = past_year),
-  list(name = 'Past three months', data = past_three_months)
-)
-
-# Create the Highchart
-sect2<-highchart() %>%
-  hc_chart(type = 'bar') %>%
-  hc_title(text = "GDP growth by industry, as of August 2023, percentage") %>%
-  hc_xAxis(categories = industries) %>%
-  hc_yAxis(title = list(text = "Growth (%)")) %>%
-  hc_add_series_list(data_for_chart) %>%
-  hc_plotOptions(series = list(stacking = 'normal')) %>%
-  hc_legend(reversed = TRUE) %>%
-  hc_add_theme(hc_theme_bloom()) %>%
-  hc_tooltip(shared = TRUE, crosshairs = TRUE) 
-  #hc_exporting(enabled = TRUE) # Enable chart exporting (optional)
-
-```
 <center>
-```{r, echo=FALSE, fig.align='center', fig.width=10, fig.height=6}
-sect2
-```
+<img src = "dashboard.jpg" width = "190%"/>
 </center>
 
 <div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #FE5F55; text-align: center;">
- <span class="small-font"> Economic Dashboard</span> 
-  <span class="small-font" style="margin-left: 100px;"><strong>Sector snapshot</strong></span>
+ <span class="small-font"> <strong>Economic dashboard</strong></span> 
+  <span class="small-font" style="margin-left: 100px;">Monetary policy</span>
   <span class="small-font" style="margin-left: 100px;">Standard of Living</span>
 </div>
 ---
-###Canada’s latest growth outlook is further downgraded, dragged by consumption and housing
+### Monetary policy tightening is starting to impact growth
+#### GDP contracted by 0.3% in the third quarter as the effects of higher interest rates trickle through the economy 
+
+.pull-left[
+- <span style="font-size: 22px;"> 
+Canada's economy shrank in the three months up to September, as business investments and exports declined while consumer spending remained flat.
+
+- <span style="font-size: 22px;"> 
+The effects of interest rate increases will continue to restrain spending, while limiting growth and employment (see Annex A). 
+
+- <span style="font-size: 22px;"> 
+Recent private sector forecasts project either <strong>weak or negative growth over the next two quarters</strong> (see Annex B). 
+
+</span>
+]
+```{r, echo=FALSE, include=FALSE}
+monetary <- read_excel("C:/Users/davreuxa/Documents/soe/monetary.xlsx")
+
+monetary1<- monetary %>%
+  pivot_longer(-indicator, names_to = "Quarter", values_to = "Value")%>%
+  pivot_wider(names_from = `indicator`, values_from = `Value`)
+
+monetary1
+```
+.pull-right[
+```{r MONETARY, echo=FALSE, fig.align='center', fig.width=10, fig.height=6}
+monetary3 <- highchart() %>%
+  hc_chart(type = "column", zoomType = "xy") %>%
+  hc_title(text = "GDP growth, monthly (left, %), Bank of Canada policy interest rate (right, %) ") %>%
+  hc_xAxis(categories = monetary1$Quarter) %>%
+  hc_yAxis_multiples(
+    list(
+      title = list(text = "GDP Quarterly Growth"),
+      opposite = FALSE
+    ),
+    list(
+      title = list(text = "Bank of Canada Policy Interest Rate"),
+      opposite = TRUE
+    )
+  ) %>%
+  hc_add_series(
+    name = "GDP quarterly growth",
+    data = monetary1$`GDP Quarterly Growth`,
+    type = "column",
+    yAxis = 0
+  ) %>%
+  hc_plotOptions(
+    column = list(
+      colorByPoint = TRUE,
+      colors = ifelse(monetary1$`GDP Quarterly Growth` < 0, "#E31737", "#333F50")
+    )
+  ) %>%
+  hc_add_series(
+    name = "Bank of Canada Policy Interest Rate",
+    data = monetary1$`Bank of Canada Policy Interest Rate`,
+    type = "line",
+    yAxis = 1
+  ) %>%
+  hc_caption(
+    text = "Statistics Canada, Table 36-10-0434-01; Gross domestic product (GDP) at basic prices, by industry, monthly (x 1,000,000), Bank of Canada, target for the overnight rate"
+  ) %>%
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_tooltip(
+    useHTML = TRUE,
+    formatter = JS("function () {
+      var pointIndex = this.point.index;
+      var gdpGrowth = this.series.chart.series[0].data[pointIndex].y;
+      var policyRate = this.series.chart.series[1].data[pointIndex].y;
+
+      return '<b>' + this.x + '</b><br>' +
+             'GDP Quarterly Growth: ' + Highcharts.numberFormat(gdpGrowth, 2) + '<br>' +
+             'Policy Interest Rate: ' + Highcharts.numberFormat(policyRate, 2) + '%';
+    }")
+  )
+
+```
+
+```{r, echo=FALSE, fig.align='center', fig.width=10, fig.height=6}
+monetary3
+```
+
+
+]
+---
+###What's the economic outlook?
 ```{r, echo=FALSE, fig.align='center', fig.width=10, fig.height=6}
 proj<-highchart() %>%
   hc_chart(type = "line") %>%
@@ -221,20 +248,20 @@ proj<-highchart() %>%
   hc_xAxis(categories = c(2022, 2023, 2024, 2025),
            plotBands = list(
              list(
-               from = 2.0,  # Assuming the categories are zero-indexed
+               from = 0.5,  # Assuming the categories are zero-indexed
                to = 3.5,    # 2024 to 2025
                color = "rgba(204, 204, 204, 0.5)"  # Light gray background
              )
            )) %>%
   hc_yAxis(title = list(text = "GDP Growth (%)")) %>%
-  hc_add_series(name = "Canada", data = c(3.4, 1.2, 0.9, 2.5)) %>%
-  hc_add_series(name = "China", data = c(3.0, 5.1, 4.5, 4.4)) %>%
-  hc_add_series(name = "Japan", data = c(1.0, 2.0, 0.8, 0.9)) %>%
-  hc_add_series(name = "United States", data = c(1.9, 2.2, 0.8, 1.2)) %>%
-  hc_add_series(name = "World", data = c(3.4, 2.9, 2.3, 2.6)) %>%
+  hc_add_series(name = "Canada, previous projection", data = c(3.4, 1.8, 1.2, 2.4)) %>%
+  hc_add_series(name = "Canada, current projection", data = c(3.4, 1.2, 0.9, 2.5)) %>%
+  hc_add_series(name = "World, current projection", data = c(3.4, 2.9, 2.3, 2.6)) %>%
+  hc_add_series(name = "World, previous projection", data = c(3.4, 2.8, 2.4, 2.7)) %>%
   hc_legend(enabled = TRUE) %>%
   hc_plotOptions(series = list(marker = list(enabled = TRUE))) %>%
   hc_tooltip(shared = TRUE, crosshairs = TRUE)%>%
+  hc_colors(colors = c('#FFBBAB', '#FF0000', 'black', 'grey')) %>%
   hc_add_theme(hc_theme_bloom()) 
 
 
@@ -246,7 +273,7 @@ proj
 </center>
 <div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #FE5F55; text-align: center;">
  <span class="small-font"> Economic Dashboard</span> 
-  <span class="small-font" style="margin-left: 100px;">Sector snapshot</span>
+  <span class="small-font" style="margin-left: 100px;">Monetary policy</span>
   <span class="small-font" style="margin-left: 100px;"><strong>Looking ahead</strong></span>
 </div>
 ---
@@ -436,5 +463,98 @@ INVESTMENTS IN BATTERIES
 CRITICAL MINERALS
 </span>
 ]
+
 ---
-class: inverse
+###Tourism and Transportation have yet to recover from the Pandemic while Construction and Agriculture dip back below their pre-pandemic levels
+```{r, echo=FALSE, include=FALSE}
+
+# Create a data frame with the GDP growth information
+gdp_growth <- data.frame(
+  Industry = c(
+    "Professional services", "Public administration", "Finance and insurance", 
+    "Health care and social assistance", "Educational services", "Real estate and rental and leasing", 
+    "Retail trade", "Information and cultural industries", "Other services", "Wholesale trade", 
+    "Energy and mining", "Manufacturing", "Construction", "Transportation and warehousing", 
+    "Utilities", "Administrative and support", "Accommodation and food services", 
+    "Agriculture, forestry, fishing and hunting", "Arts, entertainment and recreation"
+  ),
+  RelativeToPrePandemic = c(
+    11.6, 9.1, 8.7, 8.6, 6.7, 5.8, 3.4, 3.4, 3.2, 2.3, 1.3, 0.2, -0.2, -2.4, 
+    -4.1, -5.3, -7.0, -8.9, -7.3
+  ),
+  PastYear = c(
+    1.8, 3.6, 1.2, 2.9, 2.7, 2.2, -0.8, -0.9, 1.3, 1.7, 0.9, -0.2, -0.7, 4.5, 
+    -6.4, 0.1, 0.0, -15.7, 7.4
+  ),
+  PastThreeMonths = c(
+    -0.2, 0.9, 0.7, 0.6, 0.3, 0.4, -1.3, -1.8, -0.1, 0.8, 3.2, -2.0, -0.7, 0.1, 
+    -2.2, -0.6, -1.0, 1.0, -7.5
+  )
+)
+
+# Create the Highchart
+sect<-highchart() %>%
+  hc_chart(type = "bar") %>%
+  hc_title(text = "Sector Snapshot") %>%
+  hc_subtitle(text = "Tourism and Transportation have yet to recover from the Pandemic while Construction and Agriculture dip back below their pre-pandemic levels") %>%
+  hc_xAxis(categories = gdp_growth$Industry) %>%
+  hc_yAxis(title = list(text = "GDP growth (%)")) %>%
+  hc_add_series(name = "Relative to pre-pandemic", data = gdp_growth$RelativeToPrePandemic) %>%
+  hc_add_series(name = "Past year", data = gdp_growth$PastYear) %>%
+  hc_add_series(name = "Past three months", data = gdp_growth$PastThreeMonths) %>%
+  hc_legend(enabled = TRUE) %>%
+  hc_plotOptions(series = list(stacking = "normal")) %>%
+  hc_tooltip(pointFormat = "<span style='color:{point.color}'>\u25CF</span> {series.name}: <b>{point.y}%</b><br/>")
+
+sect
+
+```
+```{r,echo=FALSE}
+industries <- c("Professional services", "Public administration", "Finance and insurance",
+                "Health care and social assistance", "Educational services",
+                "Real estate and rental and leasing", "Retail trade",
+                "Information and cultural industries", "Other services", "Wholesale trade",
+                "Energy and mining", "Manufacturing", "Construction",
+                "Transportation and warehousing", "Utilities", "Administrative and support",
+                "Accommodation and food services", "Agriculture, forestry, fishing and hunting",
+                "Arts, entertainment and recreation")
+
+pre_pandemic <- c(11.6, 9.1, 8.7, 8.6, 6.7, 5.8, 3.4, 3.4, 3.2, 2.3, 1.3, 0.2, -1.2, -2.4, -4.1, -5.3, -7.0, -7.3, -8.9)
+past_year <- c(1.8, 3.6, 1.2, 2.9, 2.7, 2.2, -0.8, -0.9, 1.3, 1.7, 0.9, -0.2, -1.7, 4.5, -6.4, 0.1, 0.0, -15.7, 7.4)
+past_three_months <- c(-0.2, 0.9, 0.7, 0.6, 0.3, 0.4, -1.3, -1.8, -0.1, 0.8, 3.2, -2.0, -0.7, 0.1, -2.2, -0.6, -1.0, 1.0, -7.5)
+
+# Create a list of lists for highcharter
+data_for_chart <- list(
+  list(name = 'Relative to pre-pandemic', data = pre_pandemic),
+  list(name = 'Past year', data = past_year),
+  list(name = 'Past three months', data = past_three_months)
+)
+
+# Create the Highchart
+sect2<-highchart() %>%
+  hc_chart(type = 'bar') %>%
+  hc_title(text = "GDP growth by industry, as of August 2023, percentage") %>%
+  hc_xAxis(categories = industries) %>%
+  hc_yAxis(title = list(text = "Growth (%)")) %>%
+  hc_add_series_list(data_for_chart) %>%
+  hc_plotOptions(series = list(stacking = 'normal')) %>%
+  hc_legend(reversed = TRUE) %>%
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_tooltip(shared = TRUE, crosshairs = TRUE) 
+  #hc_exporting(enabled = TRUE) # Enable chart exporting (optional)
+
+```
+<center>
+```{r, echo=FALSE, fig.align='center', fig.width=10, fig.height=6}
+sect2
+```
+</center>
+
+<div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #FE5F55; text-align: center;">
+ <span class="small-font"> Economic Dashboard</span> 
+  <span class="small-font" style="margin-left: 100px;"><strong>Sector snapshot</strong></span>
+  <span class="small-font" style="margin-left: 100px;">Standard of Living</span>
+</div>
+
+---
+
