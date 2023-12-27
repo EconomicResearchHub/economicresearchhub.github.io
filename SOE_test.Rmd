@@ -275,7 +275,31 @@ proj
 - <span style="font-size: 17px;"> 
 Current federal debt is about 42 per cent of GDP. The government has pledged to run deficits no larger than 1% of GDP (fiscal anchor).
 ```{r, echo=FALSE}
+library(readxl)
 feddebt <- read_excel("C:/Users/davreuxa/Documents/soe/feddebttogdp.xlsx")
+
+
+feddebt_graph <-highchart() %>%
+  hc_chart(type = "line") %>%
+  hc_title(text = "Real GDP growth, past and projected, for selected countries and the world, yearly, percentage ") %>%
+  hc_xAxis(categories = feddebt$Date,
+           plotBands = list(
+             list(
+               from = 7,  # Assuming the categories are zero-indexed
+               to = 13,    # 2024 to 2025
+               color = "rgba(204, 204, 204, 0.5)"  # Light gray background
+             )
+           )) %>%
+  hc_yAxis(title = list(text = "GDP Growth (%)")) %>%
+  hc_add_series(name = "Canada, previous projection", data = feddebt$`Federal debt to GDP`) %>%
+  hc_add_series(name = "Canada, current projection", data = feddebt$Forecast) %>%
+  hc_legend(enabled = TRUE) %>%
+  hc_plotOptions(series = list(marker = list(enabled = TRUE))) %>%
+  hc_tooltip(shared = FALSE, crosshairs = TRUE)%>%
+  hc_colors(colors = c("grey", "#A4B9CE")) %>%
+  hc_add_theme(hc_theme_bloom()) 
+
+feddebt_graph
 ```
 
 ]
