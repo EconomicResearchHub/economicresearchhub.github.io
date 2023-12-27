@@ -274,14 +274,13 @@ proj
 #### Fiscal capacity is constrained
 - <span style="font-size: 17px;"> 
 Current federal debt is about 42 per cent of GDP. The government has pledged to run deficits no larger than 1% of GDP (fiscal anchor).
-```{r, echo=FALSE}
-library(readxl)
+```{r, echo=FALSE, fig.width=6, fig.height=5.5}
 feddebt <- read_excel("C:/Users/davreuxa/Documents/soe/feddebttogdp.xlsx")
 
 
 feddebt_graph <-highchart() %>%
   hc_chart(type = "line") %>%
-  hc_title(text = "Real GDP growth, past and projected, for selected countries and the world, yearly, percentage ") %>%
+  hc_title(text = "Federal Debt-to-GDP ratio") %>%
   hc_xAxis(categories = feddebt$Date,
            plotBands = list(
              list(
@@ -290,14 +289,17 @@ feddebt_graph <-highchart() %>%
                color = "rgba(204, 204, 204, 0.5)"  # Light gray background
              )
            )) %>%
-  hc_yAxis(title = list(text = "GDP Growth (%)")) %>%
+  hc_yAxis(title = list(text = "actual and forecasted values (%)")) %>%
   hc_add_series(name = "Canada, previous projection", data = feddebt$`Federal debt to GDP`) %>%
   hc_add_series(name = "Canada, current projection", data = feddebt$Forecast) %>%
   hc_legend(enabled = TRUE) %>%
   hc_plotOptions(series = list(marker = list(enabled = TRUE))) %>%
   hc_tooltip(shared = FALSE, crosshairs = TRUE)%>%
   hc_colors(colors = c("grey", "#A4B9CE")) %>%
-  hc_add_theme(hc_theme_bloom()) 
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_caption(
+    text = "Source: Fall Economic Statement 2023"
+  ) 
 
 feddebt_graph
 ```
@@ -307,6 +309,59 @@ feddebt_graph
 #### Corporate debt has reached record levels
 - <span style="font-size: 17px;"> 
 Interest charges reached $22.9 billion in Q3 2023 while banks are bracing for higher insolvencies (see Annex C).
+```{r, echo=FALSE, fig.width=7, fig.height=6}
+corpdebt <- read_excel("C:/Users/davreuxa/Documents/soe/corpdebt.xlsx")
+
+corpdebt_chart <- highchart() %>%
+  hc_chart(type = "column", zoomType = "xy") %>%
+  hc_title(text = "Total debt of non-financial corporations(left, and interest rate chargers(right)") %>%
+  hc_xAxis(categories = corpdebt$Quarter) %>%
+  hc_yAxis_multiples(
+    list(
+      title = list(text = "$ billion"),
+      opposite = FALSE
+    ),
+    list(
+      title = list(text = "%"),
+      opposite = TRUE
+    )
+  ) %>%
+  hc_add_series(
+    name = "Total debt of non-financial corporations",
+    data = corpdebt$`Total debt of non-financial corporations (left)`,
+    type = "column", # Specify the series type
+    yAxis = 0 # Associate with the first y-axis
+  ) %>%
+  hc_add_series(
+    name = "Interest rate charges",
+    data = corpdebt$`Interest charges (right)`,
+    type = "line", # Specify the series type
+    yAxis = 1 # Associate with the second y-axis
+  ) %>%
+  hc_caption(
+    text = "Source: Statistics Canada. Quarterly balance sheet, income statement, and selected financial ratios, by non-financial industries, non-seasonally adjusted (billions)."
+  ) %>%
+  hc_colors(colors = c("grey", "#A4B9CE")) %>%
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_tooltip(
+    formatter = JS("function () {
+      var xAxisValue = this.x;  // Get the x-axis value
+      var yAxisValue = this.y;  // Get the y-axis value
+
+      if (this.series.yAxis.options.index === 1) {
+        return '<b>' + xAxisValue + '</b><br>' +
+               '<b>' + Highcharts.numberFormat(yAxisValue, 2) + '%</b><br>' +
+               this.series.name;
+      } else {
+        return '<b>' + xAxisValue + '</b><br>' +
+               '<b>' + Highcharts.numberFormat(yAxisValue, 2) + '</b><br>' +
+               this.series.name;
+      }
+    }")
+  )
+
+corpdebt_chart
+```
 
 ]
 <div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #A4B9CE; text-align: center;">
@@ -314,6 +369,126 @@ Interest charges reached $22.9 billion in Q3 2023 while banks are bracing for hi
   <span class="small-font" style="margin-left: 100px;">Price of intrants </span>
   <span class="small-font" style="margin-left: 100px;">Corporate debt and insolvencies</span>
 </div>
+---
+### Canadian households are under pressure
+#### Affordibility remains a key issue, creating a drag on consumption. 
+.pull-left[
+- <span style="font-size: 22px;"> 
+<strong>High demand from population growth and a lack of supply </strong>in the housing market have offset gains in household income.
+
+- <span style="font-size: 22px;"> 
+The Bank of Canada’s <strong>housing affordability index reached its highest level </strong>— meaning the worst degree of affordability — since 1982.
+
+- <span style="font-size: 22px;"> 
+Households are allocating a higher portion of their income to housing, using up more than 38% in 2022, a 4% increase compared to 2019.
+
+- <span style="font-size: 22px;"> 
+The average household is spending around 15 cents of every after-tax dollar to service their debt – the highest since 1990.
+
+</span>
+]
+.pull-right[
+```{r, echo=FALSE, fig.width=8, fig.height=6}
+housecost <- read_excel("C:/Users/davreuxa/Documents/soe/housecost.xlsx")
+
+housecost_chart<- highchart() %>%
+  hc_chart(type = "line", zoomType = "xy") %>%
+  hc_xAxis(categories = housecost$Date) %>%
+  hc_add_series(
+    name = "Housing affordability index, quarterly",
+    data = housecost$`Value`,
+    dataLabels = list(enabled = FALSE, format = '{point.y:.2f}%')
+  ) %>%
+  hc_yAxis(
+    title = list(text = "%"),
+    plotLines = list(
+      list(
+        color = '#446992',          # Color of the dashed line
+        width = 2,              # Width of the line
+        dashStyle = 'Dash',     # Style of the line
+        value = 0.55,           # The y-value where the dashed line is drawn
+        zIndex = 5,             # Ensures that the line is above the plot
+        label = list(
+          text = 'Highest level in 41 years',
+          align = 'right',
+          style = list(
+            color = '#446992'
+          )
+        )
+      )
+    )
+  ) %>%
+  hc_caption(
+    text = "Source: Bank of Canada, Housing Affordibility."
+  ) %>%
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_tooltip(
+    pointFormat = '{series.name}: <b>{point.y:.2f}%</b><br/>',
+    shared = TRUE
+  ) %>%
+  hc_title(text = "Housing costs are taking an ever increasing share of households' income") %>%
+  hc_colors(colors = c("grey", "#A4B9CE"))
+
+# To display the chart if you're running this in an interactive R session
+housecost_chart
+```
+]
+---
+## Inflationary pressures might be easing
+#### Recent inflation numbers are the lastest sign of a cooling economy 
+.pull-left[
+- <span style="font-size: 22px;"> 
+Canada's <strong> consumer price index rose by 3.1% </strong> in the year up to October, down from 3.8% the rpevious month. 
+
+- <span style="font-size: 22px;"> 
+Overall, <strong>shelter costs (e.g. mortgage and rent payments) are up by more than six% </strong> in the past year. That's about twice the overall inflation rate.
+
+- <span style="font-size: 22px;"> 
+<strong>CPI – food purchased from stores was 5.6%.</strong> Grocery prices have now decelerated for four months in a row.
+
+- <span style="font-size: 22px;"> 
+Historical experience suggests that the recent easing of cost pressures in production and distribution (see Annex A) will lead to <strong>further declines in food price inflation </strong>over the coming months.
+
+</span>
+]
+.pull-right[
+```{r, echo=FALSE, fig.width=8, fig.height=6}
+foodinf <- read_excel("C:/Users/davreuxa/Documents/soe/foodinf.xlsx")
+
+foodinf_chart<- highchart() %>%
+  hc_chart(type = "line", zoomType = "xy") %>%
+  hc_xAxis(categories = format(as.Date(foodinf$Date), "%b %y")) %>%
+  hc_add_series(
+    name = "Food Inflation",
+    data = foodinf$`Food Inflation`,
+    dataLabels = list(enabled = FALSE, format = '{point.y:.2f}%')
+  ) %>%
+  hc_add_series(
+    name = "Headline Inflation",
+    data = foodinf$`Headline Inflation`,
+    dataLabels = list(enabled = FALSE, format = '{point.y:.2f}%')
+  ) %>%
+  hc_yAxis(
+    title = list(text = "Year-over-year inflation, monthly(%)")
+  ) %>%
+  hc_caption(
+    text = "Source: Statistics Canada. Table 18-10-0006-01 Consumer Price Index, monthly"
+  ) %>%
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_tooltip(
+    pointFormat = '{series.name}: <b>{point.y:.2f}%</b><br/>',
+    shared = TRUE
+  ) %>%
+  hc_title(text = "Food inflation continues to decrease from its January 2023 peak, getting closer to the all-items inflation") %>%
+  hc_colors(colors = c("grey", "#A4B9CE"))
+
+# To display the chart if you're running this in an interactive R session
+
+
+foodinf_chart
+```
+]
+
 ---
 ###Wages are finally catching up with inflation, adding cost pressure on firms
 
