@@ -214,6 +214,16 @@ monetary_chart
 
 ---
 ###What's the economic outlook?
+#### The Canadian economy is expected to continueits slowdown through the first half of 2024, while economic activity should improve in the second half of the year.
+.pull-left[
+- <span style="font-size: 22px;"> 
+High interest rates are expected to <strong>dampen business investments </strong> while weaker global demand could reduce exports, causing Canada’s forecasted growth in 2023 and 2024 to be weaker than previously projected
+- <span style="font-size: 22px;"> 
+Currently at 5.8% (November 2023), the <strong>unemployment rate is expected to gradually increase to 6.5% by the end of 2024 </strong>as slower hiring rates will continue to cool down a tight labor market
+
+
+</span>
+]
 ```{r, echo=FALSE, fig.align='center', fig.width=10, fig.height=6}
 proj<-highchart() %>%
   hc_chart(type = "line") %>%
