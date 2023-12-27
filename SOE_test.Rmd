@@ -202,14 +202,15 @@ monetary_chart <- highchart() %>%
     }")
   )
 ```
-
-```{r, echo=FALSE}
+.pull-right[
+```{r, echo=FALSE, fig.align='center', fig.width=8, fig.height=6}
 monetary_chart
 ```
+]
 <div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #FE5F55; text-align: center;">
  <span class="small-font"> Economic dashboard</span> 
   <span class="small-font" style="margin-left: 100px;"><strong>Monetary policy</strong></span>
-  <span class="small-font" style="margin-left: 100px;">Standard of Living</span>
+  <span class="small-font" style="margin-left: 100px;">Looking ahead</span>
 </div>
 
 ---
@@ -217,9 +218,11 @@ monetary_chart
 #### The Canadian economy is expected to continueits slowdown through the first half of 2024, while economic activity should improve in the second half of the year.
 .pull-left[
 - <span style="font-size: 22px;"> 
-High interest rates are expected to <strong>dampen business investments </strong> while weaker global demand could reduce exports, causing Canada’s forecasted growth in 2023 and 2024 to be weaker than previously projected
+High interest rates are expected to <strong>dampen business investments </strong> while weaker global demand could reduce exports, causing Canada’s forecasted growth in 2023 and 2024 to be weaker than previously projected.
+
+
 - <span style="font-size: 22px;"> 
-Currently at 5.8% (November 2023), the <strong>unemployment rate is expected to gradually increase to 6.5% by the end of 2024 </strong>as slower hiring rates will continue to cool down a tight labor market
+Currently at 5.8% (November 2023), the <strong>unemployment rate is expected to gradually increase to 6.5% by the end of 2024 </strong>as slower hiring rates will continue to cool down a tight labor market.
 
 
 </span>
@@ -249,41 +252,44 @@ proj<-highchart() %>%
 
 
 ```
-<center>
-```{r, echo=FALSE, fig.align='center', fig.width=10, fig.height=6}
+.pull-right[
+```{r, echo=FALSE, fig.align='center', fig.width=8, fig.height=6}
 proj
 ```
-</center>
+]
+
 <div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #FE5F55; text-align: center;">
  <span class="small-font"> Economic Dashboard</span> 
   <span class="small-font" style="margin-left: 100px;">Monetary policy</span>
   <span class="small-font" style="margin-left: 100px;"><strong>Looking ahead</strong></span>
 </div>
 ---
-class: inverse
+<center>
+<img src = "currenthead.jpg" width = "70%"/>
+</center>
+---
+### Elevated public and private debt levels will dampen opportunities for investment 
 
-
-.left[
-##Current Headwinds
 .pull-left[
-<img src="yukon.jpg" width="90%"/>
-]
-]
+#### Fiscal capacity is constrained
+- <span style="font-size: 17px;"> 
+Current federal debt is about 42 per cent of GDP. The government has pledged to run deficits no larger than 1% of GDP (fiscal anchor).
+```{r, echo=FALSE}
+feddebt <- read_excel("C:/Users/davreuxa/Documents/soe/feddebttogdp.xlsx")
+```
 
+]
 .pull-right[
-- <span style="font-size: 32px;"> 
-WAGE-PRICE SPIRAL RISKS
-</span>
-  
-- <span style="font-size: 32px;">
-PRICE OF INTRANTS
-</span>
+#### Corporate debt has reached record levels
+- <span style="font-size: 17px;"> 
+Interest charges reached $22.9 billion in Q3 2023 while banks are bracing for higher insolvencies (see Annex C).
 
-- <span style="font-size: 32px;">
-CORPORATE DEBT INSOLVENCIES
-</span>
 ]
-
+<div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #A4B9CE; text-align: center;">
+ <span class="small-font"> <strong>Wage-Price Spiral Risks</strong></span> 
+  <span class="small-font" style="margin-left: 100px;">Price of intrants </span>
+  <span class="small-font" style="margin-left: 100px;">Corporate debt and insolvencies</span>
+</div>
 ---
 ###Wages are finally catching up with inflation, adding cost pressure on firms
 
@@ -335,14 +341,14 @@ const <- highchart() %>%
 const
 ```
 ]
-<div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #7A9E9F; text-align: center;">
+<div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #A4B9CE; text-align: center;">
  <span class="small-font"> <strong>Wage-Price Spiral Risks</strong></span> 
   <span class="small-font" style="margin-left: 100px;">Price of intrants </span>
   <span class="small-font" style="margin-left: 100px;">Corporate debt and insolvencies</span>
 </div>
 ---
 ###Price of Intrants
-<div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #7A9E9F; text-align: center;">
+<div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #A4B9CE; text-align: center;">
  <span class="small-font"> Wage-Price Spiral Risks</span> 
   <span class="small-font" style="margin-left: 100px;"><strong>Price of intrants </strong></span>
   <span class="small-font" style="margin-left: 100px;">Corporate debt and insolvencies</span>
@@ -408,9 +414,20 @@ debt1
   <span class="small-font" style="margin-left: 100px;"><strong>Corporate debt and insolvencies</strong></span>
 </div>
 ---
+<center>
+<img src = "currenthead.jpg" width = "80%"/>
+</center>
+---
+
+<div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #7A9E9F; text-align: center;">
+ <span class="small-font"> Economic Dashboard</span> 
+  <span class="small-font" style="margin-left: 100px;"><strong>Sector snapshot</strong></span>
+  <span class="small-font" style="margin-left: 100px;">Standard of Living</span>
+</div>
+
+---
 class: inverse
 
-class: inverse
 
 
 .left[
@@ -532,11 +549,6 @@ sect2
 ```
 </center>
 
-<div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #FE5F55; text-align: center;">
- <span class="small-font"> Economic Dashboard</span> 
-  <span class="small-font" style="margin-left: 100px;"><strong>Sector snapshot</strong></span>
-  <span class="small-font" style="margin-left: 100px;">Standard of Living</span>
-</div>
 
 ---
-
+class: inverse
