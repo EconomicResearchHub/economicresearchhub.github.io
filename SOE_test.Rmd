@@ -601,8 +601,31 @@ lp_chart
 <img src = "blueprint.jpg" width = "60%"/>
 </center>
 ---
+-<span style="font-size: 18px;"> 
+Labour productivity rises through: 
+</span>
+
+ <span style="font-size: 15px;"> 
+1. More structures, machines, and intangible assets <strong>(capital deepening).</strong>
+
+ <span style="font-size: 15px;"> 
+2.More skills <strong>(skills composition of labour force)</strong>.
+
+ <span style="font-size: 15px;"> 
+3.More effective use of the above inputs <strong(total factor productivity)</strong>
+</span>
+-<span style="font-size: 18px;"> 
+Canada’s lower relative labour productivity is driven by weakness in <strong>total factor productivity growth</strong>, which has not improved in decades.   
+
+-<span style="font-size: 18px;"> 
+<strong>Total factor productivity </strong>is a measure of overall effectiveness with which inputs (capital and labour) are used to produce output in an economy. It is a <strong>measure of technological progress and innovation.</strong>
+
+</span>
+---
+.pull-left[
 ###Canada's weak productivity growth requires firms to make better use of physical and human capital
-```{r, echo=FALSE,  include=FALSE, fig.align='center', fig.width=4, fig.height=3}
+]
+```{r, echo=FALSE,  include=FALSE}
 TFP <- read_excel("C:/Users/davreuxa/Documents/soe/TFP.xlsx")
 
 multiplier <- 100
@@ -670,127 +693,85 @@ capital_deepening_chart
 skills_composition_chart
 total_factor_productivity_chart
 ```
-.bottom[
-<div class="row" style="display: flex;">
-<div class="col" style="flex: 10%; padding: 3px;">
-```{r, echo=FALSE,results='asis',fig.width=4, fig.height=3.95}
-capital_deepening_chart
-```
-</div>
-<div class="col"style="flex: 10%; padding: 3px;">
-```{r, echo=FALSE,results='asis',fig.width=4, fig.height=4}
-skills_composition_chart
-```
-</div>
-<div class="col" style="flex: 10%; padding: 3px;">
-```{r,echo=FALSE,results='asis',fig.width=4, fig.height=4}
-total_factor_productivity_chart
-```
-</div>
-</div>
-]
----
-###Canada's weak productivity growth requires firms to make better use of physical and human capital
 
-<style>
-.bottom-right-container {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-}
-
-.chart-container {
-  width: 33%;
-  padding: 5px;
-}
-</style>
-<div class="bottom-right-container">
-  <div class="chart-container">
-```{r,echo=FALSE,results='asis',fig.width=4, fig.height=4}
-# Assuming the chart object is created and named capital_deepening_chart
-capital_deepening_chart
-```
-
-
-  </div>
-  <div class="chart-container">
-```{r,echo=FALSE,results='asis',fig.width=4, fig.height=4}
-# Assuming the chart object is created and named skills_composition_chart
-skills_composition_chart
-```
-
-
-  </div>
-  <div class="chart-container">
-```{r,echo=FALSE,results='asis',fig.width=4, fig.height=4}
-# Assuming the chart object is created and named total_factor_productivity_chart
-total_factor_productivity_chart
-```
-
-
-  </div>
-</div>
----
-.pull-left[
-###Canada's weak productivity growth requires firms to make better use of physical and human capital
-]
-.pull-right[
-<style>
-.chart-container {
-  padding: 5px;
-}
-
-.bottom-right-container {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  display: flex;
-}
-
-.top-chart-container {
-  width: 100%;
-}
-
-.side-chart-container {
-  width: 33%;
-}
-</style>
-<!-- Top Chart Container -->
-<div class="chart-container top-chart-container">
+<div class="charts-container">
+<div class="top-chart">
 ```{r, echo=FALSE,results='asis', fig.width=5, fig.height=4}
 labor_growth_chart
 ```
 </div>
-<!-- Bottom Right Charts Container -->
-<div class="bottom-right-container">
-  <div class="chart-container side-chart-container">
-
-```{r,echo=FALSE,results='asis',fig.width=3.5, fig.height=3.5}
+<div class="bottom-charts">
+<div class="chart">
+```{r,echo=FALSE,results='asis',fig.width=3.5, fig.height=3.}
 # Assuming the chart object is created and named capital_deepening_chart
 capital_deepening_chart
 ```
-
-
-  </div>
-  <div class="chart-container side-chart-container">
-```{r,echo=FALSE,results='asis',fig.width=3.5, fig.height=3.5}
+</div>
+<div class="chart">
+```{r,echo=FALSE,results='asis',fig.width=3.5, fig.height=3.}
 # Assuming the chart object is created and named skills_composition_chart
 skills_composition_chart
 ```
-
-
-  </div>
-  <div class="chart-container">
-```{r,echo=FALSE,results='asis',fig.width=3.5, fig.height=3.5}
+</div>
+<div class="chart">
+```{r,echo=FALSE,results='asis',fig.width=3.5, fig.height=3.}
 # Assuming the chart object is created and named total_factor_productivity_chart
 total_factor_productivity_chart
 ```
+</div>
+
+---
+.pull-left[
+###Canada's weak productivity growth requires firms to make better use of physical and human capital
+
+<ul style="font-size: 20px;"> 
+  <li>
+    Labour productivity rises through:
+    <ul>
+      <li>More structures, machines, and intangible assets <strong>(capital deepening)</strong>.</li>
+      <li>More skills <strong>(skill composition of labour force)</strong>.</li>
+      <li>More effective use of the above inputs <strong>(total factor productivity)</strong>.</li>
+    </ul>
+  </li>
+ </ul>
+ 
+<ul style="font-size: 20px;"> 
+  <li>
+    Canada’s lower relative labour productivity is driven by weakness in <strong>total factor productivity growth</strong>, which has not improved in decades.
+  </li>
+</ul>
+
+<ul style="font-size: 20px;"> 
+  <li>
+    <strong>Total factor productivity</strong> is a measure of overall effectiveness with which inputs (capital and labour) are used to produce output in an economy. It is a <strong>measure of technological progress and innovation.</strong>
+  </li>
+</ul>
 
 
-  </div>
+]
+.pull-right[
+<div class="slide-content">
+<div class="text-container">
+<!-- Replace this with your slide text content -->
+ 
+</div>
+<div class="charts-container">
+```{r,echo=FALSE,results='asis',fig.width=5.5, fig.height=3.}
+# Assuming the chart object is created and named capital_deepening_chart
+capital_deepening_chart
+```
+```{r,echo=FALSE,results='asis',fig.width=5.5, fig.height=3.}
+# Assuming the chart object is created and named skills_composition_chart
+skills_composition_chart
+```
+```{r,echo=FALSE,results='asis',fig.width=5.5, fig.height=3.}
+# Assuming the chart object is created and named total_factor_productivity_chart
+total_factor_productivity_chart
+```
+</div>
 </div>
 ]
+
 ---
 ### Business insolvency rates have surpassed pre-pandemic levels for the vast majority of industries
 
