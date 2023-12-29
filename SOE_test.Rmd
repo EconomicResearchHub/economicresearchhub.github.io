@@ -730,6 +730,22 @@ total_factor_productivity_chart
 </div>
 ]
 ---
+.pull-left[
+### More needs to be done to encourage firms to invest in productivity enhancing assets
+- <span style="font-size: 22px;"> 
+<strong>It is not just an R&D story - Canadian businesses invest proportionally less </strong>in machinery & equipment and other IP products (e.g., software and data).
+
+</span>
+  
+- <span style="font-size: 22px;">
+Most businesses are not R&D performers but can contribute to <strong>productivity growth by investing </strong>in technologies and the knowledge and skills to effectively use them.  
+</span>
+
+- <span style="font-size: 22px;">
+Investing in both machinery and knowledge supports a healthy <strong>innovation ecosystem </strong>– critical for  economic growth, and overall competitiveness. 
+</span>
+
+]
 ```{r, echo=FALSE, include=FALSE}
 IPP <- read_excel("C:/Users/davreuxa/Documents/soe/IPP.xlsx")
 assign_colors <- function(values, country_names, highlight_country, color_default, color_highlight) {
@@ -748,7 +764,6 @@ m_e_colored <- assign_colors(IPP$`M&E`, IPP$Country, "Canada", '#7F7F7F', '#FE5F
 ipp_colored <- assign_colors(IPP$IPP, IPP$Country, "Canada", '#D7D7D7', '#FFB3AF')
 non_res_colored <- assign_colors(IPP$Non_res, IPP$Country, "Canada", '#7F7F7F', '#FE5F55')
 
-# Generate the stacked bar chart for M&E and IPP with highlighted "Canada"
 m_e_chart <- highchart() %>%
   hc_chart(type = "bar") %>%
   hc_title(text = "Machinery & Equipment + Intellectual Property Products") %>%
@@ -762,7 +777,14 @@ m_e_chart <- highchart() %>%
     shared=TRUE
   ) %>%
     hc_add_theme(hc_theme_bloom()) %>%
-  hc_legend(enabled = FALSE)
+  hc_legend(enabled = FALSE)%>%
+  hc_yAxis(
+    maxPadding = 0.1, # Adds 10% padding above the highest data point
+    endOnTick = FALSE, # Prevents the axis from ending exactly on the last tick
+    showLastLabel = TRUE, # Ensures the last label is displayed
+    tickPixelInterval = 50 # Adjust the pixel interval for ticks
+  )
+
 
 # Generate the bar chart for Non-residential Structures with highlighted "Canada"
 non_res_chart <- highchart() %>%
@@ -776,14 +798,20 @@ non_res_chart <- highchart() %>%
     shared=TRUE
   ) %>%
     hc_add_theme(hc_theme_bloom()) %>%
-  hc_legend(enabled = FALSE)
+  hc_legend(enabled = FALSE)%>%
+  hc_yAxis(
+    maxPadding = 0.1, # Adds 10% padding above the highest data point
+    endOnTick = FALSE, # Prevents the axis from ending exactly on the last tick
+    showLastLabel = TRUE, # Ensures the last label is displayed
+    tickPixelInterval = 50 # Adjust the pixel interval for ticks
+  )
 ```
 
 .pull-right[
 <div class="text-container">
 <!-- Your text content goes here -->
 <center>
-Gross fixed capital formation by asset category (percentage of GDP, 2021)
+<strong>Gross fixed capital formation by asset category (percentage of GDP, 2021)</strong>
 </center>
 </div>
 
@@ -796,6 +824,48 @@ non_res_chart
 ```
 
 </div>
+]
+---
+### New sources of productivity growth will be required to adjust for the green transition
+
+
+.pull-right[
+
+```{r, echo=FALSE, include=FALSE}
+green <- read_excel("C:/Users/davreuxa/Documents/soe/green.xlsx")
+
+green_long <- green %>% 
+  pivot_longer(cols = -Date, names_to = "Country", values_to = "Value") %>%
+  mutate(Date = as.character(Date)) # Convert Date to character for plotting
+
+gchart <- highchart() %>%
+  hc_chart(type = "column") %>%
+  hc_title(text = "GDP share of Resource-Dependant Activities, 2000 vs 2019") %>%
+  hc_xAxis(categories = unique(green_long$Country)) %>%
+  hc_yAxis(title = list(text = "%")) %>%
+  hc_add_series(name = "2000", 
+                data = filter(green_long, Date == "2000") %>% 
+                  arrange(Country) %>% 
+                  pull(Value),
+                color = "#AFABAB") %>%
+  hc_add_series(name = "2019", 
+                data = filter(green_long, Date == "2019") %>% 
+                  arrange(Country) %>% 
+                  pull(Value),
+                color = "#A4B9CE") %>%
+  hc_legend(enabled = TRUE)%>%
+  hc_tooltip(
+    pointFormat = '{series.name}: <b>{point.y:.2f}%</b><br/>'
+  ) %>%
+  hc_add_theme(hc_theme_bloom()) 
+
+
+```
+
+```{r, echo=FALSE, fig.align='center', fig.width=7, fig.height=6}
+gchart
+```
+
 ]
 ---
 ### Business insolvency rates have surpassed pre-pandemic levels for the vast majority of industries
