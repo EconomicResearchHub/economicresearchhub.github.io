@@ -622,9 +622,7 @@ Canada’s lower relative labour productivity is driven by weakness in <strong>t
 
 </span>
 ---
-.pull-left[
-###Canada's weak productivity growth requires firms to make better use of physical and human capital
-]
+
 ```{r, echo=FALSE,  include=FALSE}
 TFP <- read_excel("C:/Users/davreuxa/Documents/soe/TFP.xlsx")
 
@@ -672,6 +670,7 @@ skills_composition_chart <- highchart() %>%
     pointFormat = '{series.name}: <b>{point.y:.1f}%</b><br/>',
     shared = TRUE
   ) %>%
+  hc_legend(enabled = FALSE)%>%
   hc_colors(colors = c("#FE5F55", "#A4B9CE"))
   
 total_factor_productivity_chart <- highchart() %>%
@@ -685,6 +684,7 @@ total_factor_productivity_chart <- highchart() %>%
     pointFormat = '{series.name}: <b>{point.y:.1f}%</b><br/>',
     shared = TRUE
   ) %>%
+  hc_legend(enabled = FALSE)%>%
   hc_colors(colors = c("#FE5F55", "#A4B9CE"))
   
 
@@ -694,33 +694,6 @@ skills_composition_chart
 total_factor_productivity_chart
 ```
 
-<div class="charts-container">
-<div class="top-chart">
-```{r, echo=FALSE,results='asis', fig.width=5, fig.height=4}
-labor_growth_chart
-```
-</div>
-<div class="bottom-charts">
-<div class="chart">
-```{r,echo=FALSE,results='asis',fig.width=3.5, fig.height=3.}
-# Assuming the chart object is created and named capital_deepening_chart
-capital_deepening_chart
-```
-</div>
-<div class="chart">
-```{r,echo=FALSE,results='asis',fig.width=3.5, fig.height=3.}
-# Assuming the chart object is created and named skills_composition_chart
-skills_composition_chart
-```
-</div>
-<div class="chart">
-```{r,echo=FALSE,results='asis',fig.width=3.5, fig.height=3.}
-# Assuming the chart object is created and named total_factor_productivity_chart
-total_factor_productivity_chart
-```
-</div>
-
----
 .pull-left[
 ###Canada's weak productivity growth requires firms to make better use of physical and human capital
 
@@ -753,18 +726,20 @@ total_factor_productivity_chart
 <div class="slide-content">
 <div class="text-container">
 <!-- Replace this with your slide text content -->
- 
+<center>
+ Canada-U.S. Decomposition of Labour Productivity Growth, 1987-2021
+</center>
 </div>
 <div class="charts-container">
-```{r,echo=FALSE,results='asis',fig.width=5.5, fig.height=3.}
+```{r,echo=FALSE,results='asis',fig.width=6, fig.height=2.5}
 # Assuming the chart object is created and named capital_deepening_chart
 capital_deepening_chart
 ```
-```{r,echo=FALSE,results='asis',fig.width=5.5, fig.height=3.}
+```{r,echo=FALSE,results='asis',fig.width=6, fig.height=2.5}
 # Assuming the chart object is created and named skills_composition_chart
 skills_composition_chart
 ```
-```{r,echo=FALSE,results='asis',fig.width=5.5, fig.height=3.}
+```{r,echo=FALSE,results='asis',fig.width=6, fig.height=3}
 # Assuming the chart object is created and named total_factor_productivity_chart
 total_factor_productivity_chart
 ```
