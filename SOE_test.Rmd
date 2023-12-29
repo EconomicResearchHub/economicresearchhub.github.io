@@ -601,27 +601,6 @@ lp_chart
 <img src = "blueprint.jpg" width = "60%"/>
 </center>
 ---
--<span style="font-size: 18px;"> 
-Labour productivity rises through: 
-</span>
-
- <span style="font-size: 15px;"> 
-1. More structures, machines, and intangible assets <strong>(capital deepening).</strong>
-
- <span style="font-size: 15px;"> 
-2.More skills <strong>(skills composition of labour force)</strong>.
-
- <span style="font-size: 15px;"> 
-3.More effective use of the above inputs <strong(total factor productivity)</strong>
-</span>
--<span style="font-size: 18px;"> 
-Canada’s lower relative labour productivity is driven by weakness in <strong>total factor productivity growth</strong>, which has not improved in decades.   
-
--<span style="font-size: 18px;"> 
-<strong>Total factor productivity </strong>is a measure of overall effectiveness with which inputs (capital and labour) are used to produce output in an economy. It is a <strong>measure of technological progress and innovation.</strong>
-
-</span>
----
 
 ```{r, echo=FALSE,  include=FALSE}
 TFP <- read_excel("C:/Users/davreuxa/Documents/soe/TFP.xlsx")
@@ -685,6 +664,9 @@ total_factor_productivity_chart <- highchart() %>%
     shared = TRUE
   ) %>%
   hc_legend(enabled = FALSE)%>%
+  hc_caption(
+    text = "Source: Canada: Statistics Canada Table 36-10-0208-01; U.S.: U.S. Bureau of Labour Statistics, ISED calculations."
+  ) %>%
   hc_colors(colors = c("#FE5F55", "#A4B9CE"))
   
 
@@ -730,8 +712,9 @@ total_factor_productivity_chart
  Canada-U.S. Decomposition of Labour Productivity Growth, 1987-2021
 </center>
 </div>
+
 <div class="charts-container">
-```{r,echo=FALSE,results='asis',fig.width=6, fig.height=2.5}
+```{r,echo=FALSE,results='asis',fig.width=6, fig.height=2.75}
 # Assuming the chart object is created and named capital_deepening_chart
 capital_deepening_chart
 ```
@@ -746,7 +729,74 @@ total_factor_productivity_chart
 </div>
 </div>
 ]
+---
+```{r, echo=FALSE, include=FALSE}
+IPP <- read_excel("C:/Users/davreuxa/Documents/soe/IPP.xlsx")
+assign_colors <- function(values, country_names, highlight_country, color_default, color_highlight) {
+  colored_values <- lapply(seq_along(values), function(i) {
+    if (country_names[i] == highlight_country) {
+      list(y = values[i], color = color_highlight)
+    } else {
+      list(y = values[i], color = color_default)
+    }
+  })
+  return(colored_values)
+}
 
+# Prepare the data for "Canada" to be highlighted
+m_e_colored <- assign_colors(IPP$`M&E`, IPP$Country, "Canada", '#7F7F7F', '#FE5F55')
+ipp_colored <- assign_colors(IPP$IPP, IPP$Country, "Canada", '#D7D7D7', '#FFB3AF')
+non_res_colored <- assign_colors(IPP$Non_res, IPP$Country, "Canada", '#7F7F7F', '#FE5F55')
+
+# Generate the stacked bar chart for M&E and IPP with highlighted "Canada"
+m_e_chart <- highchart() %>%
+  hc_chart(type = "bar") %>%
+  hc_title(text = "Machinery & Equipment + Intellectual Property Products") %>%
+  hc_plotOptions(series = list(stacking = "normal")) %>%
+  hc_add_series(name = "M&E", data = m_e_colored) %>%
+  hc_add_series(name = "IPP", data = ipp_colored) %>%
+  hc_xAxis(categories = IPP$Country) %>%
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_tooltip(
+    pointFormat = '{series.name}: <b>{point.y:.2f}%</b><br/>',
+    shared=TRUE
+  ) %>%
+    hc_add_theme(hc_theme_bloom()) %>%
+  hc_legend(enabled = FALSE)
+
+# Generate the bar chart for Non-residential Structures with highlighted "Canada"
+non_res_chart <- highchart() %>%
+  hc_chart(type = "bar") %>%
+    hc_title(text = "Non-residential Structures") %>%
+  hc_add_series(name = "Non-residential Structures", data = non_res_colored) %>%
+  hc_xAxis(categories = IPP$Country) %>%
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_tooltip(
+    pointFormat = '{series.name}: <b>{point.y:.2f}%</b><br/>',
+    shared=TRUE
+  ) %>%
+    hc_add_theme(hc_theme_bloom()) %>%
+  hc_legend(enabled = FALSE)
+```
+
+.pull-right[
+<div class="text-container">
+<!-- Your text content goes here -->
+<center>
+Gross fixed capital formation by asset category (percentage of GDP, 2021)
+</center>
+</div>
+
+<div class="charts-container">
+```{r,echo=FALSE,results='asis',fig.width=6, fig.height=4.25}
+m_e_chart
+```
+```{r,echo=FALSE,results='asis',fig.width=6, fig.height=4.25}
+non_res_chart
+```
+
+</div>
+]
 ---
 ### Business insolvency rates have surpassed pre-pandemic levels for the vast majority of industries
 
