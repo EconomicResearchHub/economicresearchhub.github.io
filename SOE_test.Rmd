@@ -434,7 +434,7 @@ housecost_chart
 ```
 ]
 ---
-## Inflationary pressures might be easing
+### Inflationary pressures might be easing
 #### Recent inflation numbers are the lastest sign of a cooling economy 
 .pull-left[
 - <span style="font-size: 22px;"> 
@@ -493,13 +493,16 @@ foodinf_chart
 ###Wages are finally catching up with inflation, adding cost pressure on firms
 
 .pull-left[
--Workers have seen their average wages rise at the same rate as inflation in 2023 (+3.0% up to September)
+- <span style="font-size: 22px;"> 
+Workers have seen their average wages rise at the same rate as inflation in 2023 (+3.0% up to September)
 
--From the firm’s perspective, the cost of labor has been rising faster than the increase in price of the products sold for the last four quarters
+- <span style="font-size: 22px;"> 
+From the firm’s perspective, the cost of labor has been rising faster than the increase in price of the products sold for the last four quarters
 
--On a sectoral basis, wages in the service-producing industries have been growing faster than inflation in 2023, resulting in positive real wage growth (+0.6%), while those in the goods-producing industries are trailing behind (-0.8%) (up to September)
+- <span style="font-size: 22px;"> 
+On a sectoral basis, wages in the service-producing industries have been growing faster than inflation in 2023, resulting in positive real wage growth (+0.6%), while those in the goods-producing industries are trailing behind (-0.8%) (up to September)
 
-
+</span>
 ]
 ```{r, echo=FALSE, fig.align='center', fig.width=10, fig.height=6, warning=FALSE}
 cons <- read_excel("C:/Users/davreuxa/Documents/soe/construction.xlsx")
@@ -512,18 +515,18 @@ const <- highchart() %>%
   hc_add_series(
     name = "Change in the cost of labor",
     data = cons$`Change in the cost of labor`,
-    dataLabels = list(enabled = TRUE, format = '{point.y:.2f}%')
+    dataLabels = list(enabled = FALSE, format = '{point.y:.2f}%')
   ) %>%
     hc_add_series(
     name = "Change in the price of goods sold",
     data = cons$`Change in the price of goods sold`,
-    dataLabels = list(enabled = TRUE, format = '{point.y:.2f}%')
+    dataLabels = list(enabled = FALSE, format = '{point.y:.2f}%')
   ) %>%
   hc_yAxis(
     title = list(text = "%")
   ) %>%
   hc_caption(
-    text = "Source: StatsCan Table 36-10-0104-01"
+    text = "Source: StatsCan Table 36-10-0206-01 Indexes of business sector labour productivity, unit labour cost and related measures, seasonally adjusted"
   ) %>%
   hc_add_theme(hc_theme_bloom()) %>%
   hc_tooltip(
@@ -531,7 +534,7 @@ const <- highchart() %>%
     shared = TRUE
   )%>%
   hc_title(text = "Quarterly change in the unit labor cost, and the implicit price deflator, percentage")%>%
-  hc_colors(colors = c( "#7a9e9f","#b8d8d8"))
+  hc_colors(colors = c("grey", "#A4B9CE"))
 
 ```
 
@@ -546,12 +549,248 @@ const
   <span class="small-font" style="margin-left: 100px;">Corporate debt and insolvencies</span>
 </div>
 ---
-###Price of Intrants
-<div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #A4B9CE; text-align: center;">
- <span class="small-font"> Wage-Price Spiral Risks</span> 
-  <span class="small-font" style="margin-left: 100px;"><strong>Price of intrants </strong></span>
-  <span class="small-font" style="margin-left: 100px;">Corporate debt and insolvencies</span>
+###Tackling weak productivity growth is critical
+#### Canada’s productivity has dipped below pre-pandemic levels while widening the gap with the US
+.pull-left[
+- <span style="font-size: 22px;"> 
+Wage increases would be <strong>non-inflationary with higher productivity </strong> but that is not the case in Canada. 
+
+- <span style="font-size: 22px;"> 
+<strong>Canada needs to alter its current productivity course</strong> or be destined to enter an era of reduced consumption and declining living standards.
+
+- <span style="font-size: 22px;"> 
+Over the past four years, <strong>output per hour in the business sector has dropped at a 0.2% annual rate</strong>, the first negative reading on record over such a sustained period, whereas it has increased by 1.4% in the US (see chart). 
+</span>
+]
+.pull-right[
+```{r, echo=FALSE, fig.align='center', fig.width=7, fig.height=6}
+LP <- read_excel("C:/Users/davreuxa/Documents/soe/LP.xlsx")
+
+lp_chart<- highchart() %>%
+  hc_chart(type = "line", zoomType = "xy") %>%
+  hc_xAxis(categories = LP$Quarter) %>%
+  hc_add_series(
+    name = "Canada",
+    data = LP$Canada,
+    dataLabels = list(enabled = FALSE, format = '{point.y:.2f}%')
+  ) %>%
+  hc_add_series(
+    name = "US",
+    data = LP$US,
+    dataLabels = list(enabled = FALSE, format = '{point.y:.2f}%')
+  ) %>%
+  hc_yAxis(
+    title = list(text = "Year-over-year inflation, monthly(%)")
+  ) %>%
+  hc_caption(
+    text = "Source:Statistics Canada, US Federal Reserve Economic Data"
+  ) %>%
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_tooltip(
+    pointFormat = '{series.name}: <b>{point.y:.2f}%</b><br/>',
+    shared = TRUE
+  ) %>%
+  hc_title(text = "Labour productivity in the business sector, Canada vs. US, annualized 4-year change (%)") %>%
+  hc_colors(colors = c("#FE5F55", "#A4B9CE"))
+
+lp_chart
+```
+]
+---
+<center>
+<img src = "blueprint.jpg" width = "60%"/>
+</center>
+---
+###Canada's weak productivity growth requires firms to make better use of physical and human capital
+```{r, echo=FALSE,  include=FALSE, fig.align='center', fig.width=4, fig.height=3}
+TFP <- read_excel("C:/Users/davreuxa/Documents/soe/TFP.xlsx")
+
+multiplier <- 100
+
+# Apply the multiplier to all columns except 'Date'
+TFP[, -which(names(TFP) == "Date")] <- TFP[, -which(names(TFP) == "Date")] * multiplier
+
+
+labor_growth_chart <- highchart() %>%
+  hc_chart(type = "column") %>%
+  hc_title(text = "Labour Productivity Growth") %>%
+  hc_xAxis(categories = TFP$Date) %>%
+  hc_add_series(name = "Canada", data = TFP$LP_Can)%>%
+  hc_add_series(name = "USA", data = TFP$LP_US) %>%
+   hc_add_theme(hc_theme_bloom()) %>%
+  hc_tooltip(
+    pointFormat = '{series.name}: <b>{point.y:.1f}%</b><br/>',
+    shared = TRUE
+  ) %>%
+  hc_colors(colors = c("#FE5F55", "#A4B9CE"))
+
+
+capital_deepening_chart <- highchart() %>%
+  hc_chart(type = "column") %>%
+  hc_title(text = "Capital Deepening") %>%
+  hc_xAxis(categories = TFP$Date) %>%
+  hc_add_series(name = "Canada", data = TFP$CD_Can)%>%
+  hc_add_series(name = "USA", data = TFP$CD_US) %>%
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_tooltip(
+    pointFormat = '{series.name}: <b>{point.y:.1f}%</b><br/>',
+    shared = TRUE
+  ) %>%
+  hc_colors(colors = c("#FE5F55", "#A4B9CE"))
+  
+skills_composition_chart <- highchart() %>%
+  hc_chart(type = "column") %>%
+  hc_title(text = "Skills Composition") %>%
+  hc_xAxis(categories = TFP$Date) %>%
+  hc_add_series(name = "Canada", data = TFP$SC_Can) %>%
+  hc_add_series(name = "USA", data = TFP$SC_US) %>%
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_tooltip(
+    pointFormat = '{series.name}: <b>{point.y:.1f}%</b><br/>',
+    shared = TRUE
+  ) %>%
+  hc_colors(colors = c("#FE5F55", "#A4B9CE"))
+  
+total_factor_productivity_chart <- highchart() %>%
+  hc_chart(type = "column") %>%
+  hc_title(text = "Total Factor Productivity") %>%
+  hc_xAxis(categories = TFP$Date) %>%
+  hc_add_series(name = "Canada", data = TFP$TFP_Can)%>%
+  hc_add_series(name = "USA", data = TFP$TFP_US) %>%
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_tooltip(
+    pointFormat = '{series.name}: <b>{point.y:.1f}%</b><br/>',
+    shared = TRUE
+  ) %>%
+  hc_colors(colors = c("#FE5F55", "#A4B9CE"))
+  
+
+labor_growth_chart
+capital_deepening_chart
+skills_composition_chart
+total_factor_productivity_chart
+```
+.bottom[
+<div class="row" style="display: flex;">
+<div class="col" style="flex: 10%; padding: 3px;">
+```{r, echo=FALSE,results='asis',fig.width=4, fig.height=3.95}
+capital_deepening_chart
+```
 </div>
+<div class="col"style="flex: 10%; padding: 3px;">
+```{r, echo=FALSE,results='asis',fig.width=4, fig.height=4}
+skills_composition_chart
+```
+</div>
+<div class="col" style="flex: 10%; padding: 3px;">
+```{r,echo=FALSE,results='asis',fig.width=4, fig.height=4}
+total_factor_productivity_chart
+```
+</div>
+</div>
+]
+---
+###Canada's weak productivity growth requires firms to make better use of physical and human capital
+
+<style>
+.bottom-right-container {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+}
+
+.chart-container {
+  width: 33%;
+  padding: 5px;
+}
+</style>
+<div class="bottom-right-container">
+  <div class="chart-container">
+```{r,echo=FALSE,results='asis',fig.width=4, fig.height=4}
+# Assuming the chart object is created and named capital_deepening_chart
+capital_deepening_chart
+```
+
+
+  </div>
+  <div class="chart-container">
+```{r,echo=FALSE,results='asis',fig.width=4, fig.height=4}
+# Assuming the chart object is created and named skills_composition_chart
+skills_composition_chart
+```
+
+
+  </div>
+  <div class="chart-container">
+```{r,echo=FALSE,results='asis',fig.width=4, fig.height=4}
+# Assuming the chart object is created and named total_factor_productivity_chart
+total_factor_productivity_chart
+```
+
+
+  </div>
+</div>
+---
+.pull-left[
+###Canada's weak productivity growth requires firms to make better use of physical and human capital
+]
+.pull-right[
+<style>
+.chart-container {
+  padding: 5px;
+}
+
+.bottom-right-container {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  display: flex;
+}
+
+.top-chart-container {
+  width: 100%;
+}
+
+.side-chart-container {
+  width: 33%;
+}
+</style>
+<!-- Top Chart Container -->
+<div class="chart-container top-chart-container">
+```{r, echo=FALSE,results='asis', fig.width=5, fig.height=4}
+labor_growth_chart
+```
+</div>
+<!-- Bottom Right Charts Container -->
+<div class="bottom-right-container">
+  <div class="chart-container side-chart-container">
+
+```{r,echo=FALSE,results='asis',fig.width=3.5, fig.height=3.5}
+# Assuming the chart object is created and named capital_deepening_chart
+capital_deepening_chart
+```
+
+
+  </div>
+  <div class="chart-container side-chart-container">
+```{r,echo=FALSE,results='asis',fig.width=3.5, fig.height=3.5}
+# Assuming the chart object is created and named skills_composition_chart
+skills_composition_chart
+```
+
+
+  </div>
+  <div class="chart-container">
+```{r,echo=FALSE,results='asis',fig.width=3.5, fig.height=3.5}
+# Assuming the chart object is created and named total_factor_productivity_chart
+total_factor_productivity_chart
+```
+
+
+  </div>
+</div>
+]
 ---
 ### Business insolvency rates have surpassed pre-pandemic levels for the vast majority of industries
 
@@ -613,10 +852,7 @@ debt1
   <span class="small-font" style="margin-left: 100px;"><strong>Corporate debt and insolvencies</strong></span>
 </div>
 ---
-<center>
-<img src = "currenthead.jpg" width = "80%"/>
-</center>
----
+
 
 <div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #7A9E9F; text-align: center;">
  <span class="small-font"> Economic Dashboard</span> 
