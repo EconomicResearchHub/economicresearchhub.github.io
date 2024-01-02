@@ -709,7 +709,7 @@ total_factor_productivity_chart
 <div class="text-container">
 <!-- Replace this with your slide text content -->
 <center>
- Canada-U.S. Decomposition of Labour Productivity Growth, 1987-2021
+ <strong>Canada-U.S. Decomposition of Labour Productivity Growth, 1987-2021</strong>
 </center>
 </div>
 
@@ -827,9 +827,22 @@ non_res_chart
 ]
 ---
 ### New sources of productivity growth will be required to adjust for the green transition
+.pull-left[
+- <span style="font-size: 22px;"> 
+The <span>green transition </span>will create challenges and opportunities for productivity growth. 
 
+- <span style="font-size: 22px;"> 
+In addition to oil and gas, the Canadian economy is <strong>heavily concentrated </strong>within resource-dependent industries. 
 
-.pull-right[
+- <span style="font-size: 22px;"> 
+Among G7 countries, Canada has the highest value added share of resource-dependent industries (see chart).
+
+- <span style="font-size: 22px;"> 
+Economic concentration in resource-dependant industries creates <strong>less investment opportunities in more complex manufacturing and services </strong>(see Annex E).
+
+</span>
+]
+
 
 ```{r, echo=FALSE, include=FALSE}
 green <- read_excel("C:/Users/davreuxa/Documents/soe/green.xlsx")
@@ -855,17 +868,146 @@ gchart <- highchart() %>%
                 color = "#A4B9CE") %>%
   hc_legend(enabled = TRUE)%>%
   hc_tooltip(
-    pointFormat = '{series.name}: <b>{point.y:.2f}%</b><br/>'
+    pointFormat = '{series.name}: <b>{point.y:.2f}%</b><br/>',
+    shared=TRUE
   ) %>%
-  hc_add_theme(hc_theme_bloom()) 
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_subtitle(text = "Source: OECD.") 
+
 
 
 ```
-
+.pull-right[
 ```{r, echo=FALSE, fig.align='center', fig.width=7, fig.height=6}
 gchart
 ```
+]
 
+---
+```{r,echo=FALSE, include=FALSE}
+data <- tibble(
+  category = c('Labour Productivity', 'Revenue Growth', 'Employment Growth'),
+  cleantech = c(14300, 13.3, 6.5),
+  other = c(13500, 7.2, 2.4)
+)
+
+# Labour Productivity Chart
+lp_chart <- highchart() %>%
+  hc_add_series(name = "Clean-tech Support", data = list(list(name = data$category[1], y = data$cleantech[1])),
+                type = 'bar', color = "#CA6F07") %>%
+  hc_add_series(name = "Other Innovation Support", data = list(list(name = data$category[1], y = data$other[1])),
+                type = 'bar', color = "#FBC78D") %>%
+  hc_title(text = "Labour Productivity") %>%
+  hc_xAxis(categories = c(" ")) %>%
+  hc_yAxis(title = list(text = "USD, Median 3 year change (2018-21)"))%>%
+  hc_legend(enabled = TRUE)%>%
+    hc_add_theme(hc_theme_bloom()) %>%
+    hc_yAxis(
+    maxPadding = 0.1, # Adds 10% padding above the highest data point
+    endOnTick = FALSE, # Prevents the axis from ending exactly on the last tick
+    showLastLabel = TRUE, # Ensures the last label is displayed
+    tickPixelInterval = 50 # Adjust the pixel interval for ticks
+  )
+
+
+           
+# Revenue Growth Chart
+
+rg_chart <- highchart() %>%
+  hc_chart(type = 'bar') %>%
+  hc_title(text = "Revenue Growth") %>%
+  hc_xAxis(categories = c(" ")) %>%
+  hc_yAxis(title = list(text = "Percentage, Median 3 year change (2018-21)")) %>%
+  hc_add_series(name = "Clean-tech Support", data = c(13.3)) %>%
+  hc_add_series(name = "Other Innovation Support", data = c(7.2)) %>%
+  hc_plotOptions(
+    series = list(
+      dataLabels = list(enabled = FALSE)
+    )
+  ) %>%
+  hc_legend(enabled = FALSE)%>%
+    hc_add_theme(hc_theme_bloom())%>%
+  hc_colors(colors = c("#AFABAB", "#A4B9CE"))%>%
+    hc_yAxis(
+    maxPadding = 0.1, # Adds 10% padding above the highest data point
+    endOnTick = FALSE, # Prevents the axis from ending exactly on the last tick
+    showLastLabel = TRUE, # Ensures the last label is displayed
+    tickPixelInterval = 50 # Adjust the pixel interval for ticks
+  )
+
+
+# Employment Growth Chart
+eg_chart <- highchart() %>%
+  hc_add_series(name = "Clean-tech Support", data = list(list(name = data$category[3], y = data$cleantech[3])),
+                type = 'bar', color = "#263E5A") %>%
+  hc_add_series(name = "Other Innovation Support", data = list(list(name = data$category[3], y = data$other[3])),
+                type = 'bar', color = "#527FB6") %>%
+  hc_title(text = "Employment Growth") %>%
+  hc_xAxis(categories = c(" ")) %>%
+  hc_yAxis(title = list(text = "Percentage, Median 3 year change (2018-21)"))%>%
+   hc_plotOptions(
+    series = list(
+      dataLabels = list(enabled = FALSE)
+    )
+  )%>%
+  hc_add_theme(hc_theme_bloom()) %>%
+    hc_legend(enabled = FALSE)%>%
+    hc_yAxis(
+    maxPadding = 0.1, # Adds 10% padding above the highest data point
+    endOnTick = FALSE, # Prevents the axis from ending exactly on the last tick
+    showLastLabel = TRUE, # Ensures the last label is displayed
+    tickPixelInterval = 50 # Adjust the pixel interval for ticks
+  )%>%
+  hc_caption(
+    text = "Source: Carta M., and Demers, F. (2023) Analysis on Federal Business Innovation and Growth Support to Clean Technology, 2016-2020."
+  ) 
+
+
+```
+
+.pull-left[
+### Investments in clean-tech can unlock new productivity opportunities
+<ul style="font-size: 20px;"> 
+  <li>
+The Porter Hypothesis posits that well-formulated <strong>environmental policies can spur innovation</strong>, which can in turn stimulate productivity.
+  </li>
+ </ul>
+ 
+<ul style="font-size: 20px;"> 
+  <li>
+There is emerging evidence in Canada that the <strong>environmental and clean technology sector</strong> is generating above-average productivity returns. 
+  </li>
+</ul>
+
+<ul style="font-size: 20px;"> 
+  <li>
+A recent study finds that—relative to other innovation support beneficiaries—businesses getting clean-tech support: 
+    <ul>
+      <li>had more educated workforces;</li>
+      <li>faster labour productivity growth;</li>
+      <li>faster revenue growth, and;</li>
+      <li>faster employment growth compared to businesses receiving other innovation support programs. </li>
+    </ul>
+  </li>
+</ul>
+]
+
+.pull-right[
+<div class="text-container">
+<!-- Your text content goes here -->
+</div>
+
+<div class="charts-container">
+```{r,echo=FALSE,results='asis',fig.width=6, fig.height=3.05}
+lp_chart
+```
+```{r,echo=FALSE,results='asis',fig.width=6, fig.height=3.05}
+rg_chart
+```
+```{r,echo=FALSE,results='asis',fig.width=6, fig.height=3.05}
+eg_chart
+```
+</div>
 ]
 ---
 ### Business insolvency rates have surpassed pre-pandemic levels for the vast majority of industries
