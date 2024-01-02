@@ -1010,113 +1010,188 @@ eg_chart
 </div>
 ]
 ---
-### Business insolvency rates have surpassed pre-pandemic levels for the vast majority of industries
-
+### There is no green transition without critical minerals
 .pull-left[
--Non-financial corporations continue to borrow more, increasing their total debt by **1.5% in Q3 2023** and their interest expenses are rapidly increasing, reaching their highest recorded value of $22.8 billion
+- <span style="font-size: 22px;"> 
+Minerals such as copper, nickel, lithium, graphite and cobalt are the building blocks of renewable energy projects and electric vehicles. 
 
+- <span style="font-size: 22px;"> 
+According to the World Bank, the current <strong>global production capacity of key minerals will need to increase by 500% by 2050 </strong>to meet the demands of the clean-energy transition.
 
--As of August 2023, most industries had a higher business insolvency rate compared to pre-pandemic, with the notable exception of information and cultural industries and construction
+- <span style="font-size: 22px;"> 
+The current economic slowdown is creating major <strong>obstacles for critical mineral exploration, as less established prospectors, miners and exploration companies </strong>are particularly vulnerable to the whims of the market and struggle to raise funds. 
 
-
--Tourism-related industries, energy and manufacturing have the highest insolvency rates and are trending up
-
-
-
+</span>
 ]
-```{r, echo=FALSE, fig.align='center', fig.width=10, fig.height=6, warning=FALSE}
-debt <- read_excel("C:/Users/davreuxa/Documents/soe/debt.xlsx")
+```{r,echo=FALSE, include=FALSE}
+tsx <- read_excel("C:/Users/davreuxa/Documents/soe/tsx.xlsx")
 
 
-
-debt1 <- highchart() %>%
-  hc_chart(type = "bar", zoomType = "xy") %>%
-  hc_xAxis(categories = debt$`Industry`) %>%
-  hc_add_series(
-    name = "Jan-Aug2023",
-    data = debt$`Jan-Aug 2023`
-  ) %>%
-    hc_add_series(
-    name = "Jan-Aug2019",
-    data = debt$`Jan-Aug 2019`
-  ) %>%
-  hc_yAxis(
-    title = list(text = "%")
-  ) %>%
-  hc_caption(
-    text = "Source: StatsCan Table 36-10-0104-01"
-  ) %>%
+tsx_graph <-highchart() %>%
+  hc_chart(type = "line") %>%
+  hc_title(text = "Equity Issuance on TSX Venture exchange (metals, and mining sector)") %>%
+  hc_xAxis(categories = tsx$Year)%>%
+  hc_yAxis(title = list(text = "$ billions")) %>%
+  hc_add_series(name = "TSX", data = tsx$tsx) %>%
+  hc_legend(enabled = FALSE) %>%
+  hc_plotOptions(series = list(marker = list(enabled = TRUE))) %>%
+  hc_tooltip(shared = FALSE, crosshairs = TRUE)%>%
+  hc_colors(colors = c("grey")) %>%
   hc_add_theme(hc_theme_bloom()) %>%
-  hc_tooltip(
-    pointFormat = '{series.name}: <b>{point.y:.2f}%</b><br/>',
-    shared = TRUE
-  )%>%
-  hc_title(text = "Quarterly change in the unit labor cost, and the implicit price deflator, percentage")%>%
-  hc_colors(colors = c( "#7a9e9f","#b8d8d8"))
-
+  hc_caption(
+    text = "Source: S&P Global Market Intelligence"
+  ) 
+  #hc_subtitle(text="Junior miner's financing remains highly volatile")
 
 ```
-
 .pull-right[
-```{r, echo=FALSE, warning=FALSE}
-debt1
+```{r, echo=FALSE, fig.align='center', fig.width=7, fig.height=6}
+tsx_graph
 ```
-
 ]
-
-<div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #7A9E9F; text-align: center;">
- <span class="small-font"> Wage-Price Spiral Risks</span> 
-  <span class="small-font" style="margin-left: 100px;">Price of intrants </span>
-  <span class="small-font" style="margin-left: 100px;"><strong>Corporate debt and insolvencies</strong></span>
-</div>
 ---
-
-
-<div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #7A9E9F; text-align: center;">
- <span class="small-font"> Economic Dashboard</span> 
-  <span class="small-font" style="margin-left: 100px;"><strong>Sector snapshot</strong></span>
-  <span class="small-font" style="margin-left: 100px;">Standard of Living</span>
-</div>
-
----
-class: inverse
-
-
-
-.left[
-##A Policy Agenda
+###The shift towards electric vehicles requires urgent action to build out the supply chain
+#### Canada possesses critical minerals but lacks processing capacity, hampering productivity.
 .pull-left[
-<img src="vic.jpg" width="100%"/>
+- <span style="font-size: 22px;"> 
+Canadian sales of <strong>EVs jumped by 30% in Q2 2023 </strong>compared to the previous quarter (see chart).
+
+- <span style="font-size: 22px;"> 
+Since 2020, Canada has secured more than <strong>$34 billion in investment in the batteries and automotive supply chain.</strong>
+
+- <span style="font-size: 22px;"> 
+However, the domestic EV supply chain is still lagging in its <strong>capacity to process the raw materials going into the battery cells.</strong>
+
+- <span style="font-size: 22px;"> 
+The US Inflation Reduction Act and China’s dominant position in critical mineral processing (IMF) puts further <strong>pressure on Canada’s capability to secure its own supply chain in EV batteries.</strong>
+
+</span>
 ]
-]
+```{r, echo=FALSE, include=FALSE}
+ev <- read_excel("C:/Users/davreuxa/Documents/soe/ev.xlsx")
+
+
+ev_chart <- highchart() %>%
+  hc_chart(type = "column") %>%
+  hc_title(text = "Electric Vehicle Sales") %>%
+  hc_xAxis(categories = ev$quarter) %>%
+  hc_yAxis_multiples(
+    list(title = list(text = "Number of Vehicles (thousands)")),
+    list(title = list(text = "Share of Sales (%)"), opposite = TRUE)
+  ) %>%
+  hc_add_series(name = "Battery electric", data = ev$battery_electric, type = "column", yAxis = 0,
+                tooltip = list(valueDecimals = 2, valueSuffix = 'k')) %>%
+  hc_add_series(name = "Plug-in hybrid electric", data = ev$plugin_hybrid, type = "column", yAxis = 0,
+                tooltip = list(valueDecimals = 2, valueSuffix = 'k')) %>%
+  hc_add_series(name = "Share of Sales", data = ev$share_of_sales, type = "line", yAxis = 1, marker = list(enabled = TRUE),
+                tooltip = list(valueDecimals = 2, valueSuffix = '%')) %>%
+  hc_plotOptions(column = list(stacking = 'normal')) %>%
+  hc_legend(enabled = TRUE) %>%
+  hc_credits(enabled = TRUE)%>%
+  hc_colors(colors = c("#A4B9CE","#AFABAB", "grey"  )) %>%
+  hc_add_theme(hc_theme_bloom()) %>%
+    hc_tooltip(shared = TRUE, crosshairs = TRUE)
+
+
+```
 
 .pull-right[
-- <span style="font-size: 32px;"> 
-BERD
-</span>
-  
-- <span style="font-size: 32px;">
-REGIONAL PRODUCTIVITY
-</span>
 
-- <span style="font-size: 32px;">
-TRADE RESTRICTIONS 
-</span>
-
-- <span style="font-size: 32px;">
-LAG IN CONSTRUCTION
-</span>
-
-- <span style="font-size: 32px;">
-INVESTMENTS IN BATTERIES
-</span>
-
-- <span style="font-size: 32px;">
-CRITICAL MINERALS
-</span>
+```{r,echo=FALSE, fig.align='center', fig.width=7, fig.height=6}
+ev_chart
+```
 ]
 
 ---
+### Policies should continue to work with firms along their digitization journey
+.pull-left[
+- <span style="font-size: 22px;"> 
+Digital-intensive sectors, associated with significant <strong>productivity gains, </strong>accounted for 6% of Canada’s GDP in 2020, lagging most G7 peers (see chart).
+
+- <span style="font-size: 22px;"> 
+<strong>SMEs continue to lag larger firms in foundational technologies,</strong> such as e-commerce and social media, thus leaving money on the table in an increasingly digital market. <strong>Limited access to high-speed internet, skills shortages, and corporate giants </strong>are a few of the main barriers prohibiting SME firms from digitizing.
+
+- <span style="font-size: 22px;"> 
+Canada’s skilled workforce and early investment in AI technologies can facilitate a better integration of digital tools in its economy.
+
+</span>
+]
+.pull-right[
+```{r, echo=FALSE}
+DII <- read_excel("C:/Users/davreuxa/Documents/soe/DII.xlsx")
+
+dii_chart <- highchart() %>%
+  hc_chart(type = "column") %>%
+  hc_title(text = "Contribution to value added growth by digital intensity sectors") %>%
+  hc_xAxis(categories = DII$Country) %>%
+hc_yAxis(
+    title = list(text = "%"),
+    min = -5, # Set the minimum bound
+    max = 100  # Set the maximum bound
+  ) %>%
+  hc_plotOptions(column = list(stacking = 'normal')) %>%
+  hc_add_series(name = "High digital-intensive industries", data = DII$`High digital-intensive industries`, color = "#0E3A55") %>%
+  hc_add_series(name = "Medium-high digital-intensive industries", data = DII$`Medium-high digital-intensive industries`, color = "#B7D7E2") %>%
+  hc_add_series(name = "Medium-low digital-intensive industries", data = DII$`Medium-low digital-intensive industries`, color = "#DCD3CC") %>%
+  hc_add_series(name = "Low digital-intensive industries", data = DII$`Low digital-intensive industries`, color = "#FE5F55") %>%
+  #hc_add_series(name = "Annual real value added growth", data = DII$`Annual real value added growth`, color = "#1aadce", type = "scatter", 
+                #marker = list(lineWidth = 2, lineColor = "black", fillColor = "white"), 
+                #dataLabels = list(enabled = TRUE, format = '{point.y:.2f}%', style = list(fontSize = '13px'))) %>%
+  hc_legend(enabled = TRUE) %>%
+  hc_credits(enabled = FALSE)%>%
+  hc_add_theme(hc_theme_bloom()) 
+
+# Print the chart
+dii_chart
+```
+]
+---
+### Efforts to build an AI ecosystem could unlock a productivity premium
+.pull-left[
+- <span style="font-size: 22px;"> 
+Artificial Intelligence (AI) plays a significant role in the process of digitalization, transforming the way businesses and societies operate.
+
+- <span style="font-size: 22px;"> 
+A recent report from McKinsey estimates that automation trends could provide an annual productivity boost of <strong>0.2% to 3.3% </strong>from 2023 to 2040 and generative AI would contribute 0.1 to 0.6 percentage points of that growth. 
+
+- <span style="font-size: 22px;"> 
+A Goldman Sachs report is projects that global GDP could rise 7% over the next ten years on the back of a <strong>1.5 percentage point productivity gain from the adoption of generative AI.</strong>
+
+</span>
+]
+.pull-right[
+<img src="AI.jpg" width="100%"/>
+]
+---
+### Working closer with firms on how they deploy human capital is worth exploring
+#### Labour shortages can be good news for productivity
+
+
+---
+.pull-left[
+## Policy considerations
+<img src="policy.jpg" width="75%"/>
+]
+
+- <span style="font-size: 25px;"> 
+The Canadian economy may struggle to grow in the near-term. 
+
+<span style="font-size: 25px;"> 
+  <strong>ISED policies and programs should prepare for different economic downturn scenarios within a tight fiscal framework.</strong>
+
+
+- <span style="font-size: 25px;"> 
+ISED could look to orient policies and programs to <strong>work closer with firms to increase business investments to accelerate innovation,</strong> while also deploying the right mix of inputs, including technology and intangible assets (e.g. human capital) to <strong>lift productivity growth.</strong>
+
+
+- <span style="font-size: 25px;"> 
+While recent Competition Act reforms are critical, examine how other <strong>structural policies </strong>(e.g. those that shape the business environment) can be adjusted to address <strong>underlying economic challenges in Canada and promote sustainable growth. </strong>
+
+</span>
+
+---
+
+
 ###Tourism and Transportation have yet to recover from the Pandemic while Construction and Agriculture dip back below their pre-pandemic levels
 ```{r, echo=FALSE, include=FALSE}
 
@@ -1204,4 +1279,9 @@ sect2
 
 
 ---
-class: inverse
+class: center, middle
+
+<div style="text-align: center; vertical-align: middle; height: 50%;">
+  <h1>Thank-you</h1>
+</div>
+
