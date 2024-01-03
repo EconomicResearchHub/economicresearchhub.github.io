@@ -1051,7 +1051,8 @@ tsx <- read_excel("C:/Users/davreuxa/Documents/soe/tsx.xlsx")
 
 tsx_graph <-highchart() %>%
   hc_chart(type = "line") %>%
-  hc_title(text = "Equity Issuance on TSX Venture exchange (metals, and mining sector)") %>%
+  hc_title(text="Junior miner's financing remains highly volatile")%>%
+  hc_subtitle(text = "Equity Issuance on TSX Venture exchange (metals, and mining sector)") %>%
   hc_xAxis(categories = tsx$Year)%>%
   hc_yAxis(title = list(text = "$ billions")) %>%
   hc_add_series(name = "TSX", data = tsx$tsx) %>%
@@ -1095,11 +1096,20 @@ ev <- read_excel("C:/Users/davreuxa/Documents/soe/ev.xlsx")
 
 ev_chart <- highchart() %>%
   hc_chart(type = "column") %>%
-  hc_title(text = "Electric Vehicle Sales") %>%
+  hc_title(text="EV sales numbers have been soaring in the past two quarters")%>%
+  hc_subtitle(text = "EV registrations, quarterly (left, thousands) and share of total vehicle sales(right, %)") %>%
   hc_xAxis(categories = ev$quarter) %>%
   hc_yAxis_multiples(
-    list(title = list(text = "Number of Vehicles (thousands)")),
-    list(title = list(text = "Share of Sales (%)"), opposite = TRUE)
+    list(
+      title = list(text = "thousands"),
+      opposite = FALSE,
+      min=0,
+      max=60
+      ),
+    list(
+      title = list(text = "%"), 
+      opposite = TRUE
+      )
   ) %>%
   hc_add_series(name = "Battery electric", data = ev$battery_electric, type = "column", yAxis = 0,
                 tooltip = list(valueDecimals = 2, valueSuffix = 'k')) %>%
@@ -1170,7 +1180,7 @@ hc_yAxis(
     shared=TRUE
   ) %>%
   hc_caption(
-    text = "Source: OECD."
+    text = "Source: : Digitally Intensive Sectors determined using methodology by Calvino et al (2018); data from the OECD"
   )
 
 
@@ -1226,7 +1236,7 @@ vacancy_graph <-highchart() %>%
     list(title = list(text = " "), opposite = TRUE)
   ) %>%
  hc_add_series(name = "Unemployment-to-job Vacancies", data = vacancy$unemp, type = "line", yAxis = 0,
-                tooltip = list(valueDecimals = 2, valueSuffix = '%')) %>%
+                tooltip = list(valueDecimals = 2, valueSuffix = ' ')) %>%
   hc_add_series(name = "Job vacancies", data = vacancy$vacancy, type = "line", yAxis = 1,
                 tooltip = list(valueDecimals = 0, valueSuffix = ' ')) %>% 
   hc_legend(enabled = FALSE) %>%
