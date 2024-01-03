@@ -68,7 +68,7 @@ Tackling weak productivity growth in Canada remains a critical economic challeng
 ]
 ---
 <center>
-<img src = "recentdev.jpg" width = "80%"/>
+<img src = "recentdev.jpg" width = "70%"/>
 </center>
 
 ---
@@ -182,7 +182,7 @@ monetary_chart <- highchart() %>%
     yAxis = 1 # Associate with the second y-axis
   ) %>%
   hc_caption(
-    text = "Statistics Canada, Table 36-10-0434-01; Gross domestic product (GDP) at basic prices, by industry, monthly (x 1,000,000), Bank of Canada, target for the overnight rate"
+    text = "Source: Statistics Canada, Table 36-10-0434-01; Gross domestic product (GDP) at basic prices, by industry, monthly (x 1,000,000), Bank of Canada, target for the overnight rate"
   ) %>%
   hc_add_theme(hc_theme_bloom()) %>%
   hc_tooltip(
@@ -200,7 +200,8 @@ monetary_chart <- highchart() %>%
                this.series.name;
       }
     }")
-  )
+  )%>%
+  hc_subtitle(text="GDP growth, monthly(left, %, Bank of Canada policy interest rate (right,%)")
 ```
 .pull-right[
 ```{r, echo=FALSE, fig.align='center', fig.width=8, fig.height=6}
@@ -230,7 +231,7 @@ Currently at 5.8% (November 2023), the <strong>unemployment rate is expected to 
 ```{r, echo=FALSE, fig.align='center', fig.width=10, fig.height=6}
 proj<-highchart() %>%
   hc_chart(type = "line") %>%
-  hc_title(text = "Real GDP growth, past and projected, for selected countries and the world, yearly, percentage ") %>%
+  hc_subtitle(text = "Real GDP growth, past and projected, for Canada and the world, yearly percentage change ") %>%
   hc_xAxis(categories = c(2022, 2023, 2024, 2025),
            plotBands = list(
              list(
@@ -242,13 +243,16 @@ proj<-highchart() %>%
   hc_yAxis(title = list(text = "GDP Growth (%)")) %>%
   hc_add_series(name = "Canada, previous projection", data = c(3.4, 1.8, 1.2, 2.4)) %>%
   hc_add_series(name = "Canada, current projection", data = c(3.4, 1.2, 0.9, 2.5)) %>%
-  hc_add_series(name = "World, current projection", data = c(3.4, 2.9, 2.3, 2.6)) %>%
   hc_add_series(name = "World, previous projection", data = c(3.4, 2.8, 2.4, 2.7)) %>%
+  hc_add_series(name = "World, current projection", data = c(3.4, 2.9, 2.3, 2.6)) %>%
   hc_legend(enabled = TRUE) %>%
   hc_plotOptions(series = list(marker = list(enabled = TRUE))) %>%
   hc_tooltip(shared = TRUE, crosshairs = TRUE)%>%
-  hc_colors(colors = c('#FFBBAB', '#FF0000', 'black', 'grey')) %>%
-  hc_add_theme(hc_theme_bloom()) 
+  hc_colors(colors = c('#FFBBAB', '#FF0000', 'grey', 'black')) %>%
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_caption(
+    text = "Source: Bank of Canada's Monetary Policy Report, July 2023 projections vs. October 2023 projections"
+  ) 
 
 
 ```
@@ -278,7 +282,7 @@ Current federal debt is about 42 per cent of GDP. The government has pledged to 
 feddebt <- read_excel("C:/Users/davreuxa/Documents/soe/feddebttogdp.xlsx")
 
 
-feddebt_graph <-highchart() %>%
+feddebt_graph <- highchart() %>%
   hc_chart(type = "line") %>%
   hc_title(text = "Federal Debt-to-GDP ratio") %>%
   hc_xAxis(categories = feddebt$Date,
@@ -289,17 +293,19 @@ feddebt_graph <-highchart() %>%
                color = "rgba(204, 204, 204, 0.5)"  # Light gray background
              )
            )) %>%
-  hc_yAxis(title = list(text = "actual and forecasted values (%)")) %>%
-  hc_add_series(name = "Canada, previous projection", data = feddebt$`Federal debt to GDP`) %>%
-  hc_add_series(name = "Canada, current projection", data = feddebt$Forecast) %>%
+  hc_yAxis(title = list(text = "%")) %>%
+  hc_add_series(name = "actual values ", data = feddebt$`Federal debt to GDP`) %>%
+  hc_add_series(name = "projected values ", 
+                data = feddebt$Forecast,
+                dashStyle = "Dash") %>%
   hc_legend(enabled = TRUE) %>%
   hc_plotOptions(series = list(marker = list(enabled = TRUE))) %>%
-  hc_tooltip(shared = FALSE, crosshairs = TRUE)%>%
+  hc_tooltip(shared = FALSE, crosshairs = TRUE) %>%
   hc_colors(colors = c("grey", "#A4B9CE")) %>%
   hc_add_theme(hc_theme_bloom()) %>%
   hc_caption(
     text = "Source: Fall Economic Statement 2023"
-  ) 
+  )
 
 feddebt_graph
 ```
@@ -314,16 +320,20 @@ corpdebt <- read_excel("C:/Users/davreuxa/Documents/soe/corpdebt.xlsx")
 
 corpdebt_chart <- highchart() %>%
   hc_chart(type = "column", zoomType = "xy") %>%
-  hc_title(text = "Total debt of non-financial corporations(left, and interest rate chargers(right)") %>%
+  hc_subtitle(text = "Total debt of non-financial corporations(left), and interest rate charges(right)") %>%
   hc_xAxis(categories = corpdebt$Quarter) %>%
   hc_yAxis_multiples(
     list(
       title = list(text = "$ billion"),
-      opposite = FALSE
+      opposite = FALSE,
+      min=1400,
+      max=1800
     ),
     list(
       title = list(text = "%"),
-      opposite = TRUE
+      opposite = TRUE,
+      min = 15, # Set the minimum bound
+      max = 23  # Set the maximum bound
     )
   ) %>%
   hc_add_series(
@@ -341,7 +351,7 @@ corpdebt_chart <- highchart() %>%
   hc_caption(
     text = "Source: Statistics Canada. Quarterly balance sheet, income statement, and selected financial ratios, by non-financial industries, non-seasonally adjusted (billions)."
   ) %>%
-  hc_colors(colors = c("grey", "#A4B9CE")) %>%
+  hc_colors(colors = c("#A4B9CE","grey")) %>%
   hc_add_theme(hc_theme_bloom()) %>%
   hc_tooltip(
     formatter = JS("function () {
@@ -388,7 +398,7 @@ The average household is spending around 15 cents of every after-tax dollar to s
 </span>
 ]
 .pull-right[
-```{r, echo=FALSE, fig.width=8, fig.height=6}
+```{r, echo=FALSE, fig.width=7.5, fig.height=7}
 housecost <- read_excel("C:/Users/davreuxa/Documents/soe/housecost.xlsx")
 
 housecost_chart<- highchart() %>%
@@ -427,7 +437,10 @@ housecost_chart<- highchart() %>%
     shared = TRUE
   ) %>%
   hc_title(text = "Housing costs are taking an ever increasing share of households' income") %>%
-  hc_colors(colors = c("grey", "#A4B9CE"))
+  hc_subtitle(text="Housing affordability index, quarterly")%>%
+  hc_colors(colors = c("grey", "#A4B9CE"))%>%
+  hc_legend(enabled = FALSE) 
+
 
 # To display the chart if you're running this in an interactive R session
 housecost_chart
@@ -452,7 +465,7 @@ Historical experience suggests that the recent easing of cost pressures in produ
 </span>
 ]
 .pull-right[
-```{r, echo=FALSE, fig.width=8, fig.height=6}
+```{r, echo=FALSE, fig.width=7.5, fig.height=7}
 foodinf <- read_excel("C:/Users/davreuxa/Documents/soe/foodinf.xlsx")
 
 foodinf_chart<- highchart() %>%
@@ -469,7 +482,7 @@ foodinf_chart<- highchart() %>%
     dataLabels = list(enabled = FALSE, format = '{point.y:.2f}%')
   ) %>%
   hc_yAxis(
-    title = list(text = "Year-over-year inflation, monthly(%)")
+    title = list(text = "%")
   ) %>%
   hc_caption(
     text = "Source: Statistics Canada. Table 18-10-0006-01 Consumer Price Index, monthly"
@@ -480,7 +493,8 @@ foodinf_chart<- highchart() %>%
     shared = TRUE
   ) %>%
   hc_title(text = "Food inflation continues to decrease from its January 2023 peak, getting closer to the all-items inflation") %>%
-  hc_colors(colors = c("grey", "#A4B9CE"))
+  hc_colors(colors = c("grey", "#A4B9CE"))%>%
+  hc_subtitle(text="Year-over-year inflation, monthly (%)")
 
 # To display the chart if you're running this in an interactive R session
 
@@ -490,23 +504,24 @@ foodinf_chart
 ]
 
 ---
-###Wages are finally catching up with inflation, adding cost pressure on firms
+###There are risks of a wage-price spiral
+#### Wages are catching up with inflation, adding cost pressures to firms
 
 .pull-left[
 - <span style="font-size: 22px;"> 
-Workers have seen their average wages rise at the same rate as inflation in 2023 (+3.0% up to September)
+<strong>Wage hikes have become more widespread </strong>as workers try to recoup purchasing power including via several high-profile strikes across Canada.
 
 - <span style="font-size: 22px;"> 
-From the firm’s perspective, the cost of labor has been rising faster than the increase in price of the products sold for the last four quarters
+The <strong>cost of labour rose faster </strong>than the increase in price of the products sold for the better part of the year (see chart).
 
 - <span style="font-size: 22px;"> 
-On a sectoral basis, wages in the service-producing industries have been growing faster than inflation in 2023, resulting in positive real wage growth (+0.6%), while those in the goods-producing industries are trailing behind (-0.8%) (up to September)
+Though faster wage increases are an understandable reaction to higher inflation, they risk making a <strong>return to low inflation </strong>more difficult.
+
 
 </span>
 ]
 ```{r, echo=FALSE, fig.align='center', fig.width=10, fig.height=6, warning=FALSE}
 cons <- read_excel("C:/Users/davreuxa/Documents/soe/construction.xlsx")
-
 
 
 const <- highchart() %>%
@@ -526,28 +541,25 @@ const <- highchart() %>%
     title = list(text = "%")
   ) %>%
   hc_caption(
-    text = "Source: StatsCan Table 36-10-0206-01 Indexes of business sector labour productivity, unit labour cost and related measures, seasonally adjusted"
+    text = "Source: StatsCan Table 36-10-0206-01 Indexes of business sector labour productivity, unit labour cost and related measures, seasonally adjusted."
   ) %>%
   hc_add_theme(hc_theme_bloom()) %>%
   hc_tooltip(
     pointFormat = '{series.name}: <b>{point.y:.2f}%</b><br/>',
     shared = TRUE
   )%>%
-  hc_title(text = "Quarterly change in the unit labor cost, and the implicit price deflator, percentage")%>%
+  hc_subtitle(text = "Quarterly change in the unit labor cost, and the implicit price deflator, percentage")%>%
+  hc_title(text="The increase in costs of wages has outpaced the increase in prices of products sold for businesses for four consecutive quarters, before an uptick in prices.")%>%
   hc_colors(colors = c("grey", "#A4B9CE"))
 
 ```
 
 .pull-right[
-```{r, echo=FALSE, fig.align='center', fig.width=7, fig.height=6}
+```{r, echo=FALSE, fig.align='center', fig.width=7.5, fig.height=7}
 const
 ```
 ]
-<div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #A4B9CE; text-align: center;">
- <span class="small-font"> <strong>Wage-Price Spiral Risks</strong></span> 
-  <span class="small-font" style="margin-left: 100px;">Price of intrants </span>
-  <span class="small-font" style="margin-left: 100px;">Corporate debt and insolvencies</span>
-</div>
+
 ---
 ###Tackling weak productivity growth is critical
 #### Canada’s productivity has dipped below pre-pandemic levels while widening the gap with the US
@@ -563,7 +575,7 @@ Over the past four years, <strong>output per hour in the business sector has dro
 </span>
 ]
 .pull-right[
-```{r, echo=FALSE, fig.align='center', fig.width=7, fig.height=6}
+```{r, echo=FALSE, fig.align='center', fig.width=7.5, fig.height=7}
 LP <- read_excel("C:/Users/davreuxa/Documents/soe/LP.xlsx")
 
 lp_chart<- highchart() %>%
@@ -580,7 +592,7 @@ lp_chart<- highchart() %>%
     dataLabels = list(enabled = FALSE, format = '{point.y:.2f}%')
   ) %>%
   hc_yAxis(
-    title = list(text = "Year-over-year inflation, monthly(%)")
+    title = list(text = "%")
   ) %>%
   hc_caption(
     text = "Source:Statistics Canada, US Federal Reserve Economic Data"
@@ -590,7 +602,8 @@ lp_chart<- highchart() %>%
     pointFormat = '{series.name}: <b>{point.y:.2f}%</b><br/>',
     shared = TRUE
   ) %>%
-  hc_title(text = "Labour productivity in the business sector, Canada vs. US, annualized 4-year change (%)") %>%
+  hc_subtitle(text = "Labour productivity in the business sector, Canada vs. US, annualized 4-year change (%)") %>%
+  hc_title(text="Canada's labour productivity growth is now below pre-pandemic levels")%>%
   hc_colors(colors = c("#FE5F55", "#A4B9CE"))
 
 lp_chart
@@ -623,11 +636,12 @@ labor_growth_chart <- highchart() %>%
     shared = TRUE
   ) %>%
   hc_colors(colors = c("#FE5F55", "#A4B9CE"))
+  #hc_subtitle(text="Canada-U.S. Decomposition of Labour Productivity Growth, 1987-2021")
 
 
 capital_deepening_chart <- highchart() %>%
   hc_chart(type = "column") %>%
-  hc_title(text = "Capital Deepening") %>%
+  hc_subtitle(text = "Capital Deepening") %>%
   hc_xAxis(categories = TFP$Date) %>%
   hc_add_series(name = "Canada", data = TFP$CD_Can)%>%
   hc_add_series(name = "USA", data = TFP$CD_US) %>%
@@ -636,11 +650,12 @@ capital_deepening_chart <- highchart() %>%
     pointFormat = '{series.name}: <b>{point.y:.1f}%</b><br/>',
     shared = TRUE
   ) %>%
-  hc_colors(colors = c("#FE5F55", "#A4B9CE"))
+  hc_colors(colors = c("#FE5F55", "#A4B9CE"))%>%
+  hc_title(text="Canada-U.S. Decomposition of Labour Productivity Growth, 1987-2021")
   
 skills_composition_chart <- highchart() %>%
   hc_chart(type = "column") %>%
-  hc_title(text = "Skills Composition") %>%
+  hc_subtitle(text = "Skills Composition") %>%
   hc_xAxis(categories = TFP$Date) %>%
   hc_add_series(name = "Canada", data = TFP$SC_Can) %>%
   hc_add_series(name = "USA", data = TFP$SC_US) %>%
@@ -654,7 +669,7 @@ skills_composition_chart <- highchart() %>%
   
 total_factor_productivity_chart <- highchart() %>%
   hc_chart(type = "column") %>%
-  hc_title(text = "Total Factor Productivity") %>%
+  hc_subtitle(text = "Total Factor Productivity") %>%
   hc_xAxis(categories = TFP$Date) %>%
   hc_add_series(name = "Canada", data = TFP$TFP_Can)%>%
   hc_add_series(name = "USA", data = TFP$TFP_US) %>%
@@ -665,7 +680,7 @@ total_factor_productivity_chart <- highchart() %>%
   ) %>%
   hc_legend(enabled = FALSE)%>%
   hc_caption(
-    text = "Source: Canada: Statistics Canada Table 36-10-0208-01; U.S.: U.S. Bureau of Labour Statistics, ISED calculations."
+    text = "Source: Canada: Statistics Canada Table 36-10-0208-01; U.S. Bureau of Labour Statistics; ISED calculations."
   ) %>%
   hc_colors(colors = c("#FE5F55", "#A4B9CE"))
   
@@ -708,21 +723,19 @@ total_factor_productivity_chart
 <div class="slide-content">
 <div class="text-container">
 <!-- Replace this with your slide text content -->
-<center>
- <strong>Canada-U.S. Decomposition of Labour Productivity Growth, 1987-2021</strong>
-</center>
+
 </div>
 
 <div class="charts-container">
-```{r,echo=FALSE,results='asis',fig.width=6, fig.height=2.75}
+```{r,echo=FALSE,results='asis',fig.width=6, fig.height=3.2}
 # Assuming the chart object is created and named capital_deepening_chart
 capital_deepening_chart
 ```
-```{r,echo=FALSE,results='asis',fig.width=6, fig.height=2.5}
+```{r,echo=FALSE,results='asis',fig.width=6, fig.height=2.25}
 # Assuming the chart object is created and named skills_composition_chart
 skills_composition_chart
 ```
-```{r,echo=FALSE,results='asis',fig.width=6, fig.height=3}
+```{r,echo=FALSE,results='asis',fig.width=6, fig.height=3.5}
 # Assuming the chart object is created and named total_factor_productivity_chart
 total_factor_productivity_chart
 ```
@@ -766,7 +779,8 @@ non_res_colored <- assign_colors(IPP$Non_res, IPP$Country, "Canada", '#7F7F7F', 
 
 m_e_chart <- highchart() %>%
   hc_chart(type = "bar") %>%
-  hc_title(text = "Machinery & Equipment + Intellectual Property Products") %>%
+  hc_subtitle(text = "Machinery & Equipment + Intellectual Property Products") %>%
+  hc_title(text="Gross fixed capital formation by asset category (percentage of GDP, 2021)")%>%
   hc_plotOptions(series = list(stacking = "normal")) %>%
   hc_add_series(name = "M&E", data = m_e_colored) %>%
   hc_add_series(name = "IPP", data = ipp_colored) %>%
@@ -789,7 +803,7 @@ m_e_chart <- highchart() %>%
 # Generate the bar chart for Non-residential Structures with highlighted "Canada"
 non_res_chart <- highchart() %>%
   hc_chart(type = "bar") %>%
-    hc_title(text = "Non-residential Structures") %>%
+    hc_subtitle(text = "Non-residential Structures") %>%
   hc_add_series(name = "Non-residential Structures", data = non_res_colored) %>%
   hc_xAxis(categories = IPP$Country) %>%
   hc_add_theme(hc_theme_bloom()) %>%
@@ -810,9 +824,10 @@ non_res_chart <- highchart() %>%
 .pull-right[
 <div class="text-container">
 <!-- Your text content goes here -->
-<center>
-<strong>Gross fixed capital formation by asset category (percentage of GDP, 2021)</strong>
-</center>
+
+<strong>Canada invests relatively less in M&E / IPP 
+</strong>
+
 </div>
 
 <div class="charts-container">
@@ -829,13 +844,13 @@ non_res_chart
 ### New sources of productivity growth will be required to adjust for the green transition
 .pull-left[
 - <span style="font-size: 22px;"> 
-The <span>green transition </span>will create challenges and opportunities for productivity growth. 
+The <strong>green transition </strong>will create challenges and opportunities for productivity growth. 
 
 - <span style="font-size: 22px;"> 
 In addition to oil and gas, the Canadian economy is <strong>heavily concentrated </strong>within resource-dependent industries. 
 
 - <span style="font-size: 22px;"> 
-Among G7 countries, Canada has the highest value added share of resource-dependent industries (see chart).
+Among G7 countries, <strong>Canada has the highest value added share of resource-dependent industries</strong> (see chart).
 
 - <span style="font-size: 22px;"> 
 Economic concentration in resource-dependant industries creates <strong>less investment opportunities in more complex manufacturing and services </strong>(see Annex E).
@@ -853,7 +868,8 @@ green_long <- green %>%
 
 gchart <- highchart() %>%
   hc_chart(type = "column") %>%
-  hc_title(text = "GDP share of Resource-Dependant Activities, 2000 vs 2019") %>%
+  hc_title(text="Canada's production has become less resouce heavy, but continues to be the highest within the G7")%>%
+  hc_subtitle(text = "GDP share of Resource-Dependant Activities, 2000 vs 2019") %>%
   hc_xAxis(categories = unique(green_long$Country)) %>%
   hc_yAxis(title = list(text = "%")) %>%
   hc_add_series(name = "2000", 
@@ -872,13 +888,13 @@ gchart <- highchart() %>%
     shared=TRUE
   ) %>%
   hc_add_theme(hc_theme_bloom()) %>%
-  hc_subtitle(text = "Source: OECD.") 
+  hc_caption(text = "Source: OECD.") 
 
 
 
 ```
 .pull-right[
-```{r, echo=FALSE, fig.align='center', fig.width=7, fig.height=6}
+```{r, echo=FALSE, fig.align='center',fig.width=7.5, fig.height=7}
 gchart
 ```
 ]
@@ -893,13 +909,15 @@ data <- tibble(
 
 # Labour Productivity Chart
 lp_chart <- highchart() %>%
+  hc_title(text="Clean tech support vs. other innovation support, median 3 year change (2018-21)")%>%
   hc_add_series(name = "Clean-tech Support", data = list(list(name = data$category[1], y = data$cleantech[1])),
-                type = 'bar', color = "#CA6F07") %>%
+                type = 'bar', color = "#CA6F07",
+                tooltip = list(valueDecimals = 2, valueSuffix = ' ')) %>%
   hc_add_series(name = "Other Innovation Support", data = list(list(name = data$category[1], y = data$other[1])),
                 type = 'bar', color = "#FBC78D") %>%
-  hc_title(text = "Labour Productivity") %>%
+  hc_subtitle(text = "Labour Productivity") %>%
   hc_xAxis(categories = c(" ")) %>%
-  hc_yAxis(title = list(text = "USD, Median 3 year change (2018-21)"))%>%
+  hc_yAxis(title = list(text = "USD"))%>%
   hc_legend(enabled = TRUE)%>%
     hc_add_theme(hc_theme_bloom()) %>%
     hc_yAxis(
@@ -915,11 +933,13 @@ lp_chart <- highchart() %>%
 
 rg_chart <- highchart() %>%
   hc_chart(type = 'bar') %>%
-  hc_title(text = "Revenue Growth") %>%
+  hc_subtitle(text = "Revenue Growth") %>%
   hc_xAxis(categories = c(" ")) %>%
-  hc_yAxis(title = list(text = "Percentage, Median 3 year change (2018-21)")) %>%
-  hc_add_series(name = "Clean-tech Support", data = c(13.3)) %>%
-  hc_add_series(name = "Other Innovation Support", data = c(7.2)) %>%
+  hc_yAxis(title = list(text = "%")) %>%
+  hc_add_series(name = "Clean-tech Support", data = c(13.3),
+                tooltip = list(valueDecimals = 1, valueSuffix = '%')) %>%
+  hc_add_series(name = "Other Innovation Support", data = c(7.2),
+                tooltip = list(valueDecimals = 1, valueSuffix = '%')) %>%
   hc_plotOptions(
     series = list(
       dataLabels = list(enabled = FALSE)
@@ -927,7 +947,7 @@ rg_chart <- highchart() %>%
   ) %>%
   hc_legend(enabled = FALSE)%>%
     hc_add_theme(hc_theme_bloom())%>%
-  hc_colors(colors = c("#AFABAB", "#A4B9CE"))%>%
+  hc_colors(colors = c('light grey',"#AFABAB"))%>%
     hc_yAxis(
     maxPadding = 0.1, # Adds 10% padding above the highest data point
     endOnTick = FALSE, # Prevents the axis from ending exactly on the last tick
@@ -939,12 +959,14 @@ rg_chart <- highchart() %>%
 # Employment Growth Chart
 eg_chart <- highchart() %>%
   hc_add_series(name = "Clean-tech Support", data = list(list(name = data$category[3], y = data$cleantech[3])),
-                type = 'bar', color = "#263E5A") %>%
+                type = 'bar', color = "#263E5A",
+                tooltip = list(valueDecimals = 1, valueSuffix = '%')) %>%
   hc_add_series(name = "Other Innovation Support", data = list(list(name = data$category[3], y = data$other[3])),
-                type = 'bar', color = "#527FB6") %>%
-  hc_title(text = "Employment Growth") %>%
+                type = 'bar', color = "#A4B9CE",
+                tooltip = list(valueDecimals = 1, valueSuffix = '%')) %>%
+  hc_subtitle(text = "Employment Growth") %>%
   hc_xAxis(categories = c(" ")) %>%
-  hc_yAxis(title = list(text = "Percentage, Median 3 year change (2018-21)"))%>%
+  hc_yAxis(title = list(text = "%"))%>%
    hc_plotOptions(
     series = list(
       dataLabels = list(enabled = FALSE)
@@ -959,7 +981,7 @@ eg_chart <- highchart() %>%
     tickPixelInterval = 50 # Adjust the pixel interval for ticks
   )%>%
   hc_caption(
-    text = "Source: Carta M., and Demers, F. (2023) Analysis on Federal Business Innovation and Growth Support to Clean Technology, 2016-2020."
+    text = "Source: Carta M., and Demers, F. (2023); Analysis on Federal Business Innovation and Growth Support to Clean Technology, 2016-2020."
   ) 
 
 
@@ -998,13 +1020,13 @@ A recent study finds that—relative to other innovation support beneficiaries�
 </div>
 
 <div class="charts-container">
-```{r,echo=FALSE,results='asis',fig.width=6, fig.height=3.05}
+```{r,echo=FALSE,results='asis',fig.width=6.5, fig.height=3.45}
 lp_chart
 ```
-```{r,echo=FALSE,results='asis',fig.width=6, fig.height=3.05}
+```{r,echo=FALSE,results='asis',fig.width=6.5, fig.height=2.65}
 rg_chart
 ```
-```{r,echo=FALSE,results='asis',fig.width=6, fig.height=3.05}
+```{r,echo=FALSE,results='asis',fig.width=6.5, fig.height=3.05}
 eg_chart
 ```
 </div>
@@ -1045,7 +1067,7 @@ tsx_graph <-highchart() %>%
 
 ```
 .pull-right[
-```{r, echo=FALSE, fig.align='center', fig.width=7, fig.height=6}
+```{r, echo=FALSE, fig.align='center', fig.width=7.5, fig.height=7}
 tsx_graph
 ```
 ]
@@ -1087,17 +1109,20 @@ ev_chart <- highchart() %>%
                 tooltip = list(valueDecimals = 2, valueSuffix = '%')) %>%
   hc_plotOptions(column = list(stacking = 'normal')) %>%
   hc_legend(enabled = TRUE) %>%
-  hc_credits(enabled = TRUE)%>%
+  hc_credits(enabled = FALSE)%>%
   hc_colors(colors = c("#A4B9CE","#AFABAB", "grey"  )) %>%
   hc_add_theme(hc_theme_bloom()) %>%
-    hc_tooltip(shared = TRUE, crosshairs = TRUE)
+  hc_tooltip(shared = TRUE, crosshairs = TRUE)%>%
+  hc_caption(
+    text = "Source: Statistics Canada. Table 20-10-0024-01. New motor vehicle registrations, quarterly."
+  )
 
 
 ```
 
 .pull-right[
 
-```{r,echo=FALSE, fig.align='center', fig.width=7, fig.height=6}
+```{r,echo=FALSE, fig.align='center', fig.width=7.5, fig.height=6.75}
 ev_chart
 ```
 ]
@@ -1117,7 +1142,7 @@ Canada’s skilled workforce and early investment in AI technologies can facilit
 </span>
 ]
 .pull-right[
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.align='center',fig.width=7.5, fig.height=7}
 DII <- read_excel("C:/Users/davreuxa/Documents/soe/DII.xlsx")
 
 dii_chart <- highchart() %>%
@@ -1139,7 +1164,15 @@ hc_yAxis(
                 #dataLabels = list(enabled = TRUE, format = '{point.y:.2f}%', style = list(fontSize = '13px'))) %>%
   hc_legend(enabled = TRUE) %>%
   hc_credits(enabled = FALSE)%>%
-  hc_add_theme(hc_theme_bloom()) 
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_tooltip(
+    pointFormat = '{series.name}: <b>{point.y:.2f}%</b><br/>',
+    shared=TRUE
+  ) %>%
+  hc_caption(
+    text = "Source: OECD."
+  )
+
 
 # Print the chart
 dii_chart
@@ -1165,7 +1198,51 @@ A Goldman Sachs report is projects that global GDP could rise 7% over the next t
 ---
 ### Working closer with firms on how they deploy human capital is worth exploring
 #### Labour shortages can be good news for productivity
+.pull-left[
+- <span style="font-size: 22px;"> 
+<strong>Labour market tightness remains elevated, </strong>making life difficult for some businesses.
 
+- <span style="font-size: 22px;"> 
+<strong>Job vacancies declined to 632,200 </strong>in September 2023. but remain well above pre-COVID levels.
+
+
+- <span style="font-size: 22px;"> 
+Persistent job vacancies in some sectors can be an opportunity for <strong>digital transformation.</strong> When employers pay more for labour, they have an incentive to use it more, which can spark innovation, investments in technology (e.g. AI and automation) and productivity improvements.
+
+- <span style="font-size: 22px;"> 
+Canada could look to the UK, Finland, and Australia, where innovation policies have spotlighted the role of HR and management practices.
+
+</span>
+]
+```{r, echo=FALSE, include=FALSE}
+vacancy <- read_excel("C:/Users/davreuxa/Documents/soe/vacancy.xlsx")
+
+vacancy_graph <-highchart() %>%
+  hc_chart(type = "line") %>%
+  hc_title(text = "Vacancies continue to decline as the number of available worker per open position nearly doubles since last year.") %>%
+  hc_xAxis(categories = format(as.Date(vacancy$Date), "%b %y")) %>%  
+  hc_yAxis_multiples(
+    list(title = list(text = " ")),
+    list(title = list(text = " "), opposite = TRUE)
+  ) %>%
+ hc_add_series(name = "Unemployment-to-job Vacancies", data = vacancy$unemp, type = "line", yAxis = 0,
+                tooltip = list(valueDecimals = 2, valueSuffix = '%')) %>%
+  hc_add_series(name = "Job vacancies", data = vacancy$vacancy, type = "line", yAxis = 1,
+                tooltip = list(valueDecimals = 0, valueSuffix = ' ')) %>% 
+  hc_legend(enabled = FALSE) %>%
+  hc_tooltip(shared = TRUE, crosshairs = TRUE)%>%
+  hc_colors(colors = c("#A4B9CE","#AFABAB")) %>%
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_caption(
+    text = "Source: Statistics Canada. Labour force characteristics and job vacancies."
+  ) %>%
+  hc_subtitle(text="Unemployment-to-job vacancy ratio (left) and job vacancies (right), monthly")
+```
+.pull-right[
+```{r, echo=FALSE, fig.align='center', fig.width=7.5, fig.height=7}
+vacancy_graph
+```
+]
 
 ---
 .pull-left[
@@ -1279,7 +1356,7 @@ sect2
 
 
 ---
-class: center, middle
+class: center, middle, inverse
 
 <div style="text-align: center; vertical-align: middle; height: 50%;">
   <h1>Thank-you</h1>
