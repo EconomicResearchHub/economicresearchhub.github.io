@@ -660,7 +660,7 @@ lp_chart<- highchart() %>%
         x = 110,
         y = 1
       ),
-      text = "The productivity gap between Canada</br />
+      text = "The productivity gap between Canada    ,</br />
               and the U.S. is increasing <br />",
       draggable = FALSE,  # Set draggable to TRUE or FALSE
       labelOptions = list(
