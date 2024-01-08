@@ -64,7 +64,7 @@ Tackling weak productivity growth in Canada remains a critical economic challeng
 ]
 
 .pull-right[
-<img src = "keymessages.jpg" width = "90%"/>
+<img src = "keymessages.jpg" width = "90%" height = "150%"/>
 ]
 ---
 <center>
@@ -131,13 +131,13 @@ test
 
 .pull-left[
 - <span style="font-size: 22px;"> 
-Canada's economy shrank in the three months up to September, as business investments and exports declined while consumer spending remained flat.
+Canada's economy shrank in the three months up to September, as <strong>business investments and exports declined while consumer spending remained flat.</strong>
 
 - <span style="font-size: 22px;"> 
-The effects of interest rate increases will continue to restrain spending, while limiting growth and employment (see Annex A). 
+The effects of <strong>interest rate increases</strong> will continue to restrain spending, while limiting growth and employment. 
 
 - <span style="font-size: 22px;"> 
-Recent private sector forecasts project either <strong>weak or negative growth over the next two quarters</strong> (see Annex B). 
+Recent private sector forecasts project either <strong>weak or negative growth over the next two quarters</strong>. 
 
 </span>
 ]
@@ -399,8 +399,9 @@ The average household is spending around 15 cents of every after-tax dollar to s
 
 </span>
 ]
+
 .pull-right[
-```{r, echo=FALSE, fig.width=7.5, fig.height=7}
+```{r, echo=FALSE, fig.align='center', fig.width=7.5, fig.height=7}
 housecost <- read_excel("C:/Users/davreuxa/Documents/soe/housecost.xlsx")
 
 housecost_chart<- highchart() %>%
@@ -567,18 +568,30 @@ const <- highchart() %>%
   hc_title(text="The increase in costs of wages has outpaced the increase in prices of products sold for businesses for four consecutive quarters, before an uptick in prices.")%>%
   hc_colors(colors = c("grey", "#A4B9CE"))%>%
   hc_add_annotation( 
-    labels = list(
-      list(
-        point = list(
-          xAxis =0,
-          yAxis =0,
-          x =6,
-          y = 2
-        ),
-        text = "The cost of labour has increased faster       "
+  labels = list(
+    list(
+      point = list(
+        xAxis = 0,
+        yAxis = 0,
+        x = 6,
+        y = 2
+      ),
+      text = "The cost of labour has increased     </br />
+              faster than the rise in prices <br />",
+      draggable = FALSE,  # Set draggable to TRUE or FALSE
+      labelOptions = list(
+        shape = 'connector',
+        align = 'right',
+        justify = FALSE,
+        crop = FALSE,
+        style = list(
+          fontSize = '10px',
+          textOutline = '1px white'
+        )
       )
     )
   )
+)
 ```
 
 .pull-right[
@@ -637,7 +650,32 @@ lp_chart<- highchart() %>%
   ) %>%
   hc_subtitle(text = "Labour productivity in the business sector, Canada vs. US, annualized 4-year change (%)") %>%
   hc_title(text="Canada's labour productivity growth is now below pre-pandemic levels")%>%
-  hc_colors(colors = c("#FE5F55", "#A4B9CE"))
+  hc_colors(colors = c("#FE5F55", "#A4B9CE"))%>%
+  hc_add_annotation( 
+  labels = list(
+    list(
+      point = list(
+        xAxis = 0,
+        yAxis = 0,
+        x = 110,
+        y = 1
+      ),
+      text = "The productivity gap between Canada</br />
+              and the U.S. is increasing <br />",
+      draggable = FALSE,  # Set draggable to TRUE or FALSE
+      labelOptions = list(
+        shape = 'connector',
+        align = 'center',
+        justify = FALSE,
+        crop = TRUE,
+        style = list(
+          fontSize = '10px',
+          textOutline = '1px white'
+        )
+      )
+    )
+  )
+)
 
 lp_chart
 ```
@@ -782,6 +820,7 @@ total_factor_productivity_chart
 </div>
 </div>
 ]
+
 ---
 
 ```{r, echo=FALSE, include=FALSE}
