@@ -19,7 +19,33 @@ background-size: contain
 options(htmltools.dir.version = FALSE, htmltools.preserve.raw = FALSE)
 ```
 
-```{r, echo=FALSE, include=FALSE}
+```{r, echo=FALSE}
+install.packages("OECD")
+install.packages("statcanR")
+install.packages("devtools")
+install.packages("forecast")
+install.packages("xts")
+install.packages("rmarkdown")
+install.packages("openxlsx")
+devtools::install_github('warint/statcanR')
+remotes::install_github("jbkunst/highcharter")
+install.packages("RColorBrewer")
+install.packages("gridExtra")
+install.packages("XML")
+install.packages("reshape2")
+install.packages("plyr")
+install.packages("ggplot2")
+install.packages("devtools")
+devtools::install_github("ramnathv/rCharts")
+install.packages("vtable")
+install.packages("htmlwidgets")
+webshot::install_phantomjs()
+install.packages("scales")
+install.packages("statcanR")
+install.packages("writexl")
+install.packages("rmdformats")
+```
+```{r, echo=FALSE}
 library(OECD)
 library(rmarkdown)
 library(tidyverse)
@@ -110,12 +136,10 @@ test<-highchart() %>%
   ))
 
 ```
+.center[
+##Growth comes to a halt as higher rates start to impact businesses and labour
+]
 
-###Growth comes to a halt as higher rates start to impact businesses and labor
-
-```{r, echo=FALSE, out.width='100%', include=FALSE, fig.align='center', class='centered-plot'}
-test
-```
 <center>
 <img src = "dashboard.jpg" width = "190%"/>
 </center>
@@ -126,7 +150,10 @@ test
   <span class="small-font" style="margin-left: 100px;">Standard of Living</span>
 </div>
 ---
-### Monetary policy tightening is starting to impact growth
+.center[
+## Monetary policy tightening is starting to impact growth
+]
+
 #### GDP contracted by 0.3% in the third quarter as the effects of higher interest rates trickle through the economy 
 
 .pull-left[
@@ -215,7 +242,10 @@ monetary_chart
 </div>
 
 ---
-###What's the economic outlook?
+.center[
+##What's the economic outlook?
+]
+
 #### The Canadian economy is expected to continueits slowdown through the first half of 2024, while economic activity should improve in the second half of the year.
 .pull-left[
 - <span style="font-size: 22px;"> 
@@ -272,7 +302,9 @@ proj
 <img src = "currenthead.jpg" width = "70%"/>
 </center>
 ---
-### Elevated public and private debt levels will dampen opportunities for investment 
+.center[
+## Elevated public and private debt levels will dampen opportunities for investment 
+]
 
 .pull-left[
 #### Fiscal capacity is constrained
@@ -382,8 +414,12 @@ corpdebt_chart
 
 </div>
 ---
-### Canadian households are under pressure
+.center[
+##Canadian households are under pressure
+]
+
 #### Affordibility remains a key issue, creating a drag on consumption. 
+
 .pull-left[
 - <span style="font-size: 22px;"> 
 <strong>High demand from population growth and a lack of supply </strong>in the housing market have offset gains in household income.
@@ -457,7 +493,10 @@ housecost_chart
 
 </div>
 ---
-### Inflationary pressures might be easing
+.center[
+##Inflationary pressures might be easing
+]
+
 #### Recent inflation numbers are the lastest sign of a cooling economy 
 .pull-left[
 - <span style="font-size: 22px;"> 
@@ -499,7 +538,7 @@ foodinf_chart<- highchart() %>%
   ) %>%
   hc_add_theme(hc_theme_bloom()) %>%
   hc_tooltip(
-    pointFormat = '{series.name}: <b>{point.y:.2f}%</b><br/>',
+    pointFormat = '{series.name}: <b>{point.y:.1f}%</b><br/>',
     shared = TRUE
   ) %>%
   hc_title(text = "Food inflation continues to decrease from its January 2023 peak, getting closer to the all-items inflation") %>%
@@ -520,7 +559,10 @@ foodinf_chart
 
 </div>
 ---
-###There are risks of a wage-price spiral
+.center[
+##There are risks of a wage-price spiral
+]
+
 #### Wages are catching up with inflation, adding cost pressures to firms
 
 .pull-left[
@@ -607,7 +649,10 @@ const
 
 </div>
 ---
-###Tackling weak productivity growth is critical
+.center[
+##Tackling weak productivity growth is critical
+]
+
 #### Canada’s productivity has dipped below pre-pandemic levels while widening the gap with the US
 .pull-left[
 - <span style="font-size: 22px;"> 
@@ -770,7 +815,7 @@ total_factor_productivity_chart
 ```
 
 .pull-left[
-###Canada's weak productivity growth requires firms to make better use of physical and human capital
+##Canada's weak productivity growth requires firms to make better use of physical and human capital
 
 <ul style="font-size: 20px;"> 
   <li>
@@ -899,9 +944,11 @@ non_res_chart <- highchart() %>%
   hc_yAxis(labels = list(style = list(textOverflow = "allow")))
 non_res_chart
 ```
-.pull-left[
-
+.center[
 ### More needs to be done to encourage firms to invest in productivity enhancing assets
+]
+
+.pull-left[
 - <span style="font-size: 20px;"> 
 <strong>It is not just an R&D story - Canadian businesses invest proportionally less </strong>in machinery & equipment and other IP products (e.g., software and data).
 
@@ -919,7 +966,6 @@ Investing in both machinery and knowledge supports a healthy <strong>innovation 
 ]
 .pull-right[
 #### Gross fixed capital formation by asset category (percentage of GDP, 2021)
-##### <strong>Canada invests relatively less in M&E / IPP </strong>
 .pull-left[
 ```{r,echo=FALSE,results='asis',fig.width=3.5, fig.height=6.25}
 m_e_chart
@@ -933,7 +979,9 @@ non_res_chart
 ]
 
 ---
-### New sources of productivity growth will be required to adjust for the green transition
+.center[
+## New sources of productivity growth will be required to adjust for the green transition
+]
 .pull-left[
 - <span style="font-size: 22px;"> 
 The <strong>green transition </strong>will create challenges and opportunities for productivity growth. 
@@ -1077,7 +1125,7 @@ eg_chart <- highchart() %>%
 ```
 
 .pull-left[
-### Investments in clean-tech can unlock new productivity opportunities
+## Investments in clean-tech can unlock new productivity opportunities
 <ul style="font-size: 20px;"> 
   <li>
 The Porter Hypothesis posits that well-formulated <strong>environmental policies can spur innovation</strong>, which can in turn stimulate productivity.
@@ -1120,49 +1168,12 @@ eg_chart
 ```
 </div>
 ]
+
 ---
-### There is no green transition without critical minerals
-.pull-left[
-- <span style="font-size: 22px;"> 
-Minerals such as copper, nickel, lithium, graphite and cobalt are the building blocks of renewable energy projects and electric vehicles. 
-
-- <span style="font-size: 22px;"> 
-According to the World Bank, the current <strong>global production capacity of key minerals will need to increase by 500% by 2050 </strong>to meet the demands of the clean-energy transition.
-
-- <span style="font-size: 22px;"> 
-The current economic slowdown is creating major <strong>obstacles for critical mineral exploration, as less established prospectors, miners and exploration companies </strong>are particularly vulnerable to the whims of the market and struggle to raise funds. 
-
-</span>
+.center[
+##The shift towards electric vehicles requires urgent action to build out the supply chain
 ]
-```{r,echo=FALSE, include=FALSE}
-tsx <- read_excel("C:/Users/davreuxa/Documents/soe/tsx.xlsx")
 
-
-tsx_graph <-highchart() %>%
-  hc_chart(type = "line") %>%
-  hc_title(text="Junior miner's financing remains highly volatile")%>%
-  hc_subtitle(text = "Equity Issuance on TSX Venture exchange (metals, and mining sector)") %>%
-  hc_xAxis(categories = tsx$Year)%>%
-  hc_yAxis(title = list(text = "$ billions")) %>%
-  hc_add_series(name = "TSX", data = tsx$tsx) %>%
-  hc_legend(enabled = FALSE) %>%
-  hc_plotOptions(series = list(marker = list(enabled = TRUE))) %>%
-  hc_tooltip(shared = FALSE, crosshairs = TRUE)%>%
-  hc_colors(colors = c("grey")) %>%
-  hc_add_theme(hc_theme_bloom()) %>%
-  hc_caption(
-    text = "Source: S&P Global Market Intelligence"
-  ) 
-  #hc_subtitle(text="Junior miner's financing remains highly volatile")
-
-```
-.pull-right[
-```{r, echo=FALSE, fig.align='center', fig.width=7.5, fig.height=7}
-tsx_graph
-```
-]
----
-###The shift towards electric vehicles requires urgent action to build out the supply chain
 #### Canada possesses critical minerals but lacks processing capacity, hampering productivity.
 .pull-left[
 - <span style="font-size: 22px;"> 
@@ -1227,7 +1238,10 @@ ev_chart
 ]
 
 ---
-### Policies should continue to work with firms along their digitization journey
+.center[
+##Policies should continue to work with firms along their digitization journey
+]
+
 .pull-left[
 - <span style="font-size: 22px;"> 
 Digital-intensive sectors, associated with significant <strong>productivity gains, </strong>accounted for 6% of Canada’s GDP in 2020, lagging most G7 peers (see chart).
@@ -1277,25 +1291,12 @@ hc_yAxis(
 dii_chart
 ```
 ]
+
 ---
-### Efforts to build an AI ecosystem could unlock a productivity premium
-.pull-left[
-- <span style="font-size: 22px;"> 
-Artificial Intelligence (AI) plays a significant role in the process of digitalization, transforming the way businesses and societies operate.
-
-- <span style="font-size: 22px;"> 
-A recent report from McKinsey estimates that automation trends could provide an annual productivity boost of <strong>0.2% to 3.3% </strong>from 2023 to 2040 and generative AI would contribute 0.1 to 0.6 percentage points of that growth. 
-
-- <span style="font-size: 22px;"> 
-A Goldman Sachs report is projects that global GDP could rise 7% over the next ten years on the back of a <strong>1.5 percentage point productivity gain from the adoption of generative AI.</strong>
-
-</span>
+.center[
+##Working closer with firms on how they deploy human capital is worth exploring
 ]
-.pull-right[
-<img src="key.png" width="100%"/>
-]
----
-### Working closer with firms on how they deploy human capital is worth exploring
+
 #### Labour shortages can be good news for productivity
 .pull-left[
 - <span style="font-size: 22px;"> 
@@ -1338,7 +1339,7 @@ vacancy_graph <-highchart() %>%
   hc_subtitle(text="Unemployment-to-job vacancy ratio (left) and job vacancies (right), monthly")
 ```
 .pull-right[
-```{r, echo=FALSE, fig.align='center', fig.width=7.5, fig.height=7}
+```{r, echo=FALSE, fig.align='center', fig.width=7.5, fig.height=6.25}
 vacancy_graph
 ```
 ]
