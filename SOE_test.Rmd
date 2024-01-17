@@ -1026,7 +1026,7 @@ gchart <- highchart() %>%
     shared=TRUE
   ) %>%
   hc_add_theme(hc_theme_bloom()) %>%
-  hc_caption(text = "Source: OECD.") 
+  hc_caption(text = "Source: OECD.", style = list(fontSize = "9px")) 
 
 
 
@@ -1327,7 +1327,7 @@ vacancy_graph <-highchart() %>%
     list(title = list(text = " "), opposite = TRUE)
   ) %>%
  hc_add_series(name = "Unemployment-to-job Vacancies", data = vacancy$unemp, type = "line", yAxis = 0,
-                tooltip = list(valueDecimals = 2, valueSuffix = ' ')) %>%
+                tooltip = list(valueDecimals = 2, valueSuffix = '%')) %>%
   hc_add_series(name = "Job vacancies", data = vacancy$vacancy, type = "line", yAxis = 1,
                 tooltip = list(valueDecimals = 0, valueSuffix = ' ')) %>% 
   hc_legend(enabled = FALSE) %>%
