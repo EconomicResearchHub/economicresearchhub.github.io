@@ -19,33 +19,7 @@ background-size: contain
 options(htmltools.dir.version = FALSE, htmltools.preserve.raw = FALSE)
 ```
 
-```{r, echo=FALSE}
-install.packages("OECD")
-install.packages("statcanR")
-install.packages("devtools")
-install.packages("forecast")
-install.packages("xts")
-install.packages("rmarkdown")
-install.packages("openxlsx")
-devtools::install_github('warint/statcanR')
-remotes::install_github("jbkunst/highcharter")
-install.packages("RColorBrewer")
-install.packages("gridExtra")
-install.packages("XML")
-install.packages("reshape2")
-install.packages("plyr")
-install.packages("ggplot2")
-install.packages("devtools")
-devtools::install_github("ramnathv/rCharts")
-install.packages("vtable")
-install.packages("htmlwidgets")
-webshot::install_phantomjs()
-install.packages("scales")
-install.packages("statcanR")
-install.packages("writexl")
-install.packages("rmdformats")
-```
-```{r, echo=FALSE}
+```{r, echo=FALSE, include = FALSE}
 library(OECD)
 library(rmarkdown)
 library(tidyverse)
@@ -78,13 +52,19 @@ library(readxl)
 ## Key Messages
 .pull-left[
 - <span style="font-size: 22px;"> 
-Higher interest rates will continue to weigh on economic activity. While a soft landing is within reach, <strong>Canadian consumers and businesses are under pressure </strong>from rising costs, which could limit growth prospects in 2024.
+<strong> The Canadian economy is facing multiple headwinds pointing to slow economic activity </strong>in the first half of 2024.
+
 
 - <span style = "font-size:22px;">
-Tackling weak productivity growth in Canada remains a critical economic challenge. The <strong>twin transitions of green and digital present opportunities to unlock new productivity avenues</strong>.
+<strong>High costs and debt levels </strong>continue to put pressure on Canadian consumers and businesses, <strong>creating a drag on the economy.</strong>
+
 
 - <span style = "font-size:22px;">
-<strong>Sub-optimal business investment</strong> should continue to <strong>raise alarm bells </strong>as it is a key factor for higher incomes and living standards in Canada
+<strong>Weak and declining productivity a critical challenge </strong>for Canadian businesses and near-term economic growth prospects. 
+
+- <span style = "font-size:22px;">
+<strong>Sub-optimal business investment also a significant contributing factor <strong>to weak economic outlook. 
+
 </span>
 ]
 ]
@@ -153,18 +133,21 @@ test<-highchart() %>%
 .center[
 ## Monetary policy tightening is starting to impact growth
 ]
+<ul style="font-size: 24px;">
+GDP contracted by 0.3% in the third quarter as the effects of higher interest rates trickle through the economy.</ul>
 
-#### GDP contracted by 0.3% in the third quarter as the effects of higher interest rates trickle through the economy 
 
 .pull-left[
 - <span style="font-size: 22px;"> 
-Canada's economy shrank in the three months up to September, as <strong>business investments and exports declined while consumer spending remained flat.</strong>
+Canada's economy <strong>shrank </strong>in the three months up to September 2023. 
+
 
 - <span style="font-size: 22px;"> 
-The effects of <strong>interest rate increases</strong> will continue to restrain spending, while limiting growth and employment. 
+<strong>Business investments and exports </strong>declined while consumer spending remained flat.
+
 
 - <span style="font-size: 22px;"> 
-Recent private sector forecasts project either <strong>weak or negative growth over the next two quarters</strong>. 
+Effects of interest rate increases expected to continue to restrain spending, while limiting growth and employment. 
 
 </span>
 ]
@@ -209,7 +192,7 @@ monetary_chart <- highchart() %>%
     yAxis = 1 # Associate with the second y-axis
   ) %>%
   hc_caption(
-    text = "Source: Statistics Canada, Table 36-10-0434-01; Gross domestic product (GDP) at basic prices, by industry, monthly (x 1,000,000), Bank of Canada, target for the overnight rate"
+    text = "Source: Statistics Canada, Table 36-10-0434-01; Gross domestic product (GDP) at basic prices, by industry, monthly (x 1,000,000); Bank of Canada, target for the overnight rate", style = list(fontSize = "9px")
   ) %>%
   hc_add_theme(hc_theme_bloom()) %>%
   hc_tooltip(
@@ -228,10 +211,10 @@ monetary_chart <- highchart() %>%
       }
     }")
   )%>%
-  hc_subtitle(text="GDP growth, monthly(left, %, Bank of Canada policy interest rate (right,%)")
+  hc_subtitle(text="GDP growth, monthly (left), compared to the Bank of Canada's policy interest rate (right)", style = list(fontSize = "18px"))
 ```
 .pull-right[
-```{r, echo=FALSE, fig.align='center', fig.width=8, fig.height=6}
+```{r, echo=FALSE, fig.align='center', fig.width=8, fig.height=6.25}
 monetary_chart
 ```
 ]
@@ -243,17 +226,22 @@ monetary_chart
 
 ---
 .center[
-##What's the economic outlook?
+##Weak short-term economic outlook expected 
 ]
+<ul style="font-size: 24px;">
+Canadian economy expected to slow in early 2024, improving in second half of the year.</ul>
 
-#### The Canadian economy is expected to continueits slowdown through the first half of 2024, while economic activity should improve in the second half of the year.
+
 .pull-left[
 - <span style="font-size: 22px;"> 
-High interest rates are expected to <strong>dampen business investments </strong> while weaker global demand could reduce exports, causing Canada’s forecasted growth in 2023 and 2024 to be weaker than previously projected.
+Economic growth expected to be weak or <strong>negative over the next two quarters in 2024.</strong>
 
 
 - <span style="font-size: 22px;"> 
-Currently at 5.8% (November 2023), the <strong>unemployment rate is expected to gradually increase to 6.5% by the end of 2024 </strong>as slower hiring rates will continue to cool down a tight labor market.
+High interest rates expected to <strong>dampen business investments </strong>while weaker global demand could reduce exports.
+
+- <span style="font-size: 22px;"> 
+<strong>The unemployment rate is expected to gradually increase to 6.5% (from current 5.8%) by the end of 2024,</strong> as slower hiring rates continue to cool down a tight labour market.
 
 
 </span>
@@ -261,7 +249,7 @@ Currently at 5.8% (November 2023), the <strong>unemployment rate is expected to 
 ```{r, echo=FALSE, fig.align='center', fig.width=10, fig.height=6}
 proj<-highchart() %>%
   hc_chart(type = "line") %>%
-  hc_subtitle(text = "Real GDP growth, past and projected, for Canada and the world, yearly percentage change ") %>%
+  hc_subtitle(text = "Real GDP growth, past and projected, for Canada and the world (annualized growth rate) ", style = list(fontSize = "18px")) %>%
   hc_xAxis(categories = c(2022, 2023, 2024, 2025),
            plotBands = list(
              list(
@@ -281,13 +269,11 @@ proj<-highchart() %>%
   hc_colors(colors = c('#FFBBAB', '#FF0000', 'grey', 'black')) %>%
   hc_add_theme(hc_theme_bloom()) %>%
   hc_caption(
-    text = "Source: Bank of Canada's Monetary Policy Report, July 2023 projections vs. October 2023 projections"
+    text = "Source: Bank of Canada's Monetary Policy Report, July 2023 projections vs. October 2023 projections", style = list(fontSize = "9px")
   ) 
-
-
 ```
 .pull-right[
-```{r, echo=FALSE, fig.align='center', fig.width=8, fig.height=6}
+```{r, echo=FALSE, fig.align='center', fig.width=8, fig.height=6.5}
 proj
 ```
 ]
@@ -303,20 +289,22 @@ proj
 </center>
 ---
 .center[
-## Elevated public and private debt levels will dampen opportunities for investment 
+## Elevated debt levels will dampen opportunities for investment 
 ]
 
 .pull-left[
-#### Fiscal capacity is constrained
+<ul style="font-size: 24px;">
+Constrained government fiscal environment.</ul>
+
 - <span style="font-size: 17px;"> 
-Current federal debt is about 42 per cent of GDP. The government has pledged to run deficits no larger than 1% of GDP (fiscal anchor).
-```{r, echo=FALSE, fig.width=6, fig.height=5.5}
+Current federal debt ~42% of GDP, places Canada with third lowest public-debt-to-GDP ratio among G7, above the UK and Germany.
+```{r, echo=FALSE, fig.width=6, fig.height=5.25}
 feddebt <- read_excel("C:/Users/davreuxa/Documents/soe/feddebttogdp.xlsx")
 
 
 feddebt_graph <- highchart() %>%
   hc_chart(type = "line") %>%
-  hc_subtitle(text = "Federal Debt-to-GDP ratio") %>%
+  hc_subtitle(text = "Federal Debt-to-GDP ratio", style = list(fontSize = "16px")) %>%
   hc_xAxis(categories = feddebt$Date,
            plotBands = list(
              list(
@@ -336,7 +324,7 @@ feddebt_graph <- highchart() %>%
   hc_colors(colors = c("grey", "#A4B9CE")) %>%
   hc_add_theme(hc_theme_bloom()) %>%
   hc_caption(
-    text = "Source: Fall Economic Statement 2023"
+    text = "Source: Fall Economic Statement 2023", style = list(fontSize = "9px")
   )
 
 feddebt_graph
@@ -344,15 +332,16 @@ feddebt_graph
 
 ]
 .pull-right[
-#### Corporate debt has reached record levels
+<ul style="font-size: 24px;">
+Corporate debt reaches record levels.</ul>
 - <span style="font-size: 17px;"> 
-Interest charges reached $22.9 billion in Q3 2023 while banks are bracing for higher insolvencies (see Annex C).
-```{r, echo=FALSE, fig.width=7, fig.height=6}
+Interest charges reached $22.9 billion in Q3 2023, with banks bracing for higher level of insolvencies.
+```{r, echo=FALSE, fig.width=7, fig.height=5.80}
 corpdebt <- read_excel("C:/Users/davreuxa/Documents/soe/corpdebt.xlsx")
 
 corpdebt_chart <- highchart() %>%
   hc_chart(type = "column", zoomType = "xy") %>%
-  hc_subtitle(text = "Total debt of non-financial corporations(left), and interest rate charges(right)") %>%
+  hc_subtitle(text = "Total debt of non-financial corporations(left), and interest rate charges(right)", style = list(fontSize = "16px")) %>%
   hc_xAxis(categories = corpdebt$Quarter) %>%
   hc_yAxis_multiples(
     list(
@@ -381,7 +370,7 @@ corpdebt_chart <- highchart() %>%
     yAxis = 1 # Associate with the second y-axis
   ) %>%
   hc_caption(
-    text = "Source: Statistics Canada. Quarterly balance sheet, income statement, and selected financial ratios, by non-financial industries, non-seasonally adjusted (billions)."
+    text = "Source: Statistics Canada. Quarterly balance sheet, income statement, and selected financial ratios, by non-financial industries, non-seasonally adjusted (billions).", style = list(fontSize = "9px")
   ) %>%
   hc_colors(colors = c("#A4B9CE","grey")) %>%
   hc_add_theme(hc_theme_bloom()) %>%
@@ -404,8 +393,8 @@ corpdebt_chart <- highchart() %>%
 
 corpdebt_chart
 ```
-
 ]
+
 <div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #A4B9CE; text-align: center;">
  <span class="small-font"> <strong>Debt</strong></span> 
   <span class="small-font" style="margin-left: 100px;">Affordability </span>
@@ -415,23 +404,23 @@ corpdebt_chart
 </div>
 ---
 .center[
-##Canadian households are under pressure
+##Canadian households remain under significant pressure 
 ]
-
-#### Affordibility remains a key issue, creating a drag on consumption. 
+<ul style="font-size: 24px;">
+Affordability remains a key issue, creating a drag on consumption.</ul>
 
 .pull-left[
 - <span style="font-size: 22px;"> 
-<strong>High demand from population growth and a lack of supply </strong>in the housing market have offset gains in household income.
+<strong>High demand and a lack of supply </strong>in the housing market offset gains in household income.
 
 - <span style="font-size: 22px;"> 
 The Bank of Canada’s <strong>housing affordability index reached its highest level </strong>— meaning the worst degree of affordability — since 1982.
 
 - <span style="font-size: 22px;"> 
-Households are allocating a higher portion of their income to housing, using up more than 38% in 2022, a 4% increase compared to 2019.
+Canadian households allocating a higher portion of income to housing – on average, 55% towards total housing costs as of Q3 2023 – almost twice the rate compared to Q3 2019.
 
 - <span style="font-size: 22px;"> 
-The average household is spending around 15 cents of every after-tax dollar to service their debt – the highest since 1990.
+Average household spending of ~15 cents of every after-tax dollar to service debt – the highest since 1990, which could limit consumer spending.
 
 </span>
 ]
@@ -468,15 +457,15 @@ housecost_chart<- highchart() %>%
     )
   ) %>%
   hc_caption(
-    text = "Source: Bank of Canada, Housing Affordibility."
+    text = "Source: Bank of Canada, Housing Affordibility.", style = list(fontSize = "9px")
   ) %>%
   hc_add_theme(hc_theme_bloom()) %>%
   hc_tooltip(
     pointFormat = '{series.name}: <b>{point.y:.2f}%</b><br/>',
     shared = TRUE
   ) %>%
-  hc_title(text = "Housing costs are taking an ever increasing share of households' income") %>%
-  hc_subtitle(text="Housing affordability index, quarterly")%>%
+  hc_title(text = "Housing costs are taking an ever increasing share of households' income", style = list(fontSize = "20px")) %>%
+  hc_subtitle(text="Housing affordability index, quarterly", style = list(fontSize = "18px"))%>%
   hc_colors(colors = c("grey", "#A4B9CE"))%>%
   hc_legend(enabled = FALSE) 
 
@@ -494,22 +483,24 @@ housecost_chart
 </div>
 ---
 .center[
-##Inflationary pressures might be easing
+## Inf lationary pressures might be easing
 ]
+<ul style="font-size: 24px;">
+Inflation is generally easing down despite a recent uptick.</ul>
 
-#### Recent inflation numbers are the lastest sign of a cooling economy 
+
 .pull-left[
 - <span style="font-size: 22px;"> 
-Canada's <strong> consumer price index rose by 3.1% </strong> in the year up to October, down from 3.8% the rpevious month. 
+Canada's consumer price index rose by 3.4% in the year up to December, bringing the inflation cooldown to a halt.
 
 - <span style="font-size: 22px;"> 
-Overall, <strong>shelter costs (e.g. mortgage and rent payments) are up by more than six% </strong> in the past year. That's about twice the overall inflation rate.
+Overall, <strong>shelter costs (e.g. mortgage and rent payments) are up by more than 6% </strong> in the past year, ~twice the overall inflation rate.
 
 - <span style="font-size: 22px;"> 
-<strong>CPI – food purchased from stores was 5.6%.</strong> Grocery prices have now decelerated for four months in a row.
+<strong>CPI – food purchased from stores was 4.7%,</strong> marking a fifth month of deceleration.
 
 - <span style="font-size: 22px;"> 
-Historical experience suggests that the recent easing of cost pressures in production and distribution (see Annex A) will lead to <strong>further declines in food price inflation </strong>over the coming months.
+Historical experience suggests that the recent easing of cost pressures in production and distribution will lead to <strong>further declines in food price inflation </strong>over the coming months.
 
 </span>
 ]
@@ -519,7 +510,13 @@ foodinf <- read_excel("C:/Users/davreuxa/Documents/soe/foodinf.xlsx")
 
 foodinf_chart<- highchart() %>%
   hc_chart(type = "line", zoomType = "xy") %>%
-  hc_xAxis(categories = format(as.Date(foodinf$Date), "%b %y")) %>%
+  hc_xAxis(categories = format(as.Date(foodinf$Date), "%b %y"),
+           labels = list(
+      rotation = -90,  # Rotate the labels to vertical position
+      align = "right",
+      step = 1 # Increase x-axis label font size
+    )
+  ) %>%
   hc_add_series(
     name = "Food Inflation",
     data = foodinf$`Food Inflation`,
@@ -541,9 +538,9 @@ foodinf_chart<- highchart() %>%
     pointFormat = '{series.name}: <b>{point.y:.1f}%</b><br/>',
     shared = TRUE
   ) %>%
-  hc_title(text = "Food inflation continues to decrease from its January 2023 peak, getting closer to the all-items inflation") %>%
+  hc_title(text = "Food inflation continues to decrease from its January 2023 peak, getting closer to the all-items inflation", style = list(fontSize = "20px")) %>%
   hc_colors(colors = c("grey", "#A4B9CE"))%>%
-  hc_subtitle(text="Year-over-year inflation, monthly (%)")
+  hc_subtitle(text="Year-over-year inflation, monthly (%)", style = list(fontSize = "18px"))
 
 # To display the chart if you're running this in an interactive R session
 
@@ -560,17 +557,18 @@ foodinf_chart
 </div>
 ---
 .center[
-##There are risks of a wage-price spiral
+##Risks of a wage-price spiral
 ]
+<ul style="font-size: 24px;">
+Wages are catching up with inflation, adding cost pressures to firms.</ul>
 
-#### Wages are catching up with inflation, adding cost pressures to firms
 
 .pull-left[
 - <span style="font-size: 22px;"> 
-<strong>Wage hikes have become more widespread </strong>as workers try to recoup purchasing power including via several high-profile strikes across Canada.
+<strong>Wage increases have become more widespread </strong>as workers try to recoup purchasing power including via several high-profile strikes across Canada.
 
 - <span style="font-size: 22px;"> 
-The <strong>cost of labour rose faster </strong>than the increase in price of the products sold for the better part of the year (see chart).
+<strong>Labour costs rose faster </strong>than the increase in price of the products sold for the better part of the year (see chart).
 
 - <span style="font-size: 22px;"> 
 Though faster wage increases are an understandable reaction to higher inflation, they risk making a <strong>return to low inflation </strong>more difficult.
@@ -578,7 +576,7 @@ Though faster wage increases are an understandable reaction to higher inflation,
 
 </span>
 ]
-```{r, echo=FALSE, fig.align='center', fig.width=10, fig.height=6, warning=FALSE}
+```{r, echo=FALSE, fig.align='center', fig.width=10, fig.height=5.80, warning=FALSE}
 cons <- read_excel("C:/Users/davreuxa/Documents/soe/construction.xlsx")
 
 
@@ -596,18 +594,20 @@ const <- highchart() %>%
     dataLabels = list(enabled = FALSE, format = '{point.y:.2f}%')
   ) %>%
   hc_yAxis(
-    title = list(text = "%")
+    title = list(text = "%"),
+    min=-2,
+    max=4
   ) %>%
   hc_caption(
-    text = "Source: StatsCan Table 36-10-0206-01 Indexes of business sector labour productivity, unit labour cost and related measures, seasonally adjusted."
+    text = "Source: StatsCan Table 36-10-0206-01 Indexes of business sector labour productivity, unit labour cost and related measures, seasonally adjusted.", style = list(fontSize = "9px")
   ) %>%
   hc_add_theme(hc_theme_bloom()) %>%
   hc_tooltip(
     pointFormat = '{series.name}: <b>{point.y:.2f}%</b><br/>',
     shared = TRUE
   )%>%
-  hc_subtitle(text = "Quarterly change in the unit labor cost, and the implicit price deflator, percentage")%>%
-  hc_title(text="The increase in costs of wages has outpaced the increase in prices of products sold for businesses for four consecutive quarters, before an uptick in prices.")%>%
+  hc_subtitle(text = "Quarterly change in labor cost vs.  the implicit price deflator, %", style = list(fontSize = "16px"))%>%
+  hc_title(text="The increase in cost of wages has outpaced the increase in prices of products sold for four consecutive quarters, before a recent uptick in prices.", style = list(fontSize = "20px"))%>%
   hc_colors(colors = c("grey", "#A4B9CE"))%>%
   hc_add_annotation( 
   labels = list(
@@ -637,7 +637,7 @@ const <- highchart() %>%
 ```
 
 .pull-right[
-```{r, echo=FALSE, fig.align='center', fig.width=7.5, fig.height=7}
+```{r, echo=FALSE, fig.align='center', fig.width=7.5, fig.height=6.5}
 const
 ```
 ]
@@ -650,19 +650,22 @@ const
 </div>
 ---
 .center[
-##Tackling weak productivity growth is critical
+##Weak, declining productivity growth concerning
 ]
+<ul style="font-size: 24px;">
+Canada’s productivity dipped below pre-pandemic levels, widening the gap with the U.S.</ul>
 
-#### Canada’s productivity has dipped below pre-pandemic levels while widening the gap with the US
 .pull-left[
 - <span style="font-size: 22px;"> 
-Wage increases would be <strong>non-inflationary with higher productivity </strong> but that is not the case in Canada. 
+<strong>Canada’s productivity level is declining –  </strong>compared to last year, the average Canadian is now producing 2% less during every hour they spend at work.
 
 - <span style="font-size: 22px;"> 
-<strong>Canada needs to alter its current productivity course</strong> or be destined to enter an era of reduced consumption and declining living standards.
+Since 2020, <strong> output per hour in the business sector has dropped at an annual rate of 0.2% –</strong> the first negative reading on record (see chart). 
+
 
 - <span style="font-size: 22px;"> 
-Over the past four years, <strong>output per hour in the business sector has dropped at a 0.2% annual rate</strong>, the first negative reading on record over such a sustained period, whereas it has increased by 1.4% in the US (see chart). 
+Canada’s labour productivity gap with the U.S. further deteriorated – as of 2022, <strong>Canada was 72% as productive as the U.S.</strong>. 
+
 </span>
 ]
 .pull-right[
@@ -686,15 +689,15 @@ lp_chart<- highchart() %>%
     title = list(text = "%")
   ) %>%
   hc_caption(
-    text = "Source:Statistics Canada, US Federal Reserve Economic Data"
+    text = "Source:Statistics Canada, US Federal Reserve Economic Data", style = list(fontSize = "9px")
   ) %>%
   hc_add_theme(hc_theme_bloom()) %>%
   hc_tooltip(
     pointFormat = '{series.name}: <b>{point.y:.2f}%</b><br/>',
     shared = TRUE
   ) %>%
-  hc_subtitle(text = "Labour productivity in the business sector, Canada vs. US, annualized 4-year change (%)") %>%
-  hc_title(text="Canada's labour productivity growth is now below pre-pandemic levels")%>%
+  hc_subtitle(text = "Labour productivity in the business sector, Canada vs. US, annualized 4-year change (%)", style = list(fontSize = "18px")) %>%
+  hc_title(text="Canada's labour productivity growth is now below pre-pandemic levels", style = list(fontSize = "20px"))%>%
   hc_colors(colors = c("#FE5F55", "#A4B9CE"))%>%
   hc_add_annotation( 
   labels = list(
@@ -803,7 +806,7 @@ total_factor_productivity_chart <- highchart() %>%
   ) %>%
   hc_legend(enabled = FALSE)%>%
   hc_caption(
-    text = "Source: Canada: Statistics Canada Table 36-10-0208-01; U.S. Bureau of Labour Statistics; ISED calculations."
+    text = "Source: Canada: Statistics Canada Table 36-10-0208-01; U.S. Bureau of Labour Statistics; ISED calculations.", style = list(fontSize = "9px")
   ) %>%
   hc_colors(colors = c("#FE5F55", "#A4B9CE"))
   
@@ -815,32 +818,29 @@ total_factor_productivity_chart
 ```
 
 .pull-left[
-##Canada's weak productivity growth requires firms to make better use of physical and human capital
+## Weak productivity requires better use of physical & human capital
 
-<ul style="font-size: 20px;"> 
+<ul style="font-size: 22px;"> 
   <li>
-    Labour productivity rises through:
-    <ul>
-      <li>More structures, machines, and intangible assets <strong>(capital deepening)</strong>.</li>
-      <li>More skills <strong>(skill composition of labour force)</strong>.</li>
-      <li>More effective use of the above inputs <strong>(total factor productivity)</strong>.</li>
-    </ul>
+    Canada compares to the U.S. on the contributions of <strong>capital deepening and skills composition </strong>(e.g. level of human capital) to overall productivity growth. 
+
   </li>
- </ul>
+</ul>
+
+<ul style="font-size: 22px;"> 
+  <li>
+    However, Canada’s declining  relative labour productivity to the U.S. driven by weakness in <strong>total factor productivity growth,</strong> which has not improved in decades.   
+
+  </li>
+</ul>
+
+<ul style="font-size: 22px;"> 
+  <li>
+    A measure of <strong>technological progress and innovation, total factor productivity </strong>shows overall effectiveness with which inputs (capital and labour) are used to produce output in an economy.
  
-<ul style="font-size: 20px;"> 
-  <li>
-    Canada’s lower relative labour productivity is driven by weakness in <strong>total factor productivity growth</strong>, which has not improved in decades.
+
   </li>
 </ul>
-
-<ul style="font-size: 20px;"> 
-  <li>
-    <strong>Total factor productivity</strong> is a measure of overall effectiveness with which inputs (capital and labour) are used to produce output in an economy. It is a <strong>measure of technological progress and innovation.</strong>
-  </li>
-</ul>
-
-
 ]
 .pull-right[
 <div class="slide-content">
@@ -850,15 +850,15 @@ total_factor_productivity_chart
 </div>
 
 <div class="charts-container">
-```{r,echo=FALSE,results='asis',fig.width=6, fig.height=3.25}
+```{r,echo=FALSE,results='asis',fig.width=7, fig.height=3.25}
 # Assuming the chart object is created and named capital_deepening_chart
 capital_deepening_chart
 ```
-```{r,echo=FALSE,results='asis',fig.width=6, fig.height=2.5}
+```{r,echo=FALSE,results='asis',fig.width=7, fig.height=2.5}
 # Assuming the chart object is created and named skills_composition_chart
 skills_composition_chart
 ```
-```{r,echo=FALSE,results='asis',fig.width=6, fig.height=3.5}
+```{r,echo=FALSE,results='asis',fig.width=7, fig.height=3.5}
 # Assuming the chart object is created and named total_factor_productivity_chart
 total_factor_productivity_chart
 ```
@@ -892,7 +892,7 @@ non_res_colored <- assign_colors(IPP$Non_res, IPP$Country, "Canada", '#7F7F7F', 
 
 m_e_chart <- highchart() %>%
   hc_chart(type = "bar") %>%
-  hc_subtitle(text = "Machinery & Equipment + Intellectual Property Products") %>%
+  hc_subtitle(text = "M&E + IPP", style = list(fontSize = "16px")) %>%
   #hc_title(text="Gross fixed capital formation by asset category (percentage of GDP, 2021)")%>%
   hc_plotOptions(series = list(stacking = "normal")) %>%
   hc_add_series(name = "M&E", data = m_e_colored) %>%
@@ -912,7 +912,7 @@ m_e_chart <- highchart() %>%
     tickPixelInterval = 50 # Adjust the pixel interval for ticks
   )%>%
   hc_yAxis(labels = list(style = list(textOverflow = "allow")))%>%
-  hc_caption(text="Source: OECD.")
+  hc_caption(text="Source: OECD.", style = list(fontSize = "9px"))
 
 ```
 ```{r, echo=FALSE, include=FALSE}
@@ -925,7 +925,7 @@ non_res_colored <- assign_colors(IPP2$Non_res, IPP2$Country, "Canada", '#7F7F7F'
 # Generate the bar chart for Non-residential Structures with highlighted "Canada"
 non_res_chart <- highchart() %>%
   hc_chart(type = "bar") %>%
-    hc_subtitle(text = "Non-residential Structures") %>%
+  hc_subtitle(text = "Non-residential Structures", style = list(fontSize = "16px")) %>%
   hc_add_series(name = "Non-residential Structures", data = non_res_colored) %>%
   hc_xAxis(categories = IPP2$Country) %>%
   hc_add_theme(hc_theme_bloom()) %>%
@@ -945,34 +945,35 @@ non_res_chart <- highchart() %>%
 non_res_chart
 ```
 .center[
-### More needs to be done to encourage firms to invest in productivity enhancing assets
+## More needs to be done to encourage firms to invest in productivity enhancing assets
 ]
 
 .pull-left[
-- <span style="font-size: 20px;"> 
-<strong>It is not just an R&D story - Canadian businesses invest proportionally less </strong>in machinery & equipment and other IP products (e.g., software and data).
-
+- <span style="font-size: 22px;"> 
+<strong>It is not just an R&D story - Canadian businesses invest proportionally less </strong>in machinery & equipment (M&E)and other Intellectual Products (IPP) (e.g., software and data).
 </span>
   
-- <span style="font-size: 20px;">
-Most businesses are not R&D performers but can contribute to <strong>productivity growth by investing </strong>in technologies and the knowledge and skills to effectively use them.  
-</span>
+- <span style="font-size: 22px;">
+Bank of Canada’s latest Business Outlook Survey found that many Canadian businesses are preparing to <strong>invest less in M&E </strong>over the coming year.
 
-- <span style="font-size: 20px;">
-Investing in both machinery and knowledge supports a healthy <strong>innovation ecosystem </strong>– critical for  economic growth, and overall competitiveness. 
+
+- <span style="font-size: 22px;">
+Investing in technologies, paired with the knowledge and skills to effectively use them, <strong>contributes positively to productivity growth,<strong> supporting a healthy innovation ecosystem which is critical for economic growth. 
+
 </span>
 
 
 ]
 .pull-right[
-#### Gross fixed capital formation by asset category (percentage of GDP, 2021)
+<ul style="font-size: 20px;">
+Gross fixed capital formation by asset category,% of GDP</ul>
 .pull-left[
-```{r,echo=FALSE,results='asis',fig.width=3.5, fig.height=6.25}
+```{r,echo=FALSE,results='asis',fig.width=3.5, fig.height=6.235}
 m_e_chart
 ```
 ]
 .pull-right[
-```{r,echo=FALSE,results='asis',fig.width=4, fig.height=6.25}
+```{r,echo=FALSE,results='asis',fig.width=4, fig.height=5.85}
 non_res_chart
 ```
 ]
@@ -980,20 +981,17 @@ non_res_chart
 
 ---
 .center[
-## New sources of productivity growth will be required to adjust for the green transition
+## New sources of productivity and economic diversification required for growth
 ]
 .pull-left[
 - <span style="font-size: 22px;"> 
-The <strong>green transition </strong>will create challenges and opportunities for productivity growth. 
+The <strong>largest emitting sectors </strong>of the Canadian economy (e.g. oil and gas) are also those with the <strong>highest productivity levels.</strong>
 
 - <span style="font-size: 22px;"> 
-In addition to oil and gas, the Canadian economy is <strong>heavily concentrated </strong>within resource-dependent industries. 
+Canadian economy is <strong>shifting from resource-dependent to service industries </strong>- the value-added share of resource-dependent industries declined from 17.2% in 2000 to 13.2% in 2019, the largest decline among G7 countries. 
 
 - <span style="font-size: 22px;"> 
-Among G7 countries, <strong>Canada has the highest value added share of resource-dependent industries</strong> (see chart).
-
-- <span style="font-size: 22px;"> 
-Economic concentration in resource-dependant industries creates <strong>less investment opportunities in more complex manufacturing and services </strong>.
+Many countries have overtaken Canada in the ability to <strong>produce diversified and complex products <strong>for international markets – export sophistication positively linked to  productivity returns. 
 
 </span>
 ]
@@ -1009,7 +1007,7 @@ green_long <- green %>%
 gchart <- highchart() %>%
   hc_chart(type = "column") %>%
   hc_title(text="Canada's production has become less resouce heavy, but continues to be the highest within the G7")%>%
-  hc_subtitle(text = "GDP share of Resource-Dependant Activities, 2000 vs 2019") %>%
+  hc_subtitle(text = "GDP share of Resource-Dependant Activities, 2000 vs 2019", style = list(fontSize = "16px")) %>%
   hc_xAxis(categories = unique(green_long$Country)) %>%
   hc_yAxis(title = list(text = "%")) %>%
   hc_add_series(name = "2000", 
@@ -1119,22 +1117,22 @@ eg_chart <- highchart() %>%
   )%>%
   hc_legend(enabled = TRUE)%>%
   hc_caption(
-    text = "Source: Carta M., and Demers, F. (2023); Analysis on Federal Business Innovation and Growth Support to Clean Technology, 2016-2020."
+    text = "Source: Carta M., and Demers, F. (2023); Analysis on Federal Business Innovation and Growth Support to Clean Technology, 2016-2020.", style = list(fontSize = "9px")
   )
 
 ```
 
 .pull-left[
-## Investments in clean-tech can unlock new productivity opportunities
-<ul style="font-size: 20px;"> 
+## Investments in clean-tech could help to unlock new  productivity opportunities
+<ul style="font-size: 22px;"> 
   <li>
-The Porter Hypothesis posits that well-formulated <strong>environmental policies can spur innovation</strong>, which can in turn stimulate productivity.
+Well-formulated <strong>environmental policies and programs can spur innovation, </strong>which can in turn stimulate productivity.
   </li>
  </ul>
  
 <ul style="font-size: 20px;"> 
   <li>
-There is emerging evidence in Canada that the <strong>environmental and clean technology sector</strong> is generating above-average productivity returns. 
+Emerging evidence in Canada suggests that the <strong>environmental and clean technology sector </strong>is generating above-average productivity returns. 
   </li>
 </ul>
 
@@ -1142,7 +1140,7 @@ There is emerging evidence in Canada that the <strong>environmental and clean te
   <li>
 A recent study finds that—relative to other innovation support beneficiaries—businesses getting clean-tech support: 
     <ul>
-      <li>had more educated workforces;</li>
+      <li>had a more educated workforce;</li>
       <li>faster labour productivity growth;</li>
       <li>faster revenue growth, and;</li>
       <li>faster employment growth compared to businesses receiving other innovation support programs. </li>
@@ -1171,10 +1169,12 @@ eg_chart
 
 ---
 .center[
-##The shift towards electric vehicles requires urgent action to build out the supply chain
+##Building out supply-chain necessary step to achieve shift to electric vehicles
 ]
-
-#### Canada possesses critical minerals but lacks processing capacity, hampering productivity.
+.left[
+<ul style="font-size: 24px;">
+Rich in critical minerals, Canada lags in its processing capacity, which could increase productivity.</ul>
+]
 .pull-left[
 - <span style="font-size: 22px;"> 
 Canadian sales of <strong>EVs jumped by 30% in Q2 2023 </strong>compared to the previous quarter (see chart).
@@ -1186,7 +1186,7 @@ Since 2020, Canada has secured more than <strong>$34 billion in investment in th
 However, the domestic EV supply chain is still lagging in its <strong>capacity to process the raw materials going into the battery cells.</strong>
 
 - <span style="font-size: 22px;"> 
-The US Inflation Reduction Act and China’s dominant position in critical mineral processing (IMF) puts further <strong>pressure on Canada’s capability to secure its own supply chain in EV batteries.</strong>
+The <strong>U.S. Inflation Reduction Act and China’s dominant position in critical mineral processing </strong>(IMF) puts further pressure on Canada’s capability to secure its own supply chain in EV batteries.
 
 </span>
 ]
@@ -1196,8 +1196,8 @@ ev <- read_excel("C:/Users/davreuxa/Documents/soe/ev.xlsx")
 
 ev_chart <- highchart() %>%
   hc_chart(type = "column") %>%
-  hc_title(text="EV sales numbers have been soaring in the past two quarters")%>%
-  hc_subtitle(text = "EV registrations, quarterly (left, thousands) and share of total vehicle sales(right, %)") %>%
+  hc_title(text="EV sales numbers have been soaring in the past two quarters", style = list(fontSize = "19px"))%>%
+  hc_subtitle(text = "EV registrations (left) vs. share of total vehicle sales(right)", style = list(fontSize = "16px")) %>%
   hc_xAxis(categories = ev$quarter) %>%
   hc_yAxis_multiples(
     list(
@@ -1220,11 +1220,11 @@ ev_chart <- highchart() %>%
   hc_plotOptions(column = list(stacking = 'normal')) %>%
   hc_legend(enabled = TRUE) %>%
   hc_credits(enabled = FALSE)%>%
-  hc_colors(colors = c("#A4B9CE","#AFABAB", "grey"  )) %>%
+  hc_colors(colors = c("#A4B9CE","#AFABAB", "grey")) %>%
   hc_add_theme(hc_theme_bloom()) %>%
   hc_tooltip(shared = TRUE, crosshairs = TRUE)%>%
   hc_caption(
-    text = "Source: Statistics Canada. Table 20-10-0024-01. New motor vehicle registrations, quarterly."
+    text = "Source: Statistics Canada. Table 20-10-0024-01. New motor vehicle registrations, quarterly.", style = list(fontSize = "8px")
   )
 
 
@@ -1239,7 +1239,7 @@ ev_chart
 
 ---
 .center[
-##Policies should continue to work with firms along their digitization journey
+##Tech adoption in Canada continues to lag
 ]
 
 .pull-left[
@@ -1247,7 +1247,8 @@ ev_chart
 Digital-intensive sectors, associated with significant <strong>productivity gains, </strong>accounted for 6% of Canada’s GDP in 2020, lagging most G7 peers (see chart).
 
 - <span style="font-size: 22px;"> 
-<strong>SMEs continue to lag larger firms in foundational technologies,</strong> such as e-commerce and social media, thus leaving money on the table in an increasingly digital market. <strong>Limited access to high-speed internet, skills shortages, and corporate giants </strong>are a few of the main barriers prohibiting SME firms from digitizing.
+Small-Medium Sized firms (SMEs), the majority of Canadian economy, continue to lag larger firms in the use of foundational technologies (e.g., e-commerce). 
+
 
 - <span style="font-size: 22px;"> 
 Canada’s skilled workforce and early investment in AI technologies can facilitate a better integration of digital tools in its economy.
@@ -1283,7 +1284,7 @@ hc_yAxis(
     shared=TRUE
   ) %>%
   hc_caption(
-    text = "Source: Digitally Intensive Sectors determined using methodology by Calvino et al (2018); data from the OECD"
+    text = "Source: Digitally Intensive Sectors determined using methodology by Calvino et al (2018); data from the OECD", style = list(fontSize = "9px")
   )
 
 
@@ -1294,23 +1295,23 @@ dii_chart
 
 ---
 .center[
-##Working closer with firms on how they deploy human capital is worth exploring
+##Labour market tightness remains elevated
 ]
+<ul style="font-size: 24px;">
+Labour shortages can be good news for productivity.</ul>
 
-#### Labour shortages can be good news for productivity
 .pull-left[
-- <span style="font-size: 22px;"> 
-<strong>Labour market tightness remains elevated, </strong>making life difficult for some businesses.
 
 - <span style="font-size: 22px;"> 
 <strong>Job vacancies declined to 632,200 </strong>in September 2023. but remain well above pre-COVID levels.
 
 
 - <span style="font-size: 22px;"> 
-Persistent job vacancies in some sectors can be an opportunity for <strong>digital transformation.</strong> When employers pay more for labour, they have an incentive to use it more, which can spark innovation, investments in technology (e.g. AI and automation) and productivity improvements.
+Top three sectors with the <strong>highest vacancies </strong>(e.g. accommodation and food services, health care and social assistance, and construction) represent 16.5% of Canada’s GDP. 
+
 
 - <span style="font-size: 22px;"> 
-Canada could look to the UK, Finland, and Australia, where innovation policies have spotlighted the role of HR and management practices.
+To <strong>mitigate the negative effects of labour shortages,</strong> businesses may need to adopt strategies such as investing in workforce development, improving workplace conditions, and exploring technological solutions to automate certain tasks.
 
 </span>
 ]
@@ -1334,7 +1335,7 @@ vacancy_graph <-highchart() %>%
   hc_colors(colors = c("#A4B9CE","#AFABAB")) %>%
   hc_add_theme(hc_theme_bloom()) %>%
   hc_caption(
-    text = "Source: Statistics Canada. Labour force characteristics and job vacancies."
+    text = "Source: Statistics Canada. Labour force characteristics and job vacancies.", style = list(fontSize = "9px")
   ) %>%
   hc_subtitle(text="Unemployment-to-job vacancy ratio (left) and job vacancies (right), monthly")
 ```
@@ -1346,113 +1347,23 @@ vacancy_graph
 
 ---
 .pull-left[
-## Policy considerations
-<img src="policy.jpg" width="75%"/>
+## Summary
+<img src="policy.jpg" width="85%"/>
 ]
 
 - <span style="font-size: 25px;"> 
-The Canadian economy may struggle to grow in the near-term. 
-
-<span style="font-size: 25px;"> 
-  <strong>ISED policies and programs should prepare for different economic downturn scenarios within a tight fiscal framework.</strong>
+Economic headwinds likely to result in slower economic activity in the near-term. <strong>ISED policies and programs to prepare for different economic downturn scenarios within a tight fiscal environment. </strong>
 
 
 - <span style="font-size: 25px;"> 
-ISED could look to orient policies and programs to <strong>work closer with firms to increase business investments to accelerate innovation,</strong> while also deploying the right mix of inputs, including technology and intangible assets (e.g. human capital) to <strong>lift productivity growth.</strong>
+<strong>Elevated interest rates and ongoing significant affordability challenges continue to weigh on Canadian households, </strong>consumers and businesses, with recent drops in productivity effectively erasing five years of gains. ISED to continue looking at how various policy levers can be deployed to help solve the productivity puzzle.  
 
 
 - <span style="font-size: 25px;"> 
-While recent Competition Act reforms are critical, examine how other <strong>structural policies </strong>(e.g. those that shape the business environment) can be adjusted to address <strong>underlying economic challenges in Canada and promote sustainable growth. </strong>
+Low investment in R&D and innovation-enhancing activities also expected to weigh on economic growth. <strong>ISED policies to  continue to seek to accelerate innovation,</strong> including technology adoption and intangible assets, lifting productivity growth.
+
 
 </span>
-
----
-
-## Appendix
-###Tourism and Transportation have yet to recover from the Pandemic while Construction and Agriculture dip back below their pre-pandemic levels
-```{r, echo=FALSE, include=FALSE}
-
-# Create a data frame with the GDP growth information
-gdp_growth <- data.frame(
-  Industry = c(
-    "Professional services", "Public administration", "Finance and insurance", 
-    "Health care and social assistance", "Educational services", "Real estate and rental and leasing", 
-    "Retail trade", "Information and cultural industries", "Other services", "Wholesale trade", 
-    "Energy and mining", "Manufacturing", "Construction", "Transportation and warehousing", 
-    "Utilities", "Administrative and support", "Accommodation and food services", 
-    "Agriculture, forestry, fishing and hunting", "Arts, entertainment and recreation"
-  ),
-  RelativeToPrePandemic = c(
-    11.6, 9.1, 8.7, 8.6, 6.7, 5.8, 3.4, 3.4, 3.2, 2.3, 1.3, 0.2, -0.2, -2.4, 
-    -4.1, -5.3, -7.0, -8.9, -7.3
-  ),
-  PastYear = c(
-    1.8, 3.6, 1.2, 2.9, 2.7, 2.2, -0.8, -0.9, 1.3, 1.7, 0.9, -0.2, -0.7, 4.5, 
-    -6.4, 0.1, 0.0, -15.7, 7.4
-  ),
-  PastThreeMonths = c(
-    -0.2, 0.9, 0.7, 0.6, 0.3, 0.4, -1.3, -1.8, -0.1, 0.8, 3.2, -2.0, -0.7, 0.1, 
-    -2.2, -0.6, -1.0, 1.0, -7.5
-  )
-)
-
-# Create the Highchart
-sect<-highchart() %>%
-  hc_chart(type = "bar") %>%
-  hc_title(text = "Sector Snapshot") %>%
-  hc_subtitle(text = "Tourism and Transportation have yet to recover from the Pandemic while Construction and Agriculture dip back below their pre-pandemic levels") %>%
-  hc_xAxis(categories = gdp_growth$Industry) %>%
-  hc_yAxis(title = list(text = "GDP growth (%)")) %>%
-  hc_add_series(name = "Relative to pre-pandemic", data = gdp_growth$RelativeToPrePandemic) %>%
-  hc_add_series(name = "Past year", data = gdp_growth$PastYear) %>%
-  hc_add_series(name = "Past three months", data = gdp_growth$PastThreeMonths) %>%
-  hc_legend(enabled = TRUE) %>%
-  hc_plotOptions(series = list(stacking = "normal")) %>%
-  hc_tooltip(pointFormat = "<span style='color:{point.color}'>\u25CF</span> {series.name}: <b>{point.y}%</b><br/>")
-
-sect
-
-```
-```{r,echo=FALSE}
-industries <- c("Professional services", "Public administration", "Finance and insurance",
-                "Health care and social assistance", "Educational services",
-                "Real estate and rental and leasing", "Retail trade",
-                "Information and cultural industries", "Other services", "Wholesale trade",
-                "Energy and mining", "Manufacturing", "Construction",
-                "Transportation and warehousing", "Utilities", "Administrative and support",
-                "Accommodation and food services", "Agriculture, forestry, fishing and hunting",
-                "Arts, entertainment and recreation")
-
-pre_pandemic <- c(11.6, 9.1, 8.7, 8.6, 6.7, 5.8, 3.4, 3.4, 3.2, 2.3, 1.3, 0.2, -1.2, -2.4, -4.1, -5.3, -7.0, -7.3, -8.9)
-past_year <- c(1.8, 3.6, 1.2, 2.9, 2.7, 2.2, -0.8, -0.9, 1.3, 1.7, 0.9, -0.2, -1.7, 4.5, -6.4, 0.1, 0.0, -15.7, 7.4)
-past_three_months <- c(-0.2, 0.9, 0.7, 0.6, 0.3, 0.4, -1.3, -1.8, -0.1, 0.8, 3.2, -2.0, -0.7, 0.1, -2.2, -0.6, -1.0, 1.0, -7.5)
-
-# Create a list of lists for highcharter
-data_for_chart <- list(
-  list(name = 'Relative to pre-pandemic', data = pre_pandemic),
-  list(name = 'Past year', data = past_year),
-  list(name = 'Past three months', data = past_three_months)
-)
-
-# Create the Highchart
-sect2<-highchart() %>%
-  hc_chart(type = 'bar') %>%
-  hc_title(text = "GDP growth by industry, as of August 2023, percentage") %>%
-  hc_xAxis(categories = industries) %>%
-  hc_yAxis(title = list(text = "Growth (%)")) %>%
-  hc_add_series_list(data_for_chart) %>%
-  hc_plotOptions(series = list(stacking = 'normal')) %>%
-  hc_legend(reversed = TRUE) %>%
-  hc_add_theme(hc_theme_bloom()) %>%
-  hc_tooltip(shared = TRUE, crosshairs = TRUE) 
-  #hc_exporting(enabled = TRUE) # Enable chart exporting (optional)
-
-```
-<center>
-```{r, echo=FALSE, fig.align='center', fig.width=10, fig.height=6}
-sect2
-```
-</center>
 
 
 ---
