@@ -1,7 +1,7 @@
 ---
 title: "The State of the Canadian Economy"
-author: "Presentation to DGPC"
-date: "January 16, 2024"
+author: "Economic Research Analysis Team"
+date: "January 2024"
 output:
   xaringan::moon_reader:
     self_contained: true
@@ -478,7 +478,7 @@ housecost_chart
   <span class="small-font"> Debt</span> 
   <span class="small-font" style="margin-left: 100px;"><strong>Affordability</strong> </span>
   <span class="small-font" style="margin-left: 100px;">Inflation</span>
-    <span class="small-font" style="margin-left: 100px;">Productivity</span>
+  <span class="small-font" style="margin-left: 100px;">Productivity</span>
 
 </div>
 ---
@@ -1247,11 +1247,11 @@ ev_chart
 Digital-intensive sectors, associated with significant <strong>productivity gains, </strong>accounted for 6% of Canada’s GDP in 2020, lagging most G7 peers (see chart).
 
 - <span style="font-size: 22px;"> 
-Small-Medium Sized firms (SMEs), the majority of Canadian economy, continue to lag larger firms in the use of foundational technologies (e.g., e-commerce). 
+<strong>Small-Medium Sized firms (SMEs),</strong> the majority of Canadian economy, <strong>continue to lag larger firms in the use of foundational technologies</strong> (e.g., e-commerce). 
 
 
 - <span style="font-size: 22px;"> 
-Canada’s skilled workforce and early investment in AI technologies can facilitate a better integration of digital tools in its economy.
+Canada’s skilled workforce and early <strong>investment in AI </strong>technologies can facilitate a better integration of digital tools in its economy.
 
 </span>
 ]
@@ -1337,10 +1337,10 @@ vacancy_graph <-highchart() %>%
   hc_caption(
     text = "Source: Statistics Canada. Labour force characteristics and job vacancies.", style = list(fontSize = "9px")
   ) %>%
-  hc_subtitle(text="Unemployment-to-job vacancy ratio (left) and job vacancies (right), monthly")
+  hc_subtitle(text="Unemployment-to-job vacancy ratio (left) and job vacancies (right), monthly", style = list(fontSize = "16px"))
 ```
 .pull-right[
-```{r, echo=FALSE, fig.align='center', fig.width=7.5, fig.height=6.25}
+```{r, echo=FALSE, fig.align='center', fig.width=7.5, fig.height=6.55}
 vacancy_graph
 ```
 ]
