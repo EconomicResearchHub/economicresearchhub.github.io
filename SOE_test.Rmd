@@ -336,7 +336,7 @@ feddebt_graph
 Corporate debt reaches record levels.</ul>
 - <span style="font-size: 17px;"> 
 Interest charges reached $22.9 billion in Q3 2023, with banks bracing for higher level of insolvencies.
-```{r, echo=FALSE, fig.width=7, fig.height=5.80}
+```{r, echo=FALSE, fig.width=7, fig.height=5.90}
 corpdebt <- read_excel("C:/Users/davreuxa/Documents/soe/corpdebt.xlsx")
 
 corpdebt_chart <- highchart() %>%
@@ -531,7 +531,7 @@ foodinf_chart<- highchart() %>%
     title = list(text = "%")
   ) %>%
   hc_caption(
-    text = "Source: Statistics Canada. Table 18-10-0006-01 Consumer Price Index, monthly"
+    text = "Source: Statistics Canada. Table 18-10-0006-01 Consumer Price Index, monthly", style = list(fontSize = "9px")
   ) %>%
   hc_add_theme(hc_theme_bloom()) %>%
   hc_tooltip(
@@ -637,7 +637,7 @@ const <- highchart() %>%
 ```
 
 .pull-right[
-```{r, echo=FALSE, fig.align='center', fig.width=7.5, fig.height=6.5}
+```{r, echo=FALSE, fig.align='center', fig.width=7.5, fig.height=6.75}
 const
 ```
 ]
