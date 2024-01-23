@@ -1,6 +1,6 @@
 ---
 title: "The State of the Canadian Economy"
-author: "Economic Research Analysis Team"
+author: " "
 date: "January 2024"
 output:
   xaringan::moon_reader:
@@ -52,7 +52,7 @@ library(readxl)
 ## Key Messages
 .pull-left[
 - <span style="font-size: 22px;"> 
-<strong> The Canadian economy is facing multiple headwinds pointing to slow economic activity </strong>in the first half of 2024.
+<strong> The Canadian economy facing multiple headwinds pointing to slow economic activity </strong>in the first half of 2024.
 
 
 - <span style = "font-size:22px;">
@@ -139,7 +139,7 @@ GDP contracted by 0.3% in the third quarter as the effects of higher interest ra
 
 .pull-left[
 - <span style="font-size: 22px;"> 
-Canada's economy <strong>shrank </strong>in the three months up to September 2023. 
+<strong>Canada's economy shrank </strong>in the three months up to September 2023. 
 
 
 - <span style="font-size: 22px;"> 
@@ -192,7 +192,7 @@ monetary_chart <- highchart() %>%
     yAxis = 1 # Associate with the second y-axis
   ) %>%
   hc_caption(
-    text = "Source: Statistics Canada, Table 36-10-0434-01; Gross domestic product (GDP) at basic prices, by industry, monthly (x 1,000,000); Bank of Canada, target for the overnight rate", style = list(fontSize = "9px")
+    text = "Source: Statistics Canada, Table 36-10-0434-01; Gross domestic product (GDP) at basic prices, by industry, monthly (x 1,000,000);</br /> Bank of Canada, target for the overnight rate", style = list(fontSize = "9px")
   ) %>%
   hc_add_theme(hc_theme_bloom()) %>%
   hc_tooltip(
@@ -370,7 +370,7 @@ corpdebt_chart <- highchart() %>%
     yAxis = 1 # Associate with the second y-axis
   ) %>%
   hc_caption(
-    text = "Source: Statistics Canada. Quarterly balance sheet, income statement, and selected financial ratios, by non-financial industries, non-seasonally adjusted (billions).", style = list(fontSize = "9px")
+    text = "Source: Statistics Canada. Quarterly balance sheet, income statement, and selected financial ratios, </br /> by non-financial industries, non-seasonally adjusted (billions).", style = list(fontSize = "9px")
   ) %>%
   hc_colors(colors = c("#A4B9CE","grey")) %>%
   hc_add_theme(hc_theme_bloom()) %>%
@@ -411,22 +411,22 @@ Affordability remains a key issue, creating a drag on consumption.</ul>
 
 .pull-left[
 - <span style="font-size: 22px;"> 
-<strong>High demand and a lack of supply </strong>in the housing market offset gains in household income.
+<strong>High demand</strong> and a <strong>lack of supply </strong>in the housing market offset gains in household income.
 
 - <span style="font-size: 22px;"> 
 The Bank of Canada’s <strong>housing affordability index reached its highest level </strong>— meaning the worst degree of affordability — since 1982.
 
 - <span style="font-size: 22px;"> 
-Canadian households allocating a higher portion of income to housing – on average, 55% towards total housing costs as of Q3 2023 – almost twice the rate compared to Q3 2019.
+Canadian households allocating a <strong>higher portion of income to housing </strong>– on average, 55% towards total housing costs as of Q3 2023 – almost twice the rate compared to Q3 2019.
 
 - <span style="font-size: 22px;"> 
-Average household spending of ~15 cents of every after-tax dollar to service debt – the highest since 1990, which could limit consumer spending.
+Average household spending of <strong>~15 cents of every after-tax dollar to service debt </strong>– the highest since 1990, which could limit consumer spending.
 
 </span>
 ]
 
 .pull-right[
-```{r, echo=FALSE, fig.align='center', fig.width=7.5, fig.height=7}
+```{r, echo=FALSE, fig.align='center', fig.width=7.45, fig.height=6.95}
 housecost <- read_excel("C:/Users/davreuxa/Documents/soe/housecost.xlsx")
 
 housecost_chart<- highchart() %>%
@@ -491,7 +491,7 @@ Inflation is generally easing down despite a recent uptick.</ul>
 
 .pull-left[
 - <span style="font-size: 22px;"> 
-Canada's consumer price index rose by 3.4% in the year up to December, bringing the inflation cooldown to a halt.
+<strong>Canada's consumer price index rose by 3.4% </strong>in the year up to December, bringing the inflation cooldown to a halt.
 
 - <span style="font-size: 22px;"> 
 Overall, <strong>shelter costs (e.g. mortgage and rent payments) are up by more than 6% </strong> in the past year, ~twice the overall inflation rate.
@@ -505,7 +505,7 @@ Historical experience suggests that the recent easing of cost pressures in produ
 </span>
 ]
 .pull-right[
-```{r, echo=FALSE, fig.width=7.5, fig.height=7}
+```{r, echo=FALSE, fig.width=7.45, fig.height=6.95}
 foodinf <- read_excel("C:/Users/davreuxa/Documents/soe/foodinf.xlsx")
 
 foodinf_chart<- highchart() %>%
@@ -599,7 +599,7 @@ const <- highchart() %>%
     max=4
   ) %>%
   hc_caption(
-    text = "Source: StatsCan Table 36-10-0206-01 Indexes of business sector labour productivity, unit labour cost and related measures, seasonally adjusted.", style = list(fontSize = "9px")
+    text = "Source: StatsCan Table 36-10-0206-01 Indexes of business sector labour productivity, unit labour cost </br />and related measures, seasonally adjusted.", style = list(fontSize = "9px")
   ) %>%
   hc_add_theme(hc_theme_bloom()) %>%
   hc_tooltip(
@@ -618,7 +618,7 @@ const <- highchart() %>%
         x = 6,
         y = 2
       ),
-      text = "The cost of labour has increased     </br />
+      text = "The cost of labour has increased    , </br />
               faster than the rise in prices <br />",
       draggable = FALSE,  # Set draggable to TRUE or FALSE
       labelOptions = list(
@@ -669,7 +669,7 @@ Canada’s labour productivity gap with the U.S. further deteriorated – as of 
 </span>
 ]
 .pull-right[
-```{r, echo=FALSE, fig.align='center', fig.width=7.5, fig.height=7}
+```{r, echo=FALSE, fig.align='center', fig.width=7.5, fig.height=6.95}
 LP <- read_excel("C:/Users/davreuxa/Documents/soe/LP.xlsx")
 
 lp_chart<- highchart() %>%
@@ -705,11 +705,11 @@ lp_chart<- highchart() %>%
       point = list(
         xAxis = 0,
         yAxis = 0,
-        x = 110,
-        y = 1
+        x = 105,
+        y = 2
       ),
-      text = "The productivity gap between Canada    ,</br />
-              and the U.S. is increasing <br />",
+      text = "The productivity gap between Canad   a,</br />
+                and the U.S.is increasing <br />",
       draggable = FALSE,  # Set draggable to TRUE or FALSE
       labelOptions = list(
         shape = 'connector',
@@ -737,8 +737,140 @@ lp_chart
 </div>
 ---
 <center>
-<img src = "blueprint.jpg" width = "60%"/>
+<img src = "blueprint.jpg" width = "55%"/>
 </center>
+---
+
+```{r, echo=FALSE,  include=FALSE}
+TFP <- read_excel("C:/Users/davreuxa/Documents/soe/TFP.xlsx")
+
+multiplier <- 100
+
+# Apply the multiplier to all columns except 'Date'
+TFP[, -which(names(TFP) == "Date")] <- TFP[, -which(names(TFP) == "Date")] * multiplier
+
+
+labor_growth_chart <- highchart() %>%
+  hc_chart(type = "column") %>%
+  hc_title(text = "Labour Productivity Growth") %>%
+  hc_xAxis(categories = TFP$Date) %>%
+  hc_add_series(name = "Canada", data = TFP$LP_Can)%>%
+  hc_add_series(name = "USA", data = TFP$LP_US) %>%
+   hc_add_theme(hc_theme_bloom()) %>%
+  hc_tooltip(
+    pointFormat = '{series.name}: <b>{point.y:.1f}%</b><br/>',
+    shared = TRUE
+  ) %>%
+  hc_colors(colors = c("#FE5F55", "#A4B9CE"))
+  #hc_subtitle(text="Canada-U.S. Decomposition of Labour Productivity Growth, 1987-2021")
+
+
+capital_deepening_chart <- highchart() %>%
+  hc_chart(type = "column") %>%
+  hc_subtitle(text = "Capital Deepening") %>%
+  hc_xAxis(categories = TFP$Date) %>%
+  hc_add_series(name = "Canada", data = TFP$CD_Can)%>%
+  hc_add_series(name = "USA", data = TFP$CD_US) %>%
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_tooltip(
+    pointFormat = '{series.name}: <b>{point.y:.1f}%</b><br/>',
+    shared = TRUE
+  ) %>%
+  hc_legend(enabled = FALSE)%>%
+  hc_colors(colors = c("#FE5F55", "#A4B9CE"))
+  #hc_title(text="Canada-U.S. Decomposition of Labour Productivity Growth, 1987-2021")
+  
+skills_composition_chart <- highchart() %>%
+  hc_chart(type = "column") %>%
+  hc_subtitle(text = "Skills Composition") %>%
+  hc_xAxis(categories = TFP$Date) %>%
+  hc_add_series(name = "Canada", data = TFP$SC_Can) %>%
+  hc_add_series(name = "USA", data = TFP$SC_US) %>%
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_tooltip(
+    pointFormat = '{series.name}: <b>{point.y:.1f}%</b><br/>',
+    shared = TRUE
+  ) %>%
+  hc_legend(enabled = FALSE)%>%
+  hc_colors(colors = c("#FE5F55", "#A4B9CE"))
+  
+total_factor_productivity_chart <- highchart() %>%
+  hc_chart(type = "column") %>%
+  hc_subtitle(text = "Total Factor Productivity") %>%
+  hc_xAxis(categories = TFP$Date) %>%
+  hc_add_series(name = "Canada", data = TFP$TFP_Can)%>%
+  hc_add_series(name = "USA", data = TFP$TFP_US) %>%
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_tooltip(
+    pointFormat = '{series.name}: <b>{point.y:.1f}%</b><br/>',
+    shared = TRUE
+  ) %>%
+  hc_legend(enabled = FALSE)%>%
+  hc_caption(
+    text = "Source: Canada: Statistics Canada Table 36-10-0208-01; U.S. Bureau of Labour Statistics; ISED calculations.", style = list(fontSize = "9px")
+  ) %>%
+  hc_colors(colors = c("#FE5F55", "#A4B9CE"))
+  
+
+labor_growth_chart
+capital_deepening_chart
+skills_composition_chart
+total_factor_productivity_chart
+```
+
+.pull-left[
+## Weak productivity requires better use of physical & human capital
+
+<ul style="font-size: 22px;"> 
+  <li>
+    Canada compares to the U.S. on the contributions of <strong>capital deepening and skills composition </strong>(e.g. level of human capital) to overall productivity growth. 
+
+  </li>
+</ul>
+
+<ul style="font-size: 22px;"> 
+  <li>
+    However, Canada’s declining  relative labour productivity to the U.S. driven by weakness in <strong>total factor productivity growth,</strong> which has not improved in decades.   
+
+  </li>
+</ul>
+
+<ul style="font-size: 22px;"> 
+  <li>
+    A measure of <strong>technological progress and innovation, total factor productivity </strong>shows overall effectiveness with which inputs (capital and labour) are used to produce output in an economy.
+ 
+
+  </li>
+</ul>
+]
+.pull-right[
+<div class="slide-content">
+<div class="text-container">
+<!-- Replace this with your slide text content -->
+
+</div>
+
+<div class="charts-container">
+```{r,echo=FALSE,results='asis',fig.width=7, fig.height=2.5}
+# Assuming the chart object is created and named capital_deepening_chart
+labor_growth_chart
+```
+```{r,echo=FALSE,results='asis',fig.width=7, fig.height=2.15}
+# Assuming the chart object is created and named capital_deepening_chart
+capital_deepening_chart
+```
+```{r,echo=FALSE,results='asis',fig.width=7, fig.height=2.15}
+# Assuming the chart object is created and named skills_composition_chart
+skills_composition_chart
+```
+```{r,echo=FALSE,results='asis',fig.width=7, fig.height=2.85}
+# Assuming the chart object is created and named total_factor_productivity_chart
+total_factor_productivity_chart
+```
+</div>
+</div>
+]
+
 ---
 
 ```{r, echo=FALSE,  include=FALSE}
@@ -1161,7 +1293,7 @@ lp_chart
 ```{r,echo=FALSE,results='asis',fig.width=6.5, fig.height=2.80}
 rg_chart
 ```
-```{r,echo=FALSE,results='asis',fig.width=6.5, fig.height=3.25}
+```{r,echo=FALSE,results='asis',fig.width=6.5, fig.height=3.20}
 eg_chart
 ```
 </div>
@@ -1364,12 +1496,18 @@ Low investment in R&D and innovation-enhancing activities also expected to weigh
 
 
 </span>
-
-
 ---
-class: center, middle, inverse
+.pull-left[
+##For more information
 
-<div style="text-align: center; vertical-align: middle; height: 50%;">
-  <h1>Thank-you</h1>
-</div>
+]
+
+<img src="hub.png" width="70%"/>
+
+ <span style="font-size: 25px;"> 
+SRRB has launched a new website: <strong>[Economic Policy Research Hub](https://033gc.sharepoint.com/sites/EconomicResearchandAnalysisERA/SitePages/Home%20Page.aspx?from=SendByEmail&e=wAEAyo9qXE20Vlezw85pIw&at=9) </strong> where users can access the latest micro-economic analysis on key trends shaping the Canadian economy such as innovation, competitiveness, trade, human capital, and productivity. 
+
+<span style="font-size: 25px;"> 
+Note that the hub is also available through the homepage of [ISEDWeb](https://033gc.sharepoint.com/sites/EconomicResearchandAnalysisERA/SitePages/Home%20Page.aspx?from=SendByEmail&e=wAEAyo9qXE20Vlezw85pIw&at=9).
+
 

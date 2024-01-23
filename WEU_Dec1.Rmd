@@ -1,5 +1,5 @@
 ---
-title: 'Weekly Economic Update: December 1, 2023'
+title: 'Weekly Economic Update'
 author: ' '
 date: ' '
 output:
@@ -51,36 +51,123 @@ library(tinytex)
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
-setwd("S:/ERPA Correspondence/Weekly economic update/Update Materials/WEU Data Visualization R Code/WEU 2.0 Mock up") 
+setwd("C:/Users/davreuxa/Documents/GitHub/economicresearchhub.github.io") 
 ```
 ***
+```{r, echo=FALSE, out.width="50px"}
+knitr::include_graphics("C:/Users/davreuxa/Documents/GitHub/economicresearchhub.github.io/new.png")
+```
 <h3><strong>What's new this week?</strong></h3>
 
-```{r, echo=FALSE, out.width="50px", include=FALSE}
-knitr::include_graphics("S:/ERPA Correspondence/Weekly economic update/Update Materials/WEU Data Visualization R Code/WEU 2.0 Mock up/images/money.png")
-```
+
 <ul>
   <li>**The Canadian economy contracted in the third quarter by 0.3 per cent:** Canada's economy shrank in the three months up to September, as household spending was flat and exports declined.<br></li>
 </ul>
-```{r, echo=FALSE, out.width="50px", include=FALSE}
-knitr::include_graphics("S:/ERPA Correspondence/Weekly economic update/Update Materials/WEU Data Visualization R Code/WEU 2.0 Mock up/images/people.png")
-```
+
 <ul>
   <li>The economy added **25,000 jobs in November, while the unemployment rate rose 0.1% to 5.8%**, the highest since January 2022.<br></li>
 </ul>
 
-```{r, echo=FALSE, out.width="50px", include=FALSE}
-knitr::include_graphics("S:/ERPA Correspondence/Weekly economic update/Update Materials/WEU Data Visualization R Code/WEU 2.0 Mock up/images/business.png")
-```
+
 <ul>
   <li>Canada's November **small business optimism 3-month index fell by 3.4** points to 37.7, while the 12-month index declined by 1.5 points to 45.6.<br></li>
 </ul>
+```{r, echo=FALSE, out.width="50px"}
+knitr::include_graphics("C:/Users/davreuxa/Documents/GitHub/economicresearchhub.github.io/chart.png")
+```
+<h3><strong>Chart of the week: Inflation continues to be sticky</strong></h3>
 
-<h3><strong>Chart of the week</h3> The economy contracted in the 3rd quarter by 0.3% </strong>
 
-<center>
-<h4><strong> Gross domestic product, quarterly change</strong></h4>
-</center>
+```{r, echo=FALSE, include=FALSE, out.width='100%', fig.align='center', class='centered-plot'}
+CPI_urg <- statcan_download_data("18-10-0004-01","eng")
+#CPI_urg
+
+CPI_all <- CPI_urg %>% 
+  filter(`Products and product groups` == "All-items") %>%
+  filter(UOM == "2002=100") %>%
+  filter(GEO == "Canada") %>%
+  select( REF_DATE, `Products and product groups`, VALUE)
+
+CPI_all <- CPI_all %>%
+  mutate(YoY_Growth = (VALUE / lag(VALUE, 12) - 1) * 100) %>%
+  select(REF_DATE, YoY_Growth)
+
+sp_date <- (as.Date("2021-01-01"))
+CPI_all <- subset(CPI_all, REF_DATE >= sp_date)
+
+CPI_all$YoY_Growth <- round(CPI_all$YoY_Growth, 1)
+
+CPI_food_only <- CPI_urg %>% 
+  filter(`Products and product groups` == "Food purchased from stores") %>%
+  filter(UOM == "2002=100") %>%
+  filter(GEO == "Canada") %>%
+  select( REF_DATE, `Products and product groups`, VALUE)
+
+CPI_food_only <- CPI_food_only %>%
+  mutate(YoY_Growth = (VALUE / lag(VALUE, 12) - 1) * 100) %>%
+  select(REF_DATE, YoY_Growth)
+
+sp_date <- (as.Date("2021-01-01"))
+CPI_food_only <- subset(CPI_food_only, REF_DATE >= sp_date)
+
+ CPI_food_only$YoY_Growth <- round(CPI_food_only$YoY_Growth, 1)
+
+```
+```{r, echo=FALSE, include=FALSE, out.width='100%', fig.align='center', class='centered-plot'}
+WEU_01_19_1 <- highchart() %>%
+  hc_chart(
+    type = "line",
+    zoomType = "xy",
+    marginBottom = 100,
+    style = list(fontSize = "30px")  # Increase chart font size
+  ) %>%
+  hc_title(text = "Consumer Price Index", align = "left", style = list(fontWeight = "bold", fontSize = "28px")) %>%
+  hc_subtitle(text = "Year-over-year inflation, monthly (%)", style = list(fontSize = "22px")) %>%
+  hc_xAxis(
+    categories = format(as.Date(CPI_all$REF_DATE), "%b %y"),
+    labels = list(
+      rotation = -90,  # Rotate the labels to vertical position
+      align = "right",
+      step = 1,
+      style = list(fontSize = "19px")  # Increase x-axis label font size
+    )
+  ) %>%
+  hc_yAxis(
+    labels = list(
+      style = list(fontSize = "20px")  # Increase y-axis label font size
+    )
+  ) %>%
+  hc_legend(
+    enabled = TRUE,  # Enable the legend
+    itemStyle = list(fontSize = "20px")  # Increase legend item font size
+  ) %>%
+  hc_add_series(
+    name = "All-items",
+    type = "line",
+    data = CPI_all$YoY_Growth,
+    style = list(fontSize = "30px")
+  ) %>%
+  hc_add_series(
+    name = "Food purchased from stores",
+    type = "line",
+    data = CPI_food_only$YoY_Growth
+  ) %>%
+  hc_add_theme(hc_theme_economist()) %>%
+  hc_tooltip(
+    pointFormat = '{series.name}: <b>{point.y:.1f}%</b><br/>',
+    shared = TRUE
+  )%>%
+  hc_caption(
+    text = "Source: Statistics Canada Table 18-10-0004-01 Consumer Price Index, monthly ",
+    style = list(fontSize = "12px")  # Increase caption font size
+  ) %>%
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_colors(colors = c("#F21F14", "#0D3A57"))
+
+```
+```{r, echo=FALSE, fig.align='center', fig.width=8, fig.height=6}
+WEU_01_19_1
+```
 
 
 ```{r, echo=FALSE, include=FALSE, out.width='100%', fig.align='center', class='centered-plot'}
@@ -122,10 +209,12 @@ gdpexp_chart_QoQ2 <- highchart() %>%
 
 ```
 
-```{r, echo=FALSE, fig.align='center', fig.width=8, fig.height=6}
+```{r, echo=FALSE, fig.align='center', fig.width=8, fig.height=6, include=FALSE,}
 gdpexp_chart_QoQ2
 ```
-
+```{r, echo=FALSE, out.width="50px"}
+knitr::include_graphics("C:/Users/davreuxa/Documents/GitHub/economicresearchhub.github.io/cannews.png")
+```
 <h3><strong>Canadian economic indicators</strong></h3>
 
 <a id="section-b"></a>
@@ -155,7 +244,9 @@ gdpexp_chart_QoQ2
   <li> In November, small business optimism fell 3.4 points to 37.7 for the next 3-months, and fell 1.5 points to 45.6 for the next 12-months. Nearly half of businesses stated that insufficient domestic demand was constraining sales, and taxes and wages were cited among the top input cost constraints. </li>
   </li>
 </ul>
-
+```{r, echo=FALSE, out.width="50px"}
+knitr::include_graphics("C:/Users/davreuxa/Documents/GitHub/economicresearchhub.github.io/usnews.png")
+```
 <h3><strong> U.S. economic news</strong></h3>
 
 <ul>
@@ -165,7 +256,9 @@ gdpexp_chart_QoQ2
 <ul>
   <li>The advance figure for seasonally adjusted initial claims for unemployment insurance was 218,000 during the week ending November 25, up 7,000 from the previous week’s revised level.</li>
 </ul>
-
+```{r, echo=FALSE, out.width="50px"}
+knitr::include_graphics("C:/Users/davreuxa/Documents/GitHub/economicresearchhub.github.io/reports.png")
+```
 <h3><strong>Economic reports</strong></h3>
 
 <h5><strong>1) Self-employment among women in Canada</strong></h5>
