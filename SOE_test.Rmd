@@ -74,7 +74,7 @@ library(readxl)
 ]
 ---
 <center>
-<img src = "recentdev.jpg" width = "70%"/>
+<img src = "recentdev.jpg" width = "77.5%"/>
 </center>
 
 ---
@@ -211,7 +211,10 @@ monetary_chart <- highchart() %>%
       }
     }")
   )%>%
-  hc_subtitle(text="GDP growth, monthly (left), compared to the Bank of Canada's policy interest rate (right)", style = list(fontSize = "18px"))
+  hc_subtitle(text="GDP growth, monthly (left, %), compared to the Bank of Canada's policy interest rate (right, %)", 
+              style = list(fontSize = "16px"),
+              align = "center"
+              )
 ```
 .pull-right[
 ```{r, echo=FALSE, fig.align='center', fig.width=8, fig.height=6.25}
@@ -249,7 +252,9 @@ High interest rates expected to <strong>dampen business investments </strong>whi
 ```{r, echo=FALSE, fig.align='center', fig.width=10, fig.height=6}
 proj<-highchart() %>%
   hc_chart(type = "line") %>%
-  hc_subtitle(text = "Real GDP growth, past and projected, for Canada and the world (annualized growth rate) ", style = list(fontSize = "18px")) %>%
+  hc_subtitle(text = "Real GDP growth, past and projected, for Canada and the world (annualized growth rate) ", 
+              style = list(fontSize = "16px"),
+              align = "center") %>%
   hc_xAxis(categories = c(2022, 2023, 2024, 2025),
            plotBands = list(
              list(
@@ -285,7 +290,7 @@ proj
 </div>
 ---
 <center>
-<img src = "currenthead.jpg" width = "70%"/>
+<img src = "currenthead.jpg" width = "77.5%"/>
 </center>
 ---
 .center[
@@ -304,7 +309,9 @@ feddebt <- read_excel("C:/Users/davreuxa/Documents/soe/feddebttogdp.xlsx")
 
 feddebt_graph <- highchart() %>%
   hc_chart(type = "line") %>%
-  hc_subtitle(text = "Federal Debt-to-GDP ratio", style = list(fontSize = "16px")) %>%
+  hc_subtitle(text = "Federal Debt-to-GDP ratio", 
+              style = list(fontSize = "16px"),
+              align = "center") %>%
   hc_xAxis(categories = feddebt$Date,
            plotBands = list(
              list(
@@ -341,7 +348,9 @@ corpdebt <- read_excel("C:/Users/davreuxa/Documents/soe/corpdebt.xlsx")
 
 corpdebt_chart <- highchart() %>%
   hc_chart(type = "column", zoomType = "xy") %>%
-  hc_subtitle(text = "Total debt of non-financial corporations(left), and interest rate charges(right)", style = list(fontSize = "16px")) %>%
+  hc_subtitle(text = "Total debt of non-financial corporations(left), and interest rate charges(right)", 
+              style = list(fontSize = "16px"),
+              align = "center") %>%
   hc_xAxis(categories = corpdebt$Quarter) %>%
   hc_yAxis_multiples(
     list(
@@ -464,8 +473,12 @@ housecost_chart<- highchart() %>%
     pointFormat = '{series.name}: <b>{point.y:.2f}%</b><br/>',
     shared = TRUE
   ) %>%
-  hc_title(text = "Housing costs are taking an ever increasing share of households' income", style = list(fontSize = "20px")) %>%
-  hc_subtitle(text="Housing affordability index, quarterly", style = list(fontSize = "18px"))%>%
+  hc_title(text = "Housing costs are taking an ever increasing share of households' income", 
+           style = list(fontSize = "20px"),
+           align = "center") %>%
+  hc_subtitle(text="Housing affordability index, quarterly", 
+              style = list(fontSize = "16px"),
+              align = "center")%>%
   hc_colors(colors = c("grey", "#A4B9CE"))%>%
   hc_legend(enabled = FALSE) 
 
@@ -538,9 +551,13 @@ foodinf_chart<- highchart() %>%
     pointFormat = '{series.name}: <b>{point.y:.1f}%</b><br/>',
     shared = TRUE
   ) %>%
-  hc_title(text = "Food inflation continues to decrease from its January 2023 peak, getting closer to the all-items inflation", style = list(fontSize = "20px")) %>%
+  hc_title(text = "Food inflation continues to decrease from its January 2023 peak, getting closer to the all-items inflation", 
+           style = list(fontSize = "20px"),
+           align = "center") %>%
   hc_colors(colors = c("grey", "#A4B9CE"))%>%
-  hc_subtitle(text="Year-over-year inflation, monthly (%)", style = list(fontSize = "18px"))
+  hc_subtitle(text="Year-over-year inflation, monthly (%)", 
+              style = list(fontSize = "16px"),
+              align = "center")
 
 # To display the chart if you're running this in an interactive R session
 
@@ -606,8 +623,12 @@ const <- highchart() %>%
     pointFormat = '{series.name}: <b>{point.y:.2f}%</b><br/>',
     shared = TRUE
   )%>%
-  hc_subtitle(text = "Quarterly change in labor cost vs.  the implicit price deflator, %", style = list(fontSize = "16px"))%>%
-  hc_title(text="The increase in cost of wages has outpaced the increase in prices of products sold for four consecutive quarters, before a recent uptick in prices.", style = list(fontSize = "20px"))%>%
+  hc_subtitle(text = "Quarterly change in labor cost vs.  the implicit price deflator, %", 
+              style = list(fontSize = "16px"),
+              align = "center")%>%
+  hc_title(text="The increase in cost of wages has outpaced the increase in prices of products sold for four consecutive quarters, before a recent uptick in prices.", 
+           style = list(fontSize = "20px"),
+           align = "center")%>%
   hc_colors(colors = c("grey", "#A4B9CE"))%>%
   hc_add_annotation( 
   labels = list(
@@ -696,8 +717,12 @@ lp_chart<- highchart() %>%
     pointFormat = '{series.name}: <b>{point.y:.2f}%</b><br/>',
     shared = TRUE
   ) %>%
-  hc_subtitle(text = "Labour productivity in the business sector, Canada vs. US, annualized 4-year change (%)", style = list(fontSize = "18px")) %>%
-  hc_title(text="Canada's labour productivity growth is now below pre-pandemic levels", style = list(fontSize = "20px"))%>%
+  hc_subtitle(text = "Labour productivity in the business sector, Canada vs. US, annualized 4-year change (%)", 
+              style = list(fontSize = "16px"),
+              align = "center") %>%
+  hc_title(text="Canada's labour productivity growth is now below pre-pandemic levels", 
+           style = list(fontSize = "20px"),
+           align = "center")%>%
   hc_colors(colors = c("#FE5F55", "#A4B9CE"))%>%
   hc_add_annotation( 
   labels = list(
@@ -708,7 +733,7 @@ lp_chart<- highchart() %>%
         x = 105,
         y = 2
       ),
-      text = "The productivity gap between Canad   a,</br />
+      text = "The productivity gap between Canada   , </br />
                 and the U.S.is increasing <br />",
       draggable = FALSE,  # Set draggable to TRUE or FALSE
       labelOptions = list(
@@ -752,7 +777,8 @@ TFP[, -which(names(TFP) == "Date")] <- TFP[, -which(names(TFP) == "Date")] * mul
 
 labor_growth_chart <- highchart() %>%
   hc_chart(type = "column") %>%
-  hc_title(text = "Labour Productivity Growth") %>%
+  hc_title(text = "Labour Productivity Growth",
+           align = "center") %>%
   hc_xAxis(categories = TFP$Date) %>%
   hc_add_series(name = "Canada", data = TFP$LP_Can)%>%
   hc_add_series(name = "USA", data = TFP$LP_US) %>%
@@ -767,7 +793,8 @@ labor_growth_chart <- highchart() %>%
 
 capital_deepening_chart <- highchart() %>%
   hc_chart(type = "column") %>%
-  hc_subtitle(text = "Capital Deepening") %>%
+  hc_subtitle(text = "Capital Deepening",
+              align = "center") %>%
   hc_xAxis(categories = TFP$Date) %>%
   hc_add_series(name = "Canada", data = TFP$CD_Can)%>%
   hc_add_series(name = "USA", data = TFP$CD_US) %>%
@@ -782,7 +809,8 @@ capital_deepening_chart <- highchart() %>%
   
 skills_composition_chart <- highchart() %>%
   hc_chart(type = "column") %>%
-  hc_subtitle(text = "Skills Composition") %>%
+  hc_subtitle(text = "Skills Composition",
+              align = "center") %>%
   hc_xAxis(categories = TFP$Date) %>%
   hc_add_series(name = "Canada", data = TFP$SC_Can) %>%
   hc_add_series(name = "USA", data = TFP$SC_US) %>%
@@ -796,7 +824,8 @@ skills_composition_chart <- highchart() %>%
   
 total_factor_productivity_chart <- highchart() %>%
   hc_chart(type = "column") %>%
-  hc_subtitle(text = "Total Factor Productivity") %>%
+  hc_subtitle(text = "Total Factor Productivity",
+              align = "center") %>%
   hc_xAxis(categories = TFP$Date) %>%
   hc_add_series(name = "Canada", data = TFP$TFP_Can)%>%
   hc_add_series(name = "USA", data = TFP$TFP_US) %>%
@@ -873,133 +902,6 @@ total_factor_productivity_chart
 
 ---
 
-```{r, echo=FALSE,  include=FALSE}
-TFP <- read_excel("C:/Users/davreuxa/Documents/soe/TFP.xlsx")
-
-multiplier <- 100
-
-# Apply the multiplier to all columns except 'Date'
-TFP[, -which(names(TFP) == "Date")] <- TFP[, -which(names(TFP) == "Date")] * multiplier
-
-
-labor_growth_chart <- highchart() %>%
-  hc_chart(type = "column") %>%
-  hc_title(text = "Labour Productivity Growth") %>%
-  hc_xAxis(categories = TFP$Date) %>%
-  hc_add_series(name = "Canada", data = TFP$LP_Can)%>%
-  hc_add_series(name = "USA", data = TFP$LP_US) %>%
-   hc_add_theme(hc_theme_bloom()) %>%
-  hc_tooltip(
-    pointFormat = '{series.name}: <b>{point.y:.1f}%</b><br/>',
-    shared = TRUE
-  ) %>%
-  hc_colors(colors = c("#FE5F55", "#A4B9CE"))
-  #hc_subtitle(text="Canada-U.S. Decomposition of Labour Productivity Growth, 1987-2021")
-
-
-capital_deepening_chart <- highchart() %>%
-  hc_chart(type = "column") %>%
-  hc_subtitle(text = "Capital Deepening") %>%
-  hc_xAxis(categories = TFP$Date) %>%
-  hc_add_series(name = "Canada", data = TFP$CD_Can)%>%
-  hc_add_series(name = "USA", data = TFP$CD_US) %>%
-  hc_add_theme(hc_theme_bloom()) %>%
-  hc_tooltip(
-    pointFormat = '{series.name}: <b>{point.y:.1f}%</b><br/>',
-    shared = TRUE
-  ) %>%
-  hc_colors(colors = c("#FE5F55", "#A4B9CE"))%>%
-  hc_title(text="Canada-U.S. Decomposition of Labour Productivity Growth, 1987-2021")
-  
-skills_composition_chart <- highchart() %>%
-  hc_chart(type = "column") %>%
-  hc_subtitle(text = "Skills Composition") %>%
-  hc_xAxis(categories = TFP$Date) %>%
-  hc_add_series(name = "Canada", data = TFP$SC_Can) %>%
-  hc_add_series(name = "USA", data = TFP$SC_US) %>%
-  hc_add_theme(hc_theme_bloom()) %>%
-  hc_tooltip(
-    pointFormat = '{series.name}: <b>{point.y:.1f}%</b><br/>',
-    shared = TRUE
-  ) %>%
-  hc_legend(enabled = FALSE)%>%
-  hc_colors(colors = c("#FE5F55", "#A4B9CE"))
-  
-total_factor_productivity_chart <- highchart() %>%
-  hc_chart(type = "column") %>%
-  hc_subtitle(text = "Total Factor Productivity") %>%
-  hc_xAxis(categories = TFP$Date) %>%
-  hc_add_series(name = "Canada", data = TFP$TFP_Can)%>%
-  hc_add_series(name = "USA", data = TFP$TFP_US) %>%
-  hc_add_theme(hc_theme_bloom()) %>%
-  hc_tooltip(
-    pointFormat = '{series.name}: <b>{point.y:.1f}%</b><br/>',
-    shared = TRUE
-  ) %>%
-  hc_legend(enabled = FALSE)%>%
-  hc_caption(
-    text = "Source: Canada: Statistics Canada Table 36-10-0208-01; U.S. Bureau of Labour Statistics; ISED calculations.", style = list(fontSize = "9px")
-  ) %>%
-  hc_colors(colors = c("#FE5F55", "#A4B9CE"))
-  
-
-labor_growth_chart
-capital_deepening_chart
-skills_composition_chart
-total_factor_productivity_chart
-```
-
-.pull-left[
-## Weak productivity requires better use of physical & human capital
-
-<ul style="font-size: 22px;"> 
-  <li>
-    Canada compares to the U.S. on the contributions of <strong>capital deepening and skills composition </strong>(e.g. level of human capital) to overall productivity growth. 
-
-  </li>
-</ul>
-
-<ul style="font-size: 22px;"> 
-  <li>
-    However, Canada’s declining  relative labour productivity to the U.S. driven by weakness in <strong>total factor productivity growth,</strong> which has not improved in decades.   
-
-  </li>
-</ul>
-
-<ul style="font-size: 22px;"> 
-  <li>
-    A measure of <strong>technological progress and innovation, total factor productivity </strong>shows overall effectiveness with which inputs (capital and labour) are used to produce output in an economy.
- 
-
-  </li>
-</ul>
-]
-.pull-right[
-<div class="slide-content">
-<div class="text-container">
-<!-- Replace this with your slide text content -->
-
-</div>
-
-<div class="charts-container">
-```{r,echo=FALSE,results='asis',fig.width=7, fig.height=3.25}
-# Assuming the chart object is created and named capital_deepening_chart
-capital_deepening_chart
-```
-```{r,echo=FALSE,results='asis',fig.width=7, fig.height=2.5}
-# Assuming the chart object is created and named skills_composition_chart
-skills_composition_chart
-```
-```{r,echo=FALSE,results='asis',fig.width=7, fig.height=3.5}
-# Assuming the chart object is created and named total_factor_productivity_chart
-total_factor_productivity_chart
-```
-</div>
-</div>
-]
-
----
-
 ```{r, echo=FALSE, include=FALSE}
 IPP<-read_excel("C:/Users/davreuxa/Documents/soe/IPP.xlsx")
 
@@ -1024,7 +926,9 @@ non_res_colored <- assign_colors(IPP$Non_res, IPP$Country, "Canada", '#7F7F7F', 
 
 m_e_chart <- highchart() %>%
   hc_chart(type = "bar") %>%
-  hc_subtitle(text = "M&E + IPP", style = list(fontSize = "16px")) %>%
+  hc_subtitle(text = "M&E + IPP", 
+              style = list(fontSize = "16px"),
+              align = "center") %>%
   #hc_title(text="Gross fixed capital formation by asset category (percentage of GDP, 2021)")%>%
   hc_plotOptions(series = list(stacking = "normal")) %>%
   hc_add_series(name = "M&E", data = m_e_colored) %>%
@@ -1057,7 +961,9 @@ non_res_colored <- assign_colors(IPP2$Non_res, IPP2$Country, "Canada", '#7F7F7F'
 # Generate the bar chart for Non-residential Structures with highlighted "Canada"
 non_res_chart <- highchart() %>%
   hc_chart(type = "bar") %>%
-  hc_subtitle(text = "Non-residential Structures", style = list(fontSize = "16px")) %>%
+  hc_subtitle(text = "Non-residential Structures", 
+              style = list(fontSize = "16px"),
+              align = "center") %>%
   hc_add_series(name = "Non-residential Structures", data = non_res_colored) %>%
   hc_xAxis(categories = IPP2$Country) %>%
   hc_add_theme(hc_theme_bloom()) %>%
@@ -1077,7 +983,9 @@ non_res_chart <- highchart() %>%
 non_res_chart
 ```
 .center[
+
 ## More needs to be done to encourage firms to invest in productivity enhancing assets
+
 ]
 
 .pull-left[
@@ -1098,7 +1006,9 @@ Investing in technologies, paired with the knowledge and skills to effectively u
 ]
 .pull-right[
 <ul style="font-size: 20px;">
-Gross fixed capital formation by asset category,% of GDP</ul>
+<center>
+Gross fixed capital formation by asset category, % of GDP</ul>
+</center>
 .pull-left[
 ```{r,echo=FALSE,results='asis',fig.width=3.5, fig.height=6.235}
 m_e_chart
@@ -1138,8 +1048,11 @@ green_long <- green %>%
 
 gchart <- highchart() %>%
   hc_chart(type = "column") %>%
-  hc_title(text="Canada's production has become less resouce heavy, but continues to be the highest within the G7")%>%
-  hc_subtitle(text = "GDP share of Resource-Dependant Activities, 2000 vs 2019", style = list(fontSize = "16px")) %>%
+  hc_title(text="Canada's production has become less resouce heavy, but continues to be the highest within the G7",
+           align = "center")%>%
+  hc_subtitle(text = "GDP share of Resource-Dependant Activities, 2000 vs 2019", 
+              style = list(fontSize = "16px"),
+              align = "center") %>%
   hc_xAxis(categories = unique(green_long$Country)) %>%
   hc_yAxis(title = list(text = "%")) %>%
   hc_add_series(name = "2000", 
@@ -1179,14 +1092,16 @@ data <- tibble(
 
 # Labour Productivity Chart
 lp_chart <- highchart() %>%
-  hc_title(text="Clean tech support vs. other innovation support, median 3 year change (2018-21)")%>%
+  hc_title(text="Clean tech support vs. other innovation support, median 3 year change (2018-21)",
+           align = "center")%>%
   hc_add_series(name = "Clean-tech Support", data = list(list(name = data$category[1], y = data$cleantech[1])),
                 type = 'bar', color = "#CA6F07",
                 tooltip = list(valueDecimals = 0, valueSuffix = 'USD')) %>%
   hc_add_series(name = "Other Innovation Support", data = list(list(name = data$category[1], y = data$other[1])),
                 type = 'bar', color = "#FBC78D",
                 tooltip = list(valueDecimals = 0, valueSuffix = 'USD')) %>%
-  hc_subtitle(text = "Labour Productivity") %>%
+  hc_subtitle(text = "Labour Productivity",
+              align = "center") %>%
   hc_xAxis(categories = c(" ")) %>%
   hc_legend(enabled = TRUE)%>%
     hc_add_theme(hc_theme_bloom()) %>%
@@ -1201,7 +1116,8 @@ lp_chart <- highchart() %>%
 
 rg_chart <- highchart() %>%
   hc_chart(type = 'bar') %>%
-  hc_subtitle(text = "Revenue Growth") %>%
+  hc_subtitle(text = "Revenue Growth",
+              align = "center") %>%
   hc_xAxis(categories = c(" ")) %>%
     hc_legend(enabled = TRUE)%>%
   hc_add_series(name = "Clean-tech Support", data = c(13.3),
@@ -1232,7 +1148,8 @@ eg_chart <- highchart() %>%
   hc_add_series(name = "Other Innovation Support", data = list(list(name = data$category[3], y = data$other[3])),
                 type = 'bar', color = "#A4B9CE",
                 tooltip = list(valueDecimals = 1, valueSuffix = '%')) %>%
-  hc_subtitle(text = "Employment Growth") %>%
+  hc_subtitle(text = "Employment Growth",
+              align = "center") %>%
   hc_xAxis(categories = c(" ")) %>%
    hc_plotOptions(
     series = list(
@@ -1328,8 +1245,12 @@ ev <- read_excel("C:/Users/davreuxa/Documents/soe/ev.xlsx")
 
 ev_chart <- highchart() %>%
   hc_chart(type = "column") %>%
-  hc_title(text="EV sales numbers have been soaring in the past two quarters", style = list(fontSize = "19px"))%>%
-  hc_subtitle(text = "EV registrations (left) vs. share of total vehicle sales(right)", style = list(fontSize = "16px")) %>%
+  hc_title(text="EV sales numbers have been soaring in the past two quarters", 
+           style = list(fontSize = "19px"),
+           align = "center")%>%
+  hc_subtitle(text = "EV registrations (left) vs. share of total vehicle sales(right)", 
+              style = list(fontSize = "16px"),
+              align = "center") %>%
   hc_xAxis(categories = ev$quarter) %>%
   hc_yAxis_multiples(
     list(
@@ -1393,7 +1314,8 @@ DII <- read_excel("C:/Users/davreuxa/Documents/soe/DII.xlsx")
 
 dii_chart <- highchart() %>%
   hc_chart(type = "column") %>%
-  hc_title(text = "Contribution to value added growth by digital intensity sectors") %>%
+  hc_title(text = "Contribution to value added growth by digital intensity sectors",
+           align = "center") %>%
   hc_xAxis(categories = DII$Country) %>%
 hc_yAxis(
     title = list(text = "%"),
@@ -1452,7 +1374,8 @@ vacancy <- read_excel("C:/Users/davreuxa/Documents/soe/vacancy.xlsx")
 
 vacancy_graph <-highchart() %>%
   hc_chart(type = "line") %>%
-  hc_title(text = "Vacancies continue to decline as the number of available worker per open position nearly doubles since last year.") %>%
+  hc_title(text = "Vacancies continue to decline as the number of available worker per open position nearly doubles since last year.",
+           align = "center") %>%
   hc_xAxis(categories = format(as.Date(vacancy$Date), "%b %y")) %>%  
   hc_yAxis_multiples(
     list(title = list(text = " ")),
@@ -1469,7 +1392,9 @@ vacancy_graph <-highchart() %>%
   hc_caption(
     text = "Source: Statistics Canada. Labour force characteristics and job vacancies.", style = list(fontSize = "9px")
   ) %>%
-  hc_subtitle(text="Unemployment-to-job vacancy ratio (left) and job vacancies (right), monthly", style = list(fontSize = "16px"))
+  hc_subtitle(text="Unemployment-to-job vacancy ratio (left) and job vacancies (right), monthly", 
+              style = list(fontSize = "16px"),
+              align = "center")
 ```
 .pull-right[
 ```{r, echo=FALSE, fig.align='center', fig.width=7.5, fig.height=6.55}
@@ -1508,6 +1433,6 @@ Low investment in R&D and innovation-enhancing activities also expected to weigh
 SRRB has launched a new website: <strong>[Economic Policy Research Hub](https://033gc.sharepoint.com/sites/EconomicResearchandAnalysisERA/SitePages/Home%20Page.aspx?from=SendByEmail&e=wAEAyo9qXE20Vlezw85pIw&at=9) </strong> where users can access the latest micro-economic analysis on key trends shaping the Canadian economy such as innovation, competitiveness, trade, human capital, and productivity. 
 
 <span style="font-size: 25px;"> 
-Note that the hub is also available through the homepage of [ISEDWeb](https://033gc.sharepoint.com/sites/EconomicResearchandAnalysisERA/SitePages/Home%20Page.aspx?from=SendByEmail&e=wAEAyo9qXE20Vlezw85pIw&at=9).
+Note that the hub is also available through the homepage of <strong>[ISEDWeb](https://033gc.sharepoint.com/sites/EconomicResearchandAnalysisERA/SitePages/Home%20Page.aspx?from=SendByEmail&e=wAEAyo9qXE20Vlezw85pIw&at=9).</strong>
 
 
