@@ -988,10 +988,9 @@ Bank of Canada’s latest Business Outlook Survey shows many <strong>Canadian bu
 
 - <span style="font-size: 22px;">
 <strong>Investing in technologies </strong>and the knowledge and skills to effectively use them, <strong>contributes positively to productivity growth,</strong> supporting a healthy innovation ecosystem - critical for economic growth and competitiveness. 
-
 </span>
 <center>
-<img src="rnd.jpg" width="85%"/>
+<img src="rnd.jpg" width="105%"/>
 </center>
 ]
 .pull-right[
