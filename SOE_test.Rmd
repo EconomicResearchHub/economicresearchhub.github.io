@@ -31,7 +31,7 @@ library(XML)
 library(reshape2)
 library(plyr)
 library(ggplot2)
-library(rCharts)
+#library(rCharts)
 library(dplyr)
 library(tidyr)
 library(ggcharts)
@@ -52,7 +52,7 @@ library(readxl)
 ## Key Messages
 .pull-left[
 - <span style="font-size: 22px;"> 
-<strong> The Canadian economy facing multiple headwinds pointing to slow economic activity </strong>in the first half of 2024.
+<strong>  Canadian economy facing multiple headwinds pointing to slow economic activity </strong>in the first half of 2024.
 
 
 - <span style = "font-size:22px;">
@@ -63,7 +63,7 @@ library(readxl)
 <strong>Weak and declining productivity a critical challenge </strong>for Canadian businesses and near-term economic growth prospects. 
 
 - <span style = "font-size:22px;">
-<strong>Sub-optimal business investment also a significant contributing factor <strong>to weak economic outlook. 
+<strong>Sub-optimal business investment also a significant contributing factor </strong>to weak economic outlook. 
 
 </span>
 ]
@@ -78,44 +78,6 @@ library(readxl)
 </center>
 
 ---
-
-```{r Econ dashboard called Test, include=FALSE, echo=FALSE}
-
-# Data similar to the one in the image uploaded
-data <- data.frame(
-  categories = c("Monthly GDP", "Inflation", "Interest Rate", "Unemployment",
-                 "Business Confidence Index", "Consumer Confidence Index", 
-                 "Exports Growth", "Business Investment", "Business Insolvencies"),
-  values = c(0.1, -3.1, -5, 5.8, -3.4, 3.7, 2.2, 2.4, 3.5), # Mock values
-  periods = c("Sept.", "Oct.", "Nov.", "Nov.", "Nov.", "Nov.", "Oct.", "Q2 2023", "Q3 2023"),
-  colors = c("#FF0000", "#FF0000", "#FF0000", "#FF0000",  # Red for first 4
-             "#7a9e9f", "#7a9e9f",                        # Teal for next 2
-             "#FFD700", "#FFD700", "#FFD700")             # Yellow for last 3
-)
-
-# Parse the data for highcharter
-data_list <- lapply(1:nrow(data), function(i) {
-  list(
-    name = data$categories[i],
-    y = data$values[i],
-    color = data$colors[i]
-  )
-})
-
-# Create the highchart object with customized colors
-test<-highchart() %>%
-  hc_chart(type = 'column') %>%
-  #hc_title(text = "Economic Dashboard") %>%
-  #hc_subtitle(text = "Growth comes to a halt as higher rates start to impact businesses and labor") %>%
-  hc_xAxis(categories = data$categories) %>%
-  hc_yAxis(title = list(text = "Monthly Percentage Change")) %>%
-  hc_add_series(name = "Economic Indicators", data = data_list, dataLabels = list(enabled = TRUE)) %>%
-  hc_tooltip(formatter = JS("function() { return this.x + ': <b>' + this.y + '%</b> '; }")) %>%
-  hc_plotOptions(series = list(
-    dataLabels = list(enabled = TRUE, format = '{y:.1f}%')
-  ))
-
-```
 .center[
 ##Growth comes to a halt as higher rates start to impact businesses and labour
 ]
@@ -134,7 +96,7 @@ test<-highchart() %>%
 ## Monetary policy tightening is starting to impact growth
 ]
 <ul style="font-size: 24px;">
-GDP contracted by 0.3% in the third quarter as the effects of higher interest rates trickle through the economy.</ul>
+ 0.3% GDP contraction in the third quarter as the effects of higher interest rates trickle through the economy.</ul>
 
 
 .pull-left[
@@ -147,7 +109,7 @@ GDP contracted by 0.3% in the third quarter as the effects of higher interest ra
 
 
 - <span style="font-size: 22px;"> 
-Effects of interest rate increases expected to continue to restrain spending, while limiting growth and employment. 
+<strong>Effects of interest rate increases expected to continue </strong>to restrain spending, while limiting growth and employment. 
 
 </span>
 ]
@@ -302,8 +264,8 @@ proj
 Constrained government fiscal environment.</ul>
 
 - <span style="font-size: 17px;"> 
-Current federal debt ~42% of GDP, places Canada with third lowest public-debt-to-GDP ratio among G7, above the UK and Germany.
-```{r, echo=FALSE, fig.width=6, fig.height=5.25}
+Current federal debt 42 of GDP, places Canada with third lowest public debt to GDP ratio among G 7 above the UK and Germany Fiscal anchor calls for deficits no larger than 1% of GDP
+```{r, echo=FALSE, fig.width=6, fig.height=5.15}
 feddebt <- read_excel("C:/Users/davreuxa/Documents/soe/feddebttogdp.xlsx")
 
 
@@ -423,7 +385,7 @@ Affordability remains a key issue, creating a drag on consumption.</ul>
 <strong>High demand</strong> and a <strong>lack of supply </strong>in the housing market offset gains in household income.
 
 - <span style="font-size: 22px;"> 
-The Bank of Canada’s <strong>housing affordability index reached its highest level </strong>— meaning the worst degree of affordability — since 1982.
+The Bank of Canada’s <strong>housing affordability index reached its highest level </strong> since 1982 — worst degree of affordability .
 
 - <span style="font-size: 22px;"> 
 Canadian households allocating a <strong>higher portion of income to housing </strong>– on average, 55% towards total housing costs as of Q3 2023 – almost twice the rate compared to Q3 2019.
@@ -507,10 +469,11 @@ Inflation is generally easing down despite a recent uptick.</ul>
 <strong>Canada's consumer price index rose by 3.4% </strong>in the year up to December, bringing the inflation cooldown to a halt.
 
 - <span style="font-size: 22px;"> 
-Overall, <strong>shelter costs (e.g. mortgage and rent payments) are up by more than 6% </strong> in the past year, ~twice the overall inflation rate.
+Overall, <strong>shelter costs (e.g. mortgage and rent payments) are up by nearly 6% </strong> in the past year, ~twice the overall inflation rate.
 
 - <span style="font-size: 22px;"> 
-<strong>CPI – food purchased from stores was 4.7%,</strong> marking a fifth month of deceleration.
+<strong>CPI – food purchased from stores was 4.7% in December</strong>, similar to November. That said, grocery prices had decelerated for five consecutive months.
+
 
 - <span style="font-size: 22px;"> 
 Historical experience suggests that the recent easing of cost pressures in production and distribution will lead to <strong>further declines in food price inflation </strong>over the coming months.
@@ -585,15 +548,15 @@ Wages are catching up with inflation, adding cost pressures to firms.</ul>
 <strong>Wage increases have become more widespread </strong>as workers try to recoup purchasing power including via several high-profile strikes across Canada.
 
 - <span style="font-size: 22px;"> 
-<strong>Labour costs rose faster </strong>than the increase in price of the products sold for the better part of the year (see chart).
+<strong>Labour costs rose faster than the increase in price of the products </strong>sold for the better part of the year.
 
 - <span style="font-size: 22px;"> 
-Though faster wage increases are an understandable reaction to higher inflation, they risk making a <strong>return to low inflation </strong>more difficult.
+Though faster wage increases are an understandable reaction to higher inflation, they risk making a <strong>return to low inflation more difficult.</strong>
 
 
 </span>
 ]
-```{r, echo=FALSE, fig.align='center', fig.width=10, fig.height=5.80, warning=FALSE}
+```{r, echo=FALSE, fig.align='center', fig.width=12, fig.height=5.80, warning=FALSE}
 cons <- read_excel("C:/Users/davreuxa/Documents/soe/construction.xlsx")
 
 
@@ -636,12 +599,38 @@ const <- highchart() %>%
       point = list(
         xAxis = 0,
         yAxis = 0,
-        x = 6,
+        x = 5.8,
         y = 2
       ),
-      text = "The cost of labour has increased    , </br />
+      text = "The cost of labour has increased     , </br />
               faster than the rise in prices <br />",
       draggable = FALSE,  # Set draggable to TRUE or FALSE
+      labelOptions = list(
+        shape = 'connector',
+        align = 'left',
+        justify = FALSE,
+        crop = FALSE,
+        style = list(
+          fontSize = '10px',
+          textOutline = '1px white'
+        )
+      )
+    )
+  )
+)%>%
+  hc_add_annotation( 
+  labels = list(
+    list(
+      point = list(
+        xAxis = 0,
+        yAxis = 0,
+        x = 9,
+        y = 2
+      ),
+      text = "Recent uptick    </br>
+      in prices",
+      crop=FALSE,
+      draggable = TRUE,  # Set draggable to TRUE or FALSE
       labelOptions = list(
         shape = 'connector',
         align = 'right',
@@ -658,7 +647,7 @@ const <- highchart() %>%
 ```
 
 .pull-right[
-```{r, echo=FALSE, fig.align='center', fig.width=7.5, fig.height=6.75}
+```{r, echo=FALSE, fig.align='center', fig.width=8.3, fig.height=6.75}
 const
 ```
 ]
@@ -681,16 +670,16 @@ Canada’s productivity dipped below pre-pandemic levels, widening the gap with 
 <strong>Canada’s productivity level is declining –  </strong>compared to last year, the average Canadian is now producing 2% less during every hour they spend at work.
 
 - <span style="font-size: 22px;"> 
-Since 2020, <strong> output per hour in the business sector has dropped at an annual rate of 0.2% –</strong> the first negative reading on record (see chart). 
+Since 2020, <strong> output per hour in the business sector has dropped at an annual rate of 0.2% –</strong> the first negative reading on record over such a sustained period (see chart). 
 
 
 - <span style="font-size: 22px;"> 
-Canada’s labour productivity gap with the U.S. further deteriorated – as of 2022, <strong>Canada was 72% as productive as the U.S.</strong>. 
+Canada’s <strong>labour productivity gap with the U.S. further deteriorated – </strong>as of 2022, Canada was 72% as productive as the U.S., falling from 75%. 
 
 </span>
 ]
 .pull-right[
-```{r, echo=FALSE, fig.align='center', fig.width=7.5, fig.height=6.95}
+```{r, echo=FALSE, fig.align='center', fig.width=8.3, fig.height=6.95}
 LP <- read_excel("C:/Users/davreuxa/Documents/soe/LP.xlsx")
 
 lp_chart<- highchart() %>%
@@ -731,18 +720,18 @@ lp_chart<- highchart() %>%
         xAxis = 0,
         yAxis = 0,
         x = 105,
-        y = 2
+        y = 2.53
       ),
-      text = "The productivity gap between Canada   , </br />
-                and the U.S.is increasing <br />",
+      text = "The productivity gap between  ,</br />Canada 
+                and the U.S. increasing    .<br />",
       draggable = FALSE,  # Set draggable to TRUE or FALSE
       labelOptions = list(
         shape = 'connector',
-        align = 'center',
+        align = 'left',
         justify = FALSE,
-        crop = TRUE,
+        crop = FALSE,
         style = list(
-          fontSize = '10px',
+          fontSize = '9px',
           textOutline = '1px white'
         )
       )
@@ -859,7 +848,7 @@ total_factor_productivity_chart
 
 <ul style="font-size: 22px;"> 
   <li>
-    However, Canada’s declining  relative labour productivity to the U.S. driven by weakness in <strong>total factor productivity growth,</strong> which has not improved in decades.   
+    Canada's low/declining relative labor productivity to the U.S. is driven by <strong>weakness in total factor productivity growth,</strong> which has not improved in decades.   
 
   </li>
 </ul>
@@ -990,32 +979,33 @@ non_res_chart
 
 .pull-left[
 - <span style="font-size: 22px;"> 
-<strong>It is not just an R&D story - Canadian businesses invest proportionally less </strong>in machinery & equipment (M&E)and other Intellectual Products (IPP) (e.g., software and data).
+<strong>It is not just an R&D story - Canadian businesses invest proportionally less </strong>in machinery & equipment (M&E)and other Intellectual Property Products (IPP) (e.g., software and data).
 </span>
   
 - <span style="font-size: 22px;">
-Bank of Canada’s latest Business Outlook Survey found that many Canadian businesses are preparing to <strong>invest less in M&E </strong>over the coming year.
+Bank of Canada’s latest Business Outlook Survey shows many <strong>Canadian businesses are preparing to invest less in M&E </strong>over the coming year.
 
 
 - <span style="font-size: 22px;">
-Investing in technologies, paired with the knowledge and skills to effectively use them, <strong>contributes positively to productivity growth,<strong> supporting a healthy innovation ecosystem which is critical for economic growth. 
+<strong>Investing in technologies </strong>and the knowledge and skills to effectively use them, <strong>contributes positively to productivity growth,</strong> supporting a healthy innovation ecosystem - critical for economic growth and competitiveness. 
 
 </span>
-
-
+<center>
+<img src="rnd.jpg" width="85%"/>
+</center>
 ]
 .pull-right[
 <ul style="font-size: 20px;">
 <center>
-Gross fixed capital formation by asset category, % of GDP</ul>
+<strong>Gross fixed capital formation by asset category, % of GDP</strong></ul>
 </center>
 .pull-left[
-```{r,echo=FALSE,results='asis',fig.width=3.5, fig.height=6.235}
+```{r,echo=FALSE,results='asis',fig.width=3.5, fig.height=5.235}
 m_e_chart
 ```
 ]
 .pull-right[
-```{r,echo=FALSE,results='asis',fig.width=4, fig.height=5.85}
+```{r,echo=FALSE,results='asis',fig.width=4, fig.height=4.85}
 non_res_chart
 ```
 ]
@@ -1033,7 +1023,7 @@ The <strong>largest emitting sectors </strong>of the Canadian economy (e.g. oil 
 Canadian economy is <strong>shifting from resource-dependent to service industries </strong>- the value-added share of resource-dependent industries declined from 17.2% in 2000 to 13.2% in 2019, the largest decline among G7 countries. 
 
 - <span style="font-size: 22px;"> 
-Many countries have overtaken Canada in the ability to <strong>produce diversified and complex products <strong>for international markets – export sophistication positively linked to  productivity returns. 
+Many countries have overtaken Canada in the ability to <strong>produce diversified and complex products </strong>for international markets – export sophistication positively linked to  productivity returns. 
 
 </span>
 ]
@@ -1175,24 +1165,24 @@ eg_chart <- highchart() %>%
 ## Investments in clean-tech could help to unlock new  productivity opportunities
 <ul style="font-size: 22px;"> 
   <li>
-Well-formulated <strong>environmental policies and programs can spur innovation, </strong>which can in turn stimulate productivity.
+<strong>Well-formulated environmental policies and programs can spur innovation, </strong>which can in turn stimulate productivity.
   </li>
  </ul>
  
 <ul style="font-size: 20px;"> 
   <li>
-Emerging evidence in Canada suggests that the <strong>environmental and clean technology sector </strong>is generating above-average productivity returns. 
+Emerging evidence in Canada suggests that the <strong>environmental and clean technology sector is generating above-average productivity returns. </strong>
   </li>
 </ul>
 
 <ul style="font-size: 20px;"> 
   <li>
-A recent study finds that—relative to other innovation support beneficiaries—businesses getting clean-tech support: 
+A recent study found that businesses getting clean-tech support: 
     <ul>
       <li>had a more educated workforce;</li>
       <li>faster labour productivity growth;</li>
       <li>faster revenue growth, and;</li>
-      <li>faster employment growth compared to businesses receiving other innovation support programs. </li>
+      <li>faster employment growth. </li>
     </ul>
   </li>
 </ul>
@@ -1235,7 +1225,7 @@ Since 2020, Canada has secured more than <strong>$34 billion in investment in th
 However, the domestic EV supply chain is still lagging in its <strong>capacity to process the raw materials going into the battery cells.</strong>
 
 - <span style="font-size: 22px;"> 
-The <strong>U.S. Inflation Reduction Act and China’s dominant position in critical mineral processing </strong>(IMF) puts further pressure on Canada’s capability to secure its own supply chain in EV batteries.
+The <strong>U.S. Inflation Reduction Act and China’s dominant position in critical mineral processing </strong>(IMF) puts further pressure on Canada’s capability to secure its own supply-chain in EV batteries.
 
 </span>
 ]
@@ -1300,13 +1290,16 @@ ev_chart
 Digital-intensive sectors, associated with significant <strong>productivity gains, </strong>accounted for 6% of Canada’s GDP in 2020, lagging most G7 peers (see chart).
 
 - <span style="font-size: 22px;"> 
-<strong>Small-Medium Sized firms (SMEs),</strong> the majority of Canadian economy, <strong>continue to lag larger firms in the use of foundational technologies</strong> (e.g., e-commerce). 
+<strong>Small-Medium Sized firms (SMEs),</strong> majority of the Canadian economy, <strong>continue to lag larger firms in the use of foundational technologies</strong> (e.g., e-commerce). 
 
 
 - <span style="font-size: 22px;"> 
 Canada’s skilled workforce and early <strong>investment in AI </strong>technologies can facilitate a better integration of digital tools in its economy.
 
 </span>
+<center>
+<img src="ai.jpg" width="85%"/>
+</center>
 ]
 .pull-right[
 ```{r, echo=FALSE, fig.align='center',fig.width=7.5, fig.height=7}
@@ -1352,12 +1345,13 @@ dii_chart
 ##Labour market tightness remains elevated
 ]
 <ul style="font-size: 24px;">
-Labour shortages can be good news for productivity.</ul>
+Shortages can be good news for productivity.</ul>
 
 .pull-left[
 
 - <span style="font-size: 22px;"> 
-<strong>Job vacancies declined to 632,200 </strong>in September 2023. but remain well above pre-COVID levels.
+Job vacancies <strong>edged up to 653,005 in November 2023,</strong> remaining well above pre-COVID-19 levels.
+
 
 
 - <span style="font-size: 22px;"> 
@@ -1376,7 +1370,7 @@ vacancy_graph <-highchart() %>%
   hc_chart(type = "line") %>%
   hc_title(text = "Vacancies continue to decline as the number of available worker per open position nearly doubles since last year.",
            align = "center") %>%
-  hc_xAxis(categories = format(as.Date(vacancy$Date), "%b %y")) %>%  
+  hc_xAxis(categories = format(as.Date(vacancy$Date), " %b %y")) %>%  
   hc_yAxis_multiples(
     list(title = list(text = " ")),
     list(title = list(text = " "), opposite = TRUE)
@@ -1409,15 +1403,15 @@ vacancy_graph
 ]
 
 - <span style="font-size: 25px;"> 
-Economic headwinds likely to result in slower economic activity in the near-term. <strong>ISED policies and programs to prepare for different economic downturn scenarios within a tight fiscal environment. </strong>
+Economic headwinds likely to result in slower economic activity in the near-term. <strong>ISED policies and programs to prepare for different economic downturn scenarios</strong> within a tight fiscal environment. 
 
 
 - <span style="font-size: 25px;"> 
-<strong>Elevated interest rates and ongoing significant affordability challenges continue to weigh on Canadian households, </strong>consumers and businesses, with recent drops in productivity effectively erasing five years of gains. ISED to continue looking at how various policy levers can be deployed to help solve the productivity puzzle.  
+<strong>Elevated interest rates and ongoing significant affordability challenges continue to weigh on Canadian households, </strong>consumers and businesses, with recent drops in productivity effectively erasing five years of gains.<strong> ISED to continue looking at how various policy levers can be deployed to help solve the productivity puzzle.  </strong>
 
 
 - <span style="font-size: 25px;"> 
-Low investment in R&D and innovation-enhancing activities also expected to weigh on economic growth. <strong>ISED policies to  continue to seek to accelerate innovation,</strong> including technology adoption and intangible assets, lifting productivity growth.
+Low investment in R&D and innovation-enhancing activities also expected to weigh on economic growth. <strong>ISED policies to  continue to seek to accelerate incent/innovation,</strong> including technology adoption and intangible assets, <strong>to lift productivity growth.</strong>
 
 
 </span>
