@@ -1,0 +1,147 @@
+---
+title: "Gender Based Analysis of the Canadian Economy"
+author: "SRRB"
+date: "May 2024"
+output:
+  xaringan::moon_reader:
+    self_contained: true
+    css: [default,hygge-duke,chocolate-fonts]
+    lib_dir: libs
+    nature:
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: "16:9"
+class: middle, center, title-slide-background
+background-size: contain
+---
+```{r, echo=FALSE, include = FALSE}
+library(OECD)
+library(rmarkdown)
+library(tidyverse)
+library(forecast)
+library(xts)
+library(rmarkdown)
+library(openxlsx)
+library(XML)
+library(reshape2)
+library(plyr)
+library(ggplot2)
+#library(rCharts)
+library(dplyr)
+library(tidyr)
+library(ggcharts)
+library(ggpol)
+library(RColorBrewer)
+library(highcharter)
+library(vtable)
+library(webshot)
+library(scales)
+library(statcanR)
+library(tidyverse)
+library(writexl)
+library(highcharter)  # Make sure you have the highcharter library installed
+library(readxl)
+```
+
+
+```{r LFS, include=FALSE}
+#lfs_immig <- statcan_download_data("14-10-0086-01","eng")
+```
+
+##Women in Senior management positions in Canadian Firms 
+
+```{r, include=FALSE}
+mgmt <- read_excel("C:/Users/davreuxa/OneDrive - ISED-ISDE/GBA+ Annual Report/sme_ownership.xlsx", sheet = "mgmt")
+```
+
+```{r, include=FALSE}
+mgmt_chart <- highchart() %>%
+  hc_chart(type = "bar", stacked = TRUE, zoomType = "xy") %>%
+  hc_title(
+    text = "Women are more likely to hold senior management positions if the business is owned by the following minority groups",
+    align = "center"
+  ) %>%
+  hc_subtitle(
+    text = "Average percentage of women in management positions, Q1 2023",
+    align = "center"
+  ) %>%
+  hc_xAxis(categories = mgmt$`ownership`) %>%
+  hc_add_series(
+    name = "Women in Senior Management",
+    type = "bar",
+    data = mgmt$`Average percentage of employees that are women in senior management positions`,
+    stacking="normal"
+  ) %>%
+  hc_add_series(
+    name = "Women in all other Management",
+    type = "bar",
+    data = mgmt$`Average percentage of employees that are women in all other management positions`,
+      stacking="normal"
+  ) %>%
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_plotOptions(
+    column = list(
+      dataLabels = list(enabled = TRUE)
+    )
+  ) %>%
+  hc_tooltip(
+    pointFormat = '{series.name}: <b>{point.y:.1f}%</b><br/>',
+    shared = TRUE
+  )%>%
+  hc_caption(text = "Source: Statistics Canada Table 33-10-0660-01")%>%
+  hc_yAxis(visible = FALSE)
+
+
+```
+<center>
+```{r, echo=FALSE}
+mgmt_chart
+```
+</center>
+---
+
+##Ownership of Small-Medium Sized Firms
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r SME, include = FALSE}
+sme <- read_excel("C:/Users/davreuxa/OneDrive - ISED-ISDE/GBA+ Annual Report/sme_ownership.xlsx")
+```
+```{r , include=FALSE}
+sme_chart <- highchart() %>%
+  hc_chart(type = "column", zoomType = "xy")%>%
+  hc_title(text = "Women, Visible Minorities, and Indigenous folk disproportionally own SMEs", align = "center") %>%
+  hc_subtitle(text= "Ownership characteristics of small and medium enterprises, (%)", align = "center")%>%
+  hc_xAxis(categories = sme$`ownership`) %>%
+  hc_add_series(
+    name = "1 to 4 employees",
+    type = "column",
+    data = sme$`Employment size, 1 to 4 employees`
+  ) %>%
+  hc_add_series(
+    name = "5 to 19 employees",
+    type = "column",
+    data = sme$`Employment size, 5 to 19 employees`
+  ) %>%
+  hc_add_series(
+    name = "20 to 99 employees",
+    type = "column",
+    data = sme$`Employment size, 20 to 99 employees`
+ )%>%
+  hc_add_series(
+    name = "100 to 499 employees",
+    type = "column",
+    data = sme$`Employment size, 100 to 499 employees`
+ )%>%
+  hc_add_theme(hc_theme_bloom())%>%
+  hc_plotOptions(column = list(dataLabels = list(enabled = TRUE)))%>%
+  hc_caption(text="Source: Statistics Canada Table 33-10-0459-01")
+
+```
+<center>
+```{r, echo=FALSE}
+sme_chart
+```
+</center>
+---
+
