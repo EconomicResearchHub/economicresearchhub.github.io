@@ -137,7 +137,6 @@ intboard_chart
 ```
 ]
 ---
-
 ##Ownership of Small-Medium Sized Firms
 
 ```{r SME, include = FALSE}
@@ -180,4 +179,57 @@ sme_chart
 ```
 </center>
 ---
+## The gender gap in entrepreneurship and innovation
+```{r, include=FALSE}
+patents <- read_excel("C:/Users/davreuxa/OneDrive - ISED-ISDE/GBA+ Annual Report/sme_ownership.xlsx", sheet = "patents")
+```
 
+```{r, include=FALSE}
+patents_chart <- highchart() %>%
+  hc_chart(type = "bar", stacked = TRUE, zoomType = "xy") %>%
+  hc_title(
+    text = "Men-owned businesses were 16.5 percentage points more likely to have conducted R&D, and, conditional on conducting R&D, spent 70% more. This could help explain why men-owned firms that patent have more applications per firm, and why they have a higher rate of granted applications.",
+    align = "center"
+  ) %>%
+  hc_subtitle(
+    text = "Number of patent applications by gender of ownership, average over each period",
+    align = "center"
+  ) %>%
+  hc_xAxis(categories = patents$Period) %>%
+  hc_add_series(
+    name = "Men-owned",
+    type = "bar",
+    data = patents$`Men-owned patents`,
+    stacking="normal"
+  ) %>%
+  hc_add_series(
+    name = "Women-owned",
+    type = "bar",
+    data = patents$`Women-owned patents`,
+      stacking="normal"
+  ) %>%
+   hc_add_series(
+    name = "Equally-owned",
+    type = "bar",
+    data = patents$`Equally owned patents`,
+      stacking="normal"
+  ) %>%
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_plotOptions(
+    column = list(
+      dataLabels = list(enabled = TRUE)
+    )
+  ) %>%
+  hc_tooltip(
+    pointFormat = '{series.name}: <b>{point.y:.1f}</b><br/>',
+    shared = TRUE
+  )%>%
+  hc_caption(text = "Source: Canadian Patent Research Database and Canadian Employer-Employee Dynamics Database.")%>%
+  hc_yAxis(visible = FALSE)
+
+```
+<center>
+```{r PATENTS, echo=FALSE}
+patents_chart
+```
+</center>
