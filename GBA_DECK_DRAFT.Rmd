@@ -235,7 +235,7 @@ sme_chart
 ```{r, include=FALSE}
 ipp <- read_excel("C:/Users/davreuxa/OneDrive - ISED-ISDE/GBA+ Annual Report/sme_ownership.xlsx", sheet = "ipp")
 ```
-```{r}
+```{r, include=FALSE}
 ipp_chart <- highchart() %>%
   hc_chart(type = "column", zoomType = "xy")%>%
   hc_title(text = "  ", align = "center") %>%
