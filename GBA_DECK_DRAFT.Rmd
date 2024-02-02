@@ -145,7 +145,7 @@ sme <- read_excel("C:/Users/davreuxa/OneDrive - ISED-ISDE/GBA+ Annual Report/sme
 ```{r , include=FALSE}
 sme_chart <- highchart() %>%
   hc_chart(type = "column", zoomType = "xy")%>%
-  hc_title(text = "Women, Visible Minorities, and Indigenous folk disproportionally own SMEs", align = "center") %>%
+  hc_title(text = "Women, Visible Minorities, and Indigenous folk disproportionally own fewer SMEs", align = "center") %>%
   hc_subtitle(text= "Ownership characteristics of small and medium enterprises, (%)", align = "center")%>%
   hc_xAxis(categories = sme$`ownership`) %>%
   hc_add_series(
