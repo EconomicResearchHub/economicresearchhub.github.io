@@ -137,7 +137,59 @@ intboard_chart
 ```
 ]
 ---
-##Ownership of Small-Medium Sized Firms
+## Firm ownership
+```{r, include=FALSE}
+immig_own <- read_excel("C:/Users/davreuxa/OneDrive - ISED-ISDE/GBA+ Annual Report/sme_ownership.xlsx", sheet = "firmown")
+```
+
+```{r, include=FALSE}
+immigown_chart <- highchart() %>%
+  hc_chart(type = "bar",  zoomType = "xy") %>%
+  hc_title(
+    text = "The gender gap was proportionally higher among the Black population, but continues to be significant amongst both White and other racialized business owners.",
+    align = "center"
+  ) %>%
+  hc_subtitle(
+    text = "Distribution of business owners, by gender, immigration status, and racial profile, 2018 ",
+    align = "center"
+  ) %>%
+  hc_xAxis(categories = immig_own$race) %>%
+  hc_add_series(
+    name = "Recent immigrants",
+    type = "bar",
+    data = immig_own$`Recent Immigrants`
+  ) %>%
+  hc_add_series(
+    name = "Established immigrants",
+    type = "bar",
+    data = immig_own$`Established immigrants`
+  ) %>%
+  hc_add_series(
+    name = "Non-immigrants",
+    type = "bar",
+    data = immig_own$`Non-immigrants`
+  ) %>%
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_plotOptions(
+    column = list(
+      dataLabels = list(enabled = TRUE)
+    )
+  ) %>%
+  hc_tooltip(
+    pointFormat = '{series.name}: <b>{point.y:.1f}%</b><br/>',
+    shared = TRUE
+  )%>%
+  hc_caption(text = "Note: Recent immigrants refers to immigrants who arrived in Canada between 2013 and 2018. </br/> Source: CEEDD (2018); Census of population; National household survey" )
+  
+```
+<center>
+```{r, echo=FALSE, fig.align='center', fig.width=10, fig.height=7}
+immigown_chart
+```
+</center>
+
+---
+##Small-Medium Sized Firm Ownership
 
 ```{r SME, include = FALSE}
 sme <- read_excel("C:/Users/davreuxa/OneDrive - ISED-ISDE/GBA+ Annual Report/sme_ownership.xlsx")
