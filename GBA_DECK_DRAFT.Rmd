@@ -231,6 +231,34 @@ sme_chart
 ```
 </center>
 ---
+##Larger firms are more likely to innovate
+```{r, include=FALSE}
+ipp <- read_excel("C:/Users/davreuxa/OneDrive - ISED-ISDE/GBA+ Annual Report/sme_ownership.xlsx", sheet = "ipp")
+```
+```{r}
+ipp_chart <- highchart() %>%
+  hc_chart(type = "column", zoomType = "xy")%>%
+  hc_title(text = "  ", align = "center") %>%
+  hc_subtitle(text= "Intellectual Property Use, by firm size and ownership type", align = "center")%>%
+  hc_xAxis(categories = ipp$ipp) %>%
+  hc_add_series(
+    name = "1 to 4 employees",
+    type = "column",
+    data = ipp$value
+  ) %>%
+  hc_add_theme(hc_theme_bloom())%>%
+  hc_plotOptions(column = list(dataLabels = list(enabled = TRUE)))%>%
+  hc_caption(text="Source: Statistics Canada Table 33-10-0459-01")
+
+```
+
+<center>
+```{r , echo=FALSE, fig.align='center', fig.width=10, fig.height=7}
+ipp_chart
+```
+</center>
+
+---
 ## The gender gap in entrepreneurship and innovation
 ```{r, include=FALSE}
 patents <- read_excel("C:/Users/davreuxa/OneDrive - ISED-ISDE/GBA+ Annual Report/sme_ownership.xlsx", sheet = "patents")
@@ -285,3 +313,4 @@ patents_chart <- highchart() %>%
 patents_chart
 ```
 </center>
+---
