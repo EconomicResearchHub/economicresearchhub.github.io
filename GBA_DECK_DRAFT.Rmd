@@ -93,17 +93,53 @@ mgmt_chart <- highchart() %>%
 
 
 ```
-<center>
+.pull-left[
 ```{r, echo=FALSE}
 mgmt_chart
 ```
-</center>
+]
+
+```{r, include=FALSE}
+int_board <- read_excel("C:/Users/davreuxa/OneDrive - ISED-ISDE/GBA+ Annual Report/sme_ownership.xlsx", sheet = "int_board")
+
+intboard_chart <-highchart()%>%
+  hc_chart(type = "bar",  zoomType = "xy") %>%
+  hc_title(
+    text = "Compared to our peers, Canadian women hold nearly the least amount of board seats, only slightly above the U.S.",
+    align = "center"
+  ) %>%
+  hc_subtitle(
+    text = "Female share of board seats of the largest publically listed companies, (%)",
+    align = "center"
+  ) %>%
+  hc_xAxis(categories = int_board$country) %>%
+  hc_add_series(
+    name = "Share of board seats held by women",
+    type = "bar",
+    data = int_board$value
+  ) %>%
+  hc_add_theme(hc_theme_bloom()) %>%
+  hc_plotOptions(
+    column = list(
+      dataLabels = list(enabled = TRUE)
+    )
+  ) %>%
+  hc_tooltip(
+    pointFormat = '{series.name}: <b>{point.y:.1f}%</b><br/>',
+    shared = TRUE
+  )%>%
+  hc_caption(text = "Source: OECD")
+
+```
+.pull-right[
+```{r, echo=FALSE}
+intboard_chart
+```
+]
 ---
 
 ##Ownership of Small-Medium Sized Firms
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+
 ```{r SME, include = FALSE}
 sme <- read_excel("C:/Users/davreuxa/OneDrive - ISED-ISDE/GBA+ Annual Report/sme_ownership.xlsx")
 ```
