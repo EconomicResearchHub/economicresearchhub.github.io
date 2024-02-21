@@ -24,7 +24,7 @@ library(XML)
 library(reshape2)
 library(plyr)
 library(ggplot2)
-library(rCharts)
+#library(rCharts)
 library(dplyr)
 library(tidyr)
 library(plotly)
@@ -113,6 +113,7 @@ CPI_food_only <- subset(CPI_food_only, REF_DATE >= sp_date)
  CPI_food_only$YoY_Growth <- round(CPI_food_only$YoY_Growth, 1)
 
 ```
+
 ```{r, echo=FALSE, include=FALSE, out.width='100%', fig.align='center', class='centered-plot'}
 WEU_01_19_1 <- highchart() %>%
   hc_chart(
@@ -168,50 +169,18 @@ WEU_01_19_1 <- highchart() %>%
 ```{r, echo=FALSE, fig.align='center', fig.width=8, fig.height=6}
 WEU_01_19_1
 ```
-
-
-```{r, echo=FALSE, include=FALSE, out.width='100%', fig.align='center', class='centered-plot'}
-library(readxl)
-gdpexp <- read_excel("C:/Users/davreuxa/OneDrive - ISED-ISDE/WEU Indicators/3610010401-eng.xlsx")
-
-gdpexp_QoQ2 <- gdpexp %>%
-  mutate(gdp = (`Gross domestic product at market prices` - lag(`Gross domestic product at market prices`, default = `Gross domestic product at market prices`[1])) / lag(`Gross domestic product at market prices`, default = `Gross domestic product at market prices`[1]) * 100) %>%
-  filter(`Quarter` != "Q3 2021") %>%
-  select(`Quarter`,  gdp)
-
-
-gdpexp_chart_QoQ2 <- highchart() %>%
-  hc_chart(type = "column", zoomType = "xy") %>%
-  hc_xAxis(categories = gdpexp_QoQ2$Quarter) %>%
-  hc_add_series(
-    name = " GDP",
-    data = gdpexp_QoQ2$gdp
-  ) %>%
-  hc_plotOptions(
-    column = list(
-      colorByPoint = TRUE,
-      colors = ifelse(gdpexp_QoQ2$gdp < 0, "#E31737", "#333F50")
-    )
-  ) %>%
-  hc_yAxis(
-    title = list(text = "%")
-  ) %>%
-  hc_caption(
-    text = "Source: StatsCan Table 36-10-0104-01"
-  ) %>%
-  hc_add_theme(hc_theme_bloom()) %>%
-  hc_tooltip(
-    pointFormat = '{series.name}: <b>{point.y:.2f}%</b><br/>',
-    shared = FALSE
-  )
-
-
+```{r}
+setwd("S:/ERPA Correspondence/Weekly economic update/Current Updates/549 February 23, 2024")  
+getwd()
+#UPLOAD GRAPHS for Women +
+#Save the Highcharts graph as an HTML file
+saveWidget(WEU_01_19_1, file = "Chart02_20.html")
+# Take a screenshot of the Highcharts graph and save it as an image file
+webshot("Chart02_20.html", "Chart02_20.png", delay = 1, zoom = 4, vheight = 500)
 
 ```
 
-```{r, echo=FALSE, fig.align='center', fig.width=8, fig.height=6, include=FALSE,}
-gdpexp_chart_QoQ2
-```
+
 ```{r, echo=FALSE, out.width="50px"}
 knitr::include_graphics("C:/Users/davreuxa/Documents/GitHub/economicresearchhub.github.io/cannews.png")
 ```
@@ -399,8 +368,8 @@ knitr::include_graphics("C:/Users/davreuxa/Documents/GitHub/economicresearchhub.
       <th>Change since beginning of 2022</th>
       <th> </th>
     </tr>
-  </thead>
-  <tbody>
+    </thead>
+    <tbody>
     <tr class="active">
       <td><strong>Market Index</strong></td>
       <th></th>
@@ -411,7 +380,7 @@ knitr::include_graphics("C:/Users/davreuxa/Documents/GitHub/economicresearchhub.
     </tr>
     <tr>
       <td>TSX</td>
-      <td>20,210.07</td>
+      <th>20,210.07</th>
       <td>0.5%</td>
       <td>7.1%</td>
       <td>1.2%</td>

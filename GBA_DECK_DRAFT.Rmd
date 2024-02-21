@@ -146,7 +146,7 @@ immig_own <- read_excel("C:/Users/davreuxa/OneDrive - ISED-ISDE/GBA+ Annual Repo
 immigown_chart <- highchart() %>%
   hc_chart(type = "bar",  zoomType = "xy") %>%
   hc_title(
-    text = "The gender gap was proportionally higher among the Black population, but continues to be significant amongst both White and other racialized business owners.",
+    text = "The gender gap in terms of firm ownership was disproportionally higher among the Black population, but continues to be significant amongst both White and other racialized business owners.",
     align = "center"
   ) %>%
   hc_subtitle(
@@ -194,6 +194,7 @@ immigown_chart
 ```{r SME, include = FALSE}
 sme <- read_excel("C:/Users/davreuxa/OneDrive - ISED-ISDE/GBA+ Annual Report/sme_ownership.xlsx")
 ```
+
 ```{r , include=FALSE}
 sme_chart <- highchart() %>%
   hc_chart(type = "column", zoomType = "xy")%>%
@@ -235,6 +236,7 @@ sme_chart
 ```{r, include=FALSE}
 ipp <- read_excel("C:/Users/davreuxa/OneDrive - ISED-ISDE/GBA+ Annual Report/sme_ownership.xlsx", sheet = "ipp")
 ```
+
 ```{r, include=FALSE}
 ipp_chart <- highchart() %>%
   hc_chart(type = "column", zoomType = "xy")%>%
@@ -242,7 +244,7 @@ ipp_chart <- highchart() %>%
   hc_subtitle(text= "Intellectual Property Use, by firm size and ownership type", align = "center")%>%
   hc_xAxis(categories = ipp$ipp) %>%
   hc_add_series(
-    name = "1 to 4 employees",
+    name = "IPP Use",
     type = "column",
     data = ipp$value
   ) %>%
@@ -268,7 +270,7 @@ patents <- read_excel("C:/Users/davreuxa/OneDrive - ISED-ISDE/GBA+ Annual Report
 patents_chart <- highchart() %>%
   hc_chart(type = "bar", stacked = TRUE, zoomType = "xy") %>%
   hc_title(
-    text = "Men-owned businesses were 16.5 percentage points more likely to have conducted R&D, and, conditional on conducting R&D, spent 70% more. This could help explain why men-owned firms that patent have more applications per firm, and why they have a higher rate of granted applications.",
+    text = "Men-owned businesses were 16.5 percentage points more likely to have conducted R&D, and, conditional on conducting R&D, spent 70% more. ",
     align = "center"
   ) %>%
   hc_subtitle(
@@ -313,4 +315,4 @@ patents_chart <- highchart() %>%
 patents_chart
 ```
 </center>
----
+
