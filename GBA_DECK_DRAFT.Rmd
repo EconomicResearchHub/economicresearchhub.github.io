@@ -6,7 +6,7 @@ output:
   xaringan::moon_reader:
     seal: false
     self_contained: true
-    css: [default,hygge,chocolate-fonts, "cols.css"]
+    css: [default,metropolis-fonts, "cols.css"]
     lib_dir: libs
     nature:
       beforeInit: "cols_macro.js"
@@ -82,11 +82,14 @@ library(readxl)
 - <span style="font-size: 22px;"> 
 <strong>  Gender gaps, amongst both minority and white Canadians in the labour force have been tightening </strong> since the pandemic, but wage disparities persist. 
 
+
 - <span style="font-size: 22px;"> 
 Canadian <strong>women in all minority groups have increased educational attainment</strong>, but this has not translated into a higher rate of innovative activities such as inventions, entrepreneurship, and firm ownership.
 
+
 - <span style="font-size: 22px;"> 
 Public policies such as the <strong>10$/day child-care benefit have had a positive impact on participation rates </strong>for Canadian women with small children.
+
 
 <div class="subpoints" style="position: absolute; top: 0; left: 0; width: 100%; padding: 10px; background-color: #CFECF5; text-align: center;">
  <span class="small-font"> Economy</span> 
@@ -145,10 +148,10 @@ GDPpercapita1 <- GDPpercapita %>%
 
 GDPpercapita1
 ```
-## Canada's economic growth has outpaced most of its G7 counterparts since 2020
+### Canada's economic growth has outpaced most of its G7 counterparts since 2020
 
 <center>
-```{r, echo=FALSE, fig.align='center', fig.width=8, fig.height=6.25}
+```{r, echo=FALSE, fig.align='center', fig.width=9, fig.height=6.55}
 gdp_percapita_chart <- highchart()%>%
   hc_chart(type = "line",  zoomType = "xy") %>%
   hc_subtitle(
@@ -228,7 +231,7 @@ wagegap <- as.data.frame(dataset1)
 ---
 class: animated slideInRight fadeOutLeft
 
-## Despite progress in narrowing the gender labour gap over time, significant disparities in wages persist.
+### Despite progress in narrowing the gender labour gap over time, significant disparities in wages persist.
 .pull-left[.full-width[.content-box-blue[`r icons::fontawesome("bell")`    There remains a nearly <strong>8pp disparity </strong>between working-age men and women’s participation rates.]]]
 
 ```{r, echo=FALSE}
@@ -270,7 +273,7 @@ partrate_graph
 
 
 ---
-## Women and Canada's Gross Domestic Product: A Growing Contribution
+### Women and Canada's Gross Domestic Product: A Growing Contribution
 <center>
 From 2008 to 2018, the contribution of women to Canada’s gross domestic product (GDP) rose 2.8%pp to 28.5%, while the contribution of men edged up 0.5pp to 49.2%.
 </center>
@@ -307,7 +310,7 @@ hcmap(
 ```{r, echo=FALSE}
 GDP_sectoral <-  read_excel("C:/Users/davreuxa/OneDrive - ISED-ISDE/GBA+ Annual Report/sme_ownership.xlsx", sheet = "GDP_sectoral")
 ```
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.height=6.65}
 gdpsectoral <- highchart() %>%
   hc_chart(type = "bar",  zoomType = "xy") %>%
   hc_subtitle(
@@ -342,7 +345,7 @@ gdpsectoral
 ```
 ]
 ---
-## Male-owned firms exhibit a higher propensity to allocate resources towards research and development (R&D) as well as patents.
+### Male-owned firms exhibit a higher propensity to allocate resources towards research and development (R&D) as well as patents.
 
 
 .pull-left[
@@ -444,7 +447,7 @@ patents_chart
 ]
 
 ---
-## A GBA Plus review of Canada’s Self-employment and Entrepreneurial Activities
+### A GBA Plus review of Canada’s Self-employment and Entrepreneurial Activities
 .pull-left[
 <span style="font-size: 17px;">
 <center><strong> Entrepreneurship in Canada </strong></center>
