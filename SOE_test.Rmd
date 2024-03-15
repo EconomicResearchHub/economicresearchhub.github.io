@@ -4,22 +4,33 @@ author: " "
 date: "January 2024"
 output:
   xaringan::moon_reader:
+    seal: false
     self_contained: true
-    css: [default,hygge-duke,chocolate-fonts]
+    css: [default, chocolate-fonts ]
     lib_dir: libs
     nature:
       highlightLines: true
       countIncrementalSlides: false
       ratio: "16:9"
+---
 class: middle, center, title-slide-background
 background-size: contain
 ---
+class: animated slideInRight fadeOutLeft
+```{r xaringan-animate-css, echo=FALSE}
+xaringanExtra::use_animate_css()
+```
+
 
 ```{r setup, include=FALSE}
 options(htmltools.dir.version = FALSE, htmltools.preserve.raw = FALSE)
 ```
 
 ```{r, echo=FALSE, include = FALSE}
+library(knitr)
+library(tidyverse)
+library(NHSRtheme)
+library(xaringanExtra)
 library(OECD)
 library(rmarkdown)
 library(tidyverse)
@@ -73,6 +84,7 @@ library(readxl)
 <img src = "keymessages.jpg" width = "90%" height = "150%"/>
 ]
 ---
+
 <center>
 <img src = "recentdev.jpg" width = "77.5%"/>
 </center>
